@@ -1,0 +1,31 @@
+@charset "utf-8";
+/* ?~M?¤í~J?? ë°°?~H */
+.prom_close{background-image:url(https://ssl.pstatic.net/static/pwe/common/deskhome/spr_promotion_icon.png);background-repeat:no-repeat;background-color:transparent;background-position:-20px 0;width:14px;height:13px;vertical-align:middle;overflow:hidden;border:0;cursor:pointer;margin-left:4px;z-index:10}
+.prom_close::-moz-focus-inner{padding:0}
+.prom_close span{display:none}
+.closing_area{position:absolute;margin:0;padding:0;}
+.closing_area a{line-height:18px !important;vertical-align:baseline !important;font-size:11px;color:#666;letter-spacing:-1px}
+.closing_area a .prom_close{vertical-align:top !important;position:relative;top:2px;*position:static}
+.closing_area input{vertical-align:middle}
+.closing_area label{font-size:11px;color:#666;vertical-align:middle;cursor:pointer;letter-spacing:-1px;margin-left:6px;*margin-left:3px;*position:relative;*top:1px}
+/* type1 - text */
+.cmn_promotion_text{position:relative;text-align:center;background:#edf4fb;height:28px;color:#000;vertical-align:middle;border:0;border-bottom:1px solid #dbe3ec;overflow:hidden;zoom:1}
+.cmn_promotion_text .rolling_container{position:relative;text-align:center;height:20px;padding-top:8px;overflow:hidden;margin:0 30px}
+.cmn_promotion_text ol{position:relative}
+.cmn_promotion_text li{padding-bottom:7px;height:20px;overflow:hidden}
+.cmn_promotion_text a{color:#000;font-size:12px}
+.cmn_promotion_text a strong{color:#000 !important}
+.cmn_promotion_text .icon{background-image:url(https://ssl.pstatic.net/static/pwe/common/deskhome/spr_promotion_icon.png);background-repeat:no-repeat;display:inline-block;height:12px;vertical-align:-2px;margin-right:2px}
+.cmn_promotion_text .icon em{overflow:hidden;position:absolute;top:0;left:0;width:0;height:0;border:0;background:none;font-size:0;line-height:0}
+.cmn_promotion_text .new .icon{background-position:-49px -13px;width:24px}
+.cmn_promotion_text .tip .icon{background-position:-49px -26px;width:24px}
+.cmn_promotion_text .event .icon{background-position:-39px 0px;width:34px}
+.cmn_promotion_text .new  strong{color:#c00}
+.cmn_promotion_text .tip strong{color:#090}
+.cmn_promotion_text .event strong{color:#63c}
+.cmn_promotion_text .link{font-size:11px;color:#666;letter-spacing:-1px;text-decoration:underline !important}
+.cmn_promotion_text .prom_close{position:absolute;right:7px;top:7px}
+/* type2 - image */
+.cmn_promotion_image{position:relative;border-top:1px solid #dfe5ea;height:49px;background-color:#f3f8fb;text-align:center;zoom:1}
+.cmn_promotion_image p a,.cmn_promotion_image p img{vertical-align:middle;}
+.cmn_promotion_image .closing_area{right:15px;top:17px;*top:15px}
