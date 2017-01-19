@@ -18,13 +18,15 @@ function getLastDate(month) {
 
     var lastDate = lastDateArray[month];
     // TODO 윤년계산
-
+    if(month===2 && ((thisYear%4===0 && thisYear%100 !== 0) || thisYear%400===0)) {
+        lastDate = 29;
+    }
     return lastDate;
 }
 
-// setCalendar(thisYear, thisMonth);
+setCalendar(thisYear, thisMonth);
 
-setCalendar(2017, 4);
+//setCalendar(2017, 4);
 
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function setCalendar(targetYear, targetMonth) {
@@ -61,6 +63,7 @@ function setCalendar(targetYear, targetMonth) {
         nums[i].innerText = calendar[i];
     }
 }
+
 // 해당 날짜에 대한 정보를 ISO형식으로 div의 data-date속성으로 저장
 function saveDate(date) {
 
