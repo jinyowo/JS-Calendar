@@ -1,7 +1,7 @@
 // month이름, weekday이름, 각 달의 마지막 날짜를 저장한 배열
-var monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var monthArray = ['','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-var lastDateArray = [31,28,31,30,31,30,31,31,30,31,30,31];
+var lastDateArray = [0,31,28,31,30,31,30,31,31,30,31,30,31];
 var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
 // 1. 처음 캘린더를 켰을 때 : 오늘 날짜가 속해 있는 달의 날짜를 채움
 // 2. 화살표 : 오늘을 기준으로 달을 +, - 해서 그 달의 날짜를 채움
@@ -10,28 +10,27 @@ var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-f
 // 오늘의 날짜를 받아옵니다.
 var today = new Date();
 var thisYear = today.getFullYear();
-var thisMonth = today.getMonth();
+var thisMonth = today.getMonth() + 1; // 0 ~ 11
 var thisDate = today.getDate();
 
 function getLastDate(month) {
-    if(month < 0){ month = 11;}
+    if(month < 1){ month = 12;}
 
     var lastDate = lastDateArray[month];
-    // TODO 윤년계산
     if(month===2 && ((thisYear%4===0 && thisYear%100 !== 0) || thisYear%400===0)) {
         lastDate = 29;
     }
     return lastDate;
 }
 
-setCalendar(thisYear, thisMonth);
+//setCalendar(thisYear, thisMonth);
 
-//setCalendar(2017, 4);
+setCalendar(2017, 4);
 
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function setCalendar(targetYear, targetMonth) {
     // 해당 년, 월의 1일 구하기
-    var firstDate = new Date(targetYear, targetMonth, 1); // 이번달 1일
+    var firstDate = new Date(targetYear, targetMonth-1, 1); // 이번달 1일
     var lastDate = getLastDate(targetMonth);
     var firstWeekday = firstDate.getDay();
 
