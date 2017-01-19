@@ -36,15 +36,19 @@ function setCalendar(targetYear, targetMonth) {
 
     // 달력에 숫자 뿌리기 - TODO: 함수로 빼기
     var calendar = [];
+    var cells = document.querySelectorAll(".fc-month-view .fc-day-top");
     var prevMonthLastDate = getLastDate(targetMonth-1);
     var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
+    var currentDate = 0;
 
     // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
     for(var i = prevMonthfirstDate; i<=prevMonthLastDate; i++) {
+        cells[currentDate++].className += " fc-other-month";
         calendar.push(i);
     }
     // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
     for(var i = 1; i<=lastDate; i++) {
+        currentDate++;
         calendar.push(i);
     }
     // 숫자를 띄울 a태그 전체
@@ -53,6 +57,7 @@ function setCalendar(targetYear, targetMonth) {
     for(var i=0; i<nums.length; i++) {
         // 다음달 날짜 채우기
         if(calendar[i] === undefined) {
+            cells[currentDate++].className += " fc-other-month";
             calendar[i] = nextMonthDate++;
         }
         nums[i].innerText = calendar[i];
