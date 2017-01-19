@@ -3,6 +3,7 @@ var allDayButton = document.querySelector('#allDay');
 var inputList = ["title", "start", "end", "place", "desc"];
 var idList = ["title", "start", "end", "place", "desc", "repeat"];
 
+
 submitButton.addEventListener("click", getValue);
 allDayButton.addEventListener("click", setAllDay);
 
