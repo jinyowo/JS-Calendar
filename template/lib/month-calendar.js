@@ -27,7 +27,7 @@ function setCalendar() {
 
     // 달력에 숫자 뿌리기 - TODO: 함수로 빼기
     var calendar = [];
-  
+
     var prevMonthLastDate = getLastDate(myMonth-1);
     var cells = document.querySelectorAll(".fc-month-view .fc-day-top");
 
@@ -62,6 +62,27 @@ function saveDate(date) {
 
 }
 
+document.addEventListener("DOMContentLoaded", init);
+function init() {
+    // 오늘의 날짜를 받아옵니다.
+    var today = new Date();
+    var thisYear = today.getFullYear();
+    var thisMonth = today.getMonth(); // 0 ~ 11
+    var thisDate = today.getDate();
+
+    setMyDate(thisYear, thisMonth);
+    setCalendar();
+    hideCalendar();
+    document.querySelector(".fc-month-view").style.display = "block";
+
+    // 화살표 달력 이동
+    var arrowButtons = document.querySelector(".fc-left .fc-button-group");
+    arrowButtons.addEventListener("click", moveMonth);
+    // 달력 형식 변경
+    var typeButtons = document.querySelector(".fc-right .fc-button-group");
+    typeButtons.addEventListener("click", changeType);
+}
+
 function moveMonth(evt) {
     var prevArrowClass = "fc-prev-button";
     var nextArrowClass = "fc-next-button";
@@ -76,29 +97,28 @@ function moveMonth(evt) {
 
     if(myMonth < 0) { myMonth = 11; myYear--;}
     else if(myMonth > 11) { myMonth = 0; myYear++;}
-    
+
     setCalendar();
 }
 function setMyDate(year, month) {
     myMonth = month;
     myYear = year;
 }
-document.addEventListener("DOMContentLoaded", init);
-function init() {
-    // 오늘의 날짜를 받아옵니다.
-    var today = new Date();
-    var thisYear = today.getFullYear();
-    var thisMonth = today.getMonth(); // 0 ~ 11
-    var thisDate = today.getDate();
 
-    setMyDate(thisYear, thisMonth);
-    setCalendar();
+function changeType(evt) {
+    var typeSet = document.querySelectorAll(".fc-right .fc-button-group button");
+    var calendarSet = document.querySelectorAll(".fc-view-container .fc-view");
+    var type = evt.target.closest("button");
+    console.log(typeSet);
+    console.log(type);
+    hideCalendar();
+    for(var i=0; i<typeSet.length; i++) {
+        if(typeSet[i] === type) { calendarSet[i].style.display = "block";}
+    }
 
-    // 화살표 달력 이동
-    var arrowButtons = document.querySelector(".fc-left .fc-button-group");
-    arrowButtons.addEventListener("click", moveMonth);
 }
-
-// 임시
-document.querySelector(".fc-basicWeek-view").style.display = "none";
-document.querySelector(".fc-agendaDay-view").style.display = "none";
+function hideCalendar() {
+    document.querySelector(".fc-month-view").style.display = "none";
+    document.querySelector(".fc-basicWeek-view").style.display = "none";
+    document.querySelector(".fc-agendaDay-view").style.display = "none";
+}
