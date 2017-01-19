@@ -8,9 +8,9 @@ submitButton.addEventListener("click", getValue);
 allDayButton.addEventListener("click", setAllDay);
 
 function getValue() {
-    for (var i = 0; i < idputList.length; i++) {
-        var inputValue = document.getElementById(idputList[i]).value;
-        localStorage.setItem(idputList[i], inputValue);
+    for (var i = 0; i < inputList.length; i++) {
+        var inputValue = document.getElementById(inputList[i]).value;
+        localStorage.setItem(inputList[i], inputValue);
     }
     var repeatValue = document.querySelector('input[name="optradio"]:checked').value;
     localStorage.setItem("repeat", repeatValue);
