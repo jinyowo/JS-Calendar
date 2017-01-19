@@ -81,6 +81,9 @@ function init() {
     // 달력 형식 변경
     var typeButtons = document.querySelector(".fc-right .fc-button-group");
     typeButtons.addEventListener("click", changeType);
+    // today
+    var todayButton = document.querySelector(".fc-left .fc-today-button");
+    todayButton.addEventListener("click", returnToday);
 }
 
 function moveMonth(evt) {
@@ -121,4 +124,12 @@ function hideCalendar() {
     document.querySelector(".fc-month-view").style.display = "none";
     document.querySelector(".fc-basicWeek-view").style.display = "none";
     document.querySelector(".fc-agendaDay-view").style.display = "none";
+}
+function returnToday() {
+    var today = new Date();
+    var thisYear = today.getFullYear();
+    var thisMonth = today.getMonth();
+
+    setMyDate(thisYear, thisMonth);
+    setCalendar();
 }
