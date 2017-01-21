@@ -1,26 +1,76 @@
-var schedule={ };
-var popup = document.getElementById('popup');
-
+//테스트용 object
+var schedule = {
+    title: "NTS intern",
+    start: "2017-01-02T08:00",
+    end: "2017-02-10T19:00",
+    repeat: "W",
+    place: "startup campus",
+    desc: "FE 인턴 education"
+};
+//반복 주기 object
+var repeat = {
+    Y: "매년",
+    M: "매월",
+    W: "매주",
+    D: "매일",
+    none: "반복안함"
+};
+var popupBackground = document.querySelector('.popupBackground');
+var popupContent = document.querySelector('.popupContent');
 var span = document.querySelector('.popupClose');
-
-// fc-content class content 클릭시 popup 출력
-document.addEventListener("click",function(event) {
-    if(event.target.className ==="fc-content"){
-    popup.style.display = "block";}
-} );
-span.addEventListener("click",function() {
-    popup.style.display = "none";
-});
-
-
 // x클릭시 팝업 닫기
-span.onclick = function() {
-    popup.style.display = "none";
-};
-
+span.addEventListener("click", closePopup);
 // 팝업 바깥영역 클릭시 팝업 닫기
-window.onclick = function(event) {
-    if (event.target == popup) {
-        popup.style.display = "none";
+window.addEventListener("click", function(event) {
+    if (event.target.className === "popupBackground") {
+        closePopup();
     }
-};
+});
+// fc-content class content 클릭시 popup 출력
+document.addEventListener("click", function(event) {
+    if (confirmTarget(event)) {
+        showPopup();
+        getCoordinate(event);
+        insertPopupContent();
+    }
+});
+function confirmTarget(event) {
+    if (event.target.className === "fc-content" || event.target.className === "fc-title") {
+        return true;
+    } else return false;
+}
+function closePopup() {
+    popupBackground.style.display = "none";
+}
+function showPopup() {
+    popupBackground.style.display = "block";
+}
+// 클릭한 지점 좌표 반영, 화면을 중심점을 기준으로 4분면으로 나워서 팝업 위치를 각각 다르게 함
+function getCoordinate(event) {
+    var centerPointX = (window.innerWidth) / 2;
+    var centerPointY = (window.innerHeight) / 2;
+    var x = event.clientX;
+    var y = event.clientY;
+    if (x <= centerPointX && y <= centerPointY) {
+        popupContent.style.top = y + 'px';
+        popupContent.style.left = x + 'px';
+    } else if (x > centerPointX && y <= centerPointY) {
+        popupContent.style.top = y + 'px';
+        popupContent.style.left = (x - popupContent.offsetWidth) + 'px';
+    } else if (x <= centerPointX && y > centerPointY) {
+        popupContent.style.top = (y - popupContent.offsetHeight) + 'px';
+        popupContent.style.left = x + 'px';
+    } else if (x > centerPointX && y > centerPointY) {
+        popupContent.style.top = (y - popupContent.offsetHeight) + 'px';
+        popupContent.style.left = (x - popupContent.offsetWidth) + 'px';
+    }
+}
+//팜업 상세일정 표시
+function insertPopupContent() {
+    var parsedStart = schedule['start'].replace("T", " ");
+    var parsedEnd = schedule['end'].replace("T", " ");
+    var stringData = "<strong><%= title %></strong><br><label >시간: </label><span>" + parsedStart + " ~ " + parsedEnd + "</span><br><label >반복: </label><span>" + repeat[schedule['repeat']] + "<span><br><label >장소: </label><span><%= place %></span><br><label >설명: </label><span><%= desc %></span>";
+    var compiled = _.template(stringData);
+    var str = compiled(schedule);
+    document.querySelector('.parsedContent').innerHTML = str;
+}
