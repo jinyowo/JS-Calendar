@@ -1,3 +1,4 @@
+/*팝업배경*/
 .popupBackground {
     display: none;
     /* 기본값 숨김 */
@@ -6,7 +7,7 @@
     z-index: 1;
     /* 제일 위에 띄우기 */
     padding-top: 100px;
-    /* 팝업 박스 위치*/
+    /* 팝업 배경 위치*/
     left: 0;
     top: 0;
     width: 100%;
@@ -15,32 +16,34 @@
     /* 높이 */
     overflow: auto;
     /* 스크롤 가능 */
-
 }
-
-
 /* 팝업 Content */
-
 .popupContent {
     background-color: #fefefe;
-    margin: auto;
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
+    position: fixed;
 }
-
-
 /* 닫기 버튼*/
-
 .popupClose {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
-
-.popupClose:hover, .popupClose:focus {
+/*x버튼 마우스 hover 했을때 css 애니메이션*/
+.popupClose:hover{
     color: #000;
     text-decoration: none;
     cursor: pointer;
+}
+/*팝업 콘텐트*/
+.parsedContent {
+    padding: 10px;
+}
+
+/*팝업 콘텐트 내의 br간격*/
+br {
+    line-height: 150%;
 }
