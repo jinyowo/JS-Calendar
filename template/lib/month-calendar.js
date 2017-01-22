@@ -33,6 +33,7 @@ function setCalendar() {
     var calendar = [];
 
     var prevMonthLastDate = getLastDate(myDate.month-1);
+
     var cells = document.querySelectorAll(".fc-month-view .fc-day-top");
 
     var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
@@ -40,12 +41,21 @@ function setCalendar() {
 
     // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
     for(var i = prevMonthfirstDate; i<=prevMonthLastDate; i++) {
-        cells[currentDate++].className += " fc-other-month";
+        cells[currentDate].setAttribute("data-date", formDate(myYear, myMonth, i));
+        if(!cells[currentDate].className.includes("fc-other-month")) {
+          cells[currentDate].className += " fc-other-month";
+        }
+        currentDate++;
         calendar.push(i);
     }
     // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
     for(var i = 1; i<=lastDate; i++) {
+        cells[currentDate].setAttribute("data-date", formDate(myYear, myMonth + 1, i));
+        if(cells[currentDate].className.includes("fc-other-month")) {
+            removeClass(cells[currentDate], "fc-other-month");
+        }
         currentDate++;
+
         calendar.push(i);
     }
     // 숫자를 띄울 a태그 전체
@@ -54,7 +64,11 @@ function setCalendar() {
     for(var i=0; i<nums.length; i++) {
         // 다음달 날짜 채우기
         if(calendar[i] === undefined) {
-            cells[currentDate++].className += " fc-other-month";
+            cells[currentDate].setAttribute("data-date", formDate(myYear, myMonth + 2, nextMonthDate));
+            if(!cells[currentDate].className.includes("fc-other-month")) {
+                cells[currentDate].className += " fc-other-month";
+            }
+            currentDate++;
             calendar[i] = nextMonthDate++;
         }
         nums[i].innerText = calendar[i];
