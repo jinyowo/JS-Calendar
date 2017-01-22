@@ -6,6 +6,7 @@ var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-f
 var myDate = {
     month : -1,
     year : -1,
+    date : -1,
 }
 
 function getLastDate(month) {
