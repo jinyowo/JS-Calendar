@@ -3,32 +3,35 @@ var monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July'
 var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
 
-var myMonth = -1;
-var myYear = -1;
+var myDate = {
+    month : -1,
+    year : -1,
+}
+
 function getLastDate(month) {
     if(month < 0){ month = 11;}
 
-    var lastDate = new Date(myYear, month+1, 0).getDate();
+    var lastDate = new Date(myDate.year, month+1, 0).getDate();
     return lastDate;
 }
 
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function setCalendar() {
     // 해당 년, 월의 1일 구하기
-    var firstDate = new Date(myYear, myMonth, 1); // 이번달 1일
+    var firstDate = new Date(myDate.year, myDate.month, 1); // 이번달 1일
 
-    var lastDate = getLastDate(myMonth);
+    var lastDate = getLastDate(myDate.month);
     var firstWeekday = firstDate.getDay();
 
     // 상단 가운데 월이름, 년도 -TODO: 나중에 함수로 뺄 예정
     var monthTitle = document.querySelector(".fc-center");
-    var thisMonthFullname = monthArray[myMonth];
-    monthTitle.innerHTML = "<h2>"+thisMonthFullname+" "+myYear+"</h2>";
+    var thisMonthFullname = monthArray[myDate.month];
+    monthTitle.innerHTML = "<h2>"+thisMonthFullname+" "+myDate.year+"</h2>";
 
     // 달력에 숫자 뿌리기 - TODO: 함수로 빼기
     var calendar = [];
 
-    var prevMonthLastDate = getLastDate(myMonth-1);
+    var prevMonthLastDate = getLastDate(myDate.month-1);
     var cells = document.querySelectorAll(".fc-month-view .fc-day-top");
 
     var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
@@ -72,64 +75,23 @@ function init() {
 
     setMyDate(thisYear, thisMonth);
     setCalendar();
+    var monthType = document.querySelector(".fc-right .fc-month-button");
+    monthType.classList.add("fc-state-active");
+    inactiveButton(todayButton);
     hideCalendar();
+
     document.querySelector(".fc-month-view").style.display = "block";
 
-    // 화살표 달력 이동
-    var arrowButtons = document.querySelector(".fc-left .fc-button-group");
-    arrowButtons.addEventListener("click", moveMonth);
-    // 달력 형식 변경
-    var typeButtons = document.querySelector(".fc-right .fc-button-group");
-    typeButtons.addEventListener("click", changeType);
-    // today
-    var todayButton = document.querySelector(".fc-left .fc-today-button");
-    todayButton.addEventListener("click", returnToday);
+    registerButtonEvents();
 }
 
-function moveMonth(evt) {
-    var prevArrowClass = "fc-prev-button";
-    var nextArrowClass = "fc-next-button";
-
-    var button = evt.target.closest("button");
-
-    if(button.classList.contains(prevArrowClass)) {
-        myMonth--;
-    } else if(button.classList.contains(nextArrowClass)) {
-        myMonth++;
-    }
-
-    if(myMonth < 0) { myMonth = 11; myYear--;}
-    else if(myMonth > 11) { myMonth = 0; myYear++;}
-
-    setCalendar();
-}
 function setMyDate(year, month) {
-    myMonth = month;
-    myYear = year;
+    myDate.month = month;
+    myDate.year = year;
 }
 
-function changeType(evt) {
-    var typeSet = document.querySelectorAll(".fc-right .fc-button-group button");
-    var calendarSet = document.querySelectorAll(".fc-view-container .fc-view");
-    var type = evt.target.closest("button");
-    console.log(typeSet);
-    console.log(type);
-    hideCalendar();
-    for(var i=0; i<typeSet.length; i++) {
-        if(typeSet[i] === type) { calendarSet[i].style.display = "block";}
-    }
-
-}
 function hideCalendar() {
     document.querySelector(".fc-month-view").style.display = "none";
     document.querySelector(".fc-basicWeek-view").style.display = "none";
     document.querySelector(".fc-agendaDay-view").style.display = "none";
-}
-function returnToday() {
-    var today = new Date();
-    var thisYear = today.getFullYear();
-    var thisMonth = today.getMonth();
-
-    setMyDate(thisYear, thisMonth);
-    setCalendar();
 }
