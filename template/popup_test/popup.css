@@ -1,4 +1,5 @@
 /*팝업배경*/
+
 .popupBackground {
     /* 기본값 숨김 */
     display: none;
@@ -17,7 +18,10 @@
     /* 스크롤 가능 */
     overflow: auto;
 }
+
+
 /* 팝업 Content */
+
 .popupContent {
     background-color: #fefefe;
     padding: 20px;
@@ -25,24 +29,50 @@
     width: 30%;
     position: fixed;
 }
+
+
 /* 닫기 버튼*/
+
 .popupClose {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
 }
+
+
 /*x버튼 마우스 hover 했을때 css 애니메이션*/
-.popupClose:hover {
+
+.popupClose:hover,.delete:hover, .modify:hover {
     color: #000;
     text-decoration: none;
     cursor: pointer;
 }
+
+
 /*팝업 콘텐트*/
+
 .parsedContent {
     padding: 10px;
 }
+
+
 /*팝업 콘텐트 내의 br간격*/
+
 br {
     line-height: 150%;
+}
+
+
+/*delete 버튼*/
+
+.delete {
+    margin: 3px;
+}
+
+
+/*modify 버튼*/
+
+.modify {
+    margin: 3px;
 }

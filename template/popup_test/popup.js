@@ -18,6 +18,7 @@ var repeat = {
 var popupBackground = document.querySelector('.popupBackground');
 var popupContent = document.querySelector('.popupContent');
 var span = document.querySelector('.popupClose');
+var deleteButton = document.querySelector('.delete');
 // x클릭시 팝업 닫기
 span.addEventListener("click", closePopup);
 // 팝업 바깥영역 클릭시 팝업 닫기
@@ -34,14 +35,18 @@ document.addEventListener("click", function(event) {
         insertPopupContent();
     }
 });
+deleteButton.addEventListener("click", deleteSchedule);
+
 function confirmTarget(event) {
     if (event.target.className === "fc-content" || event.target.className === "fc-title") {
         return true;
     } else return false;
 }
+
 function closePopup() {
     popupBackground.style.display = "none";
 }
+
 function showPopup() {
     popupBackground.style.display = "block";
 }
@@ -73,4 +78,13 @@ function insertPopupContent() {
     var compiled = _.template(stringData);
     var str = compiled(schedule);
     document.querySelector('.parsedContent').innerHTML = str;
+}
+
+function deleteSchedule() {
+    msg = confirm("일정을 삭제하시겠습니까?");
+    if (msg) { // Yes click
+      
+    } else {
+        // no click
+    }
 }
