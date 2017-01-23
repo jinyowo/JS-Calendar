@@ -2,7 +2,7 @@
 localStorage.setItem("2017-01-24",JSON.stringify([{
   title: "일정",
   start: "2017-01-24T00:00:00Z",
-  end: "2017-01-31T00:00:00Z",
+  end: "2017-02-07T23:59:00Z",
   allDay: "false",
   repeat: "none",
   place: "where",
@@ -26,14 +26,22 @@ function setMonthEvent(event, row) {
 
   var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
   for (var i = 0; i < weeks.length; i++) {
-    var dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+    if(!hasNewLine) {
+      var dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+      var dateBody;
+    }
     if (dateHead !== null) {
-      var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
-      var dateBody = getTbodyFromThead(rowHead, dateHead);
+      if(!hasNewLine) {
+        if(diff != 0) {
+          var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
+          dateBody = getTbodyFromThead(rowHead, dateHead);
 
-      var remain = getElementPosition(dateBody) - diff + 1;
-      if (dateBody !== null && diff !== 0) {
-
+        }
+      } else {
+        dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
+      }
+        var remain = diff - getElementPosition(dateBody) - 1;
+      if (dateBody !== null) {
         var isStart = true;
         var isEnd = true;
         var length = 0;
@@ -41,25 +49,31 @@ function setMonthEvent(event, row) {
         if(hasNewLine === true) {
           isStart = false;
         }
-        if(remain < 0) {
+        if(remain > 0) {
           hasNewLine = true;
           isEnd = false;
         }
         if(isEnd) {
           length = diff;
         } else if (isStart) {
-          length = remain + diff;
+          length = diff - remain;
         } else if(!isStart && !isEnd) {
           length = 7;
         }
-          setEventClass(dateBody, isStart, isEnd, length, weeks[i], row);
           diff -= length;
+
+          if(diff === 0) {
+            isEnd = true;
+            hasNewLine = false;
+          }
+          setEventClass(dateBody, isStart, isEnd, length, weeks[i], row, event[row].title);
+
       }
     }
   }
 }
 
-function setEventClass(dateBody, isStart, isEnd, length, week, row) {
+function setEventClass(dateBody, isStart, isEnd, length, week, row, title) {
   dateBody.className += "fc-event-container";
   if (length !== 1) {
     dateBody.setAttribute("colspan", length);
@@ -70,18 +84,18 @@ function setEventClass(dateBody, isStart, isEnd, length, week, row) {
   }
   dateBody.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
     "<div class = \"fc-content\">"
-    + "<span calss=\"fc-title\">" + "e" + "</span></div></a>";
+    + "<span calss=\"fc-title\">" + title + "</span></div></a>";
   var eventLink = dateBody.querySelector("a");
   if(isStart) {
-    eventLink.className +=  "fc-start";
+    eventLink.className +=  " fc-start";
   }
   else {
-    eventLink.className +=  "fc-not-start";
+    eventLink.className +=  " fc-not-start";
   }
   if(isEnd) {
-    eventLink.className +=  "fc-end";
+    eventLink.className +=  " fc-end";
   }
   else {
-    eventLink.className +=  "fc-not-end";
+    eventLink.className +=  " fc-not-end";
   }
 }
