@@ -2,7 +2,6 @@
 var monthArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
-
 // 현재 보여지는 달력의 정보를 저장할 object
 var MyDate = {
     year : -1,
@@ -10,12 +9,14 @@ var MyDate = {
     date : -1,
     type : "month",
 };
+// 오늘 년, 월, 일 정보를 저장할 object
 var _today = new Date();
 var Today = {
     year : _today.getFullYear(),
     month : _today.getMonth(),
     date : _today.getDate(),
 };
+// 달력의 type 3가지를 저장할 object
 var calendarType = {
     month : document.querySelector(".fc-month-view"),
     week : document.querySelector(".fc-basicWeek-view"),
@@ -30,15 +31,20 @@ function init() {
     registerButtonEvents();
 }
 function setCalendar(type) {
+    // type에 따라 달력 그리기
     switch(type) {
         case "month": drawMonthCalendar(); break;
         case "week": drawWeekCalendar(); break;
         case "day": drawDayCalendar(); break;
     }
+    // type에 따라 달력 display속성을 block
     showCalendar(type);
+    // type에 따라 우상단의 type button 활성화
     setTypeButton(type);
-    setEvent("2017-01-24");//임시 데이터
+    // 달력에 따라 today button 활성화/비활성화
     isToday();
+    // 해당 달력에 포함되어 있는 일정 띄우기
+    setEvent("2017-01-24"); //임시 데이터
 }
 function setMyDate(year, month, date) {
     MyDate.month = month;
@@ -54,18 +60,22 @@ function getLastDate(month) {
 
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function drawMonthCalendar() {
-    // 해당 년, 월의 1일 구하기
-    var firstDate = new Date(MyDate.year, MyDate.month, 1); // 이번달 1일
-
+    // 이번달 1일, 마지막날, 1일의 요일 구하기
+    var firstDate = new Date(MyDate.year, MyDate.month, 1);
     var lastDate = getLastDate(MyDate.month);
     var firstWeekday = firstDate.getDay();
 
-    // 상단 가운데 월이름, 년도 -TODO: 나중에 함수로 뺄 예정
+    // 상단에 "January 2017" 출력
+    setMonthTitle();
+    // 달력에 숫자 출력
+    setDate(firstDate, lastDate, firstWeekday);
+}
+function setMonthTitle() {
     var monthTitle = document.querySelector(".fc-center");
     var thisMonthFullname = monthArray[MyDate.month];
-    monthTitle.innerHTML = "<h2>"+thisMonthFullname+" "+MyDate.year+"</h2>";
-
-    // 달력에 숫자 뿌리기 - TODO: 함수로 빼기
+    monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + MyDate.year + "</h2>";
+}
+function setDate(firstDate, lastDate, firstWeekday) {
     var calendar = [];
 
     var prevMonthLastDate = getLastDate(MyDate.month-1);
