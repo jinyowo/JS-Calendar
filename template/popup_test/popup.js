@@ -1,8 +1,8 @@
 //테스트용 object
 var schedule = {
     title: "NTS intern",
-    start: "2017-01-02T08:00",
-    end: "2017-02-10T19:00",
+    start: "2017-01-02T08:00:00Z",
+    end: "2017-02-10T19:00:00Z",
     repeat: "W",
     place: "startup campus",
     desc: "FE 인턴 education"
@@ -73,8 +73,10 @@ function getCoordinate(event) {
 }
 //팜업 상세일정 표시
 function insertPopupContent() {
-    var parsedStart = schedule['start'].replace("T", " ");
-    var parsedEnd = schedule['end'].replace("T", " ");
+    var fixedStart = schedule['start'].replace("T", " ");
+    var fixedEnd = schedule['end'].replace("T", " ");
+    var parsedStart =  fixedStart.replace(":00Z","");
+    var parsedEnd = fixedEnd.replace(":00Z","");
     var stringData = "<strong><%= title %></strong><br><label >시간: </label><span>" + parsedStart + " ~ " + parsedEnd + "</span><br><label >반복: </label><span>" + repeat[schedule['repeat']] + "<span><br><label >장소: </label><span><%= place %></span><br><label >설명: </label><span><%= desc %></span>";
     var compiled = _.template(stringData);
     var str = compiled(schedule);
