@@ -17,6 +17,7 @@ function addClass(ele, name) {
 function removeClass(ele, name) {
   ele.classList.remove(name);
 }
+
 function getTbodyFromThead(headEle, tdEle) {
   var tds = headEle.querySelectorAll("td");
 
@@ -30,4 +31,13 @@ function getTbodyFromThead(headEle, tdEle) {
   } else {
     return null;
   }
+}
+
+function getElementPosition(ele) {
+  var i = 0;
+  while(ele.nextElementSibling !== null) {
+    i++;
+    ele = ele.nextElementSibling
+  }
+  return i;
 }
