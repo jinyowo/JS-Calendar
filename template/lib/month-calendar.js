@@ -37,6 +37,7 @@ function setCalendar(type) {
     }
     showCalendar(type);
     setTypeButton(type);
+    setEvent("2017-01-24");//임시 데이터
     isToday();
 }
 function setMyDate(year, month, date) {

@@ -15,3 +15,17 @@ function formDate(year, month, date) {
 function removeClass(ele, name) {
   ele.classList.remove(name);
 }
+function getTbodyFromThead(headEle, tdEle) {
+  var tds = headEle.querySelectorAll("td");
+
+  for (var i = 0; i < tds.length; i++) {
+    if(tds[i].isEqualNode(tdEle)) {
+      break;
+    }
+  }
+  if (i < tds.length) {
+    return headEle.nextElementSibling.firstElementChild.children[i];
+  } else {
+    return null;
+  }
+}
