@@ -15,6 +15,7 @@ var repeat = {
     D: "매일",
     none: "반복안함"
 };
+
 var popupBackground = document.querySelector('.popupBackground');
 var popupContent = document.querySelector('.popupContent');
 var span = document.querySelector('.popupClose');
@@ -81,9 +82,9 @@ function insertPopupContent() {
 }
 
 function deleteSchedule() {
-    msg = confirm("일정을 삭제하시겠습니까?");
+    var msg = confirm("일정을 삭제하시겠습니까?");
     if (msg) { // Yes click
-      
+
     } else {
         // no click
     }
