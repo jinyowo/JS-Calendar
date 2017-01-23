@@ -74,7 +74,7 @@ function setMonthEvent(event, row) {
 }
 
 function setEventClass(dateBody, isStart, isEnd, length, week, row, title) {
-  dateBody.className += "fc-event-container";
+  dateBody.className += " fc-event-container";
   if (length !== 1) {
     dateBody.setAttribute("colspan", length);
     for(var j = 0; j < length-1; j++) {

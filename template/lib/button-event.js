@@ -36,7 +36,7 @@ function moveMonth(evt) {
     var nextArrowClass = "fc-next-button";
 
     var button = evt.target.closest("button");
-
+    resetEvent();
     if(button.classList.contains(prevArrowClass)) {
         MyDate.month--;
     } else if(button.classList.contains(nextArrowClass)) {

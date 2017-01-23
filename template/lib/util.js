@@ -41,3 +41,19 @@ function getElementPosition(ele) {
   }
   return i;
 }
+
+function resetEvent() {
+  var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
+
+  for (var i = 0; i < eventRow.length; i++) {
+      eventRow[i].innerHTML = "<tr>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n</tr>";
+  }
+}
