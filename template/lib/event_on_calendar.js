@@ -22,11 +22,11 @@ function setMonthEvent(event, row) {
   var endDate = formDate(end.getFullYear(), end.getMonth()+1, end.getDate());
   var diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
 
-  var weeks = document.querySelectorAll(".fc-day-grid .fc-row.fc-week");
+  var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
   for (var i = 0; i < weeks.length; i++) {
-    var dateHead = weeks[i].querySelector("[data-date=\"" + startDate + "\"]");
+    var dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
     if (dateHead !== null) {
-      var rowHead = weeks[i].querySelector("thead");
+      var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
       var dateBody = getTbodyFromThead(rowHead, dateHead);
       if (dateBody !== null) {
         dateBody.className += "fc-event-container";

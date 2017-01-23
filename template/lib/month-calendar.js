@@ -116,8 +116,6 @@ function drawMonthCalendar() {
     }
 }
 function setToday(ele) {
-    console.log(Today);
-    console.log(ele.getAttribute("data-date"));
     ele.classList.add("fc-today");
     ele.classList.add("fc-state-highlight");
 }
@@ -144,22 +142,3 @@ function hideAllCalendar() {
     calendarType.week.style.display = "none";
     calendarType.day.style.display = "none";
 }
-document.addEventListener("DOMContentLoaded", init);
-function init() {
-    // 오늘의 날짜를 받아옵니다.
-    var today = new Date();
-    var thisYear = today.getFullYear();
-    var thisMonth = today.getMonth(); // 0 ~ 11
-    var thisDate = today.getDate();
-
-    setMyDate(thisYear, thisMonth);
-    setCalendar();
-    setEvent("2017-01-24");
-    // 화살표 달력 이동
-    var arrowButtons = document.querySelector(".fc-left .fc-button-group");
-    arrowButtons.addEventListener("click", moveMonth);
-}
-
-// 임시
-document.querySelector(".fc-basicWeek-view").style.display = "none";
-document.querySelector(".fc-agendaDay-view").style.display = "none";
