@@ -106,7 +106,7 @@ function init() {
 
     setMyDate(thisYear, thisMonth);
     setCalendar();
-
+    setEvent("2017-01-24");
     // 화살표 달력 이동
     var arrowButtons = document.querySelector(".fc-left .fc-button-group");
     arrowButtons.addEventListener("click", moveMonth);
