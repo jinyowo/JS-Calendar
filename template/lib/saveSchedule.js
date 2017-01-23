@@ -4,6 +4,7 @@ var inputList = ["title", "start", "end", "place", "desc"];
 // var idList = ["title", "start", "end", "place", "desc", "repeat"];
 var scheduleInfo = {};
 
+document.addEventListener("DOMContentLoaded", makeEvent);
 submitButton.addEventListener("click", getValue);
 allDayButton.addEventListener("click", setAllDay);
 
@@ -19,10 +20,18 @@ function getValue() {
     // localStorage.setItem("repeat", repeatValue);
 
     //확인용 console
-    for (var prop in scheduleInfo)
-    {
-      console.log(scheduleInfo[prop]);
+    for (var prop in scheduleInfo) {
+        console.log(scheduleInfo[prop]);
     }
+}
+// 달력 페이지에서 한칸 클릭했을때 로컬스토리지에 저장된 날짜 정보가 있으면 받아온다. 정보를 받은뒤에는 정보삭제.
+function makeEvent() {
+    var dateData = localStorage.getItem("dateKey");
+    if (!!dateData) {
+        document.getElementById("start").value = dateData + "T00:00";
+        localStorage.removeItem("dateKey");
+    }
+
 }
 
 
