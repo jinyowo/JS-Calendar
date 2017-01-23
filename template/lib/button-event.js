@@ -7,7 +7,7 @@ var calendarTypeButton = {
     month : document.querySelector(".fc-month-button"),
     week : document.querySelector(".fc-agendaWeek-button"),
     day : document.querySelector(".fc-agendaDay-button"),
-}
+};
 function registerButtonEvents() {
     // 공통 이벤트
     for(var i=0; i<buttons.length; i++) {
