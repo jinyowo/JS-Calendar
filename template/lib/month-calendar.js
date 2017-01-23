@@ -2,25 +2,26 @@
 var monthArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
-
 // 현재 보여지는 달력의 정보를 저장할 object
 var MyDate = {
     year : -1,
     month : -1,
     date : -1,
     type : "month",
-}
+};
+// 오늘 년, 월, 일 정보를 저장할 object
 var _today = new Date();
 var Today = {
     year : _today.getFullYear(),
     month : _today.getMonth(),
     date : _today.getDate(),
-}
+};
+// 달력의 type 3가지를 저장할 object
 var calendarType = {
     month : document.querySelector(".fc-month-view"),
     week : document.querySelector(".fc-basicWeek-view"),
     day : document.querySelector(".fc-agendaDay-view"),
-}
+};
 
 document.addEventListener("DOMContentLoaded", init);
 function init() {
@@ -30,15 +31,20 @@ function init() {
     registerButtonEvents();
 }
 function setCalendar(type) {
+    // type에 따라 달력 그리기
     switch(type) {
         case "month": drawMonthCalendar(); break;
         case "week": drawWeekCalendar(); break;
         case "day": drawDayCalendar(); break;
     }
+    // type에 따라 달력 display속성을 block
     showCalendar(type);
+    // type에 따라 우상단의 type button 활성화
     setTypeButton(type);
-    setEvent("2017-01-24");//임시 데이터
+    // 달력에 따라 today button 활성화/비활성화
     isToday();
+    // 해당 달력에 포함되어 있는 일정 띄우기
+    setEvent("2017-01-24"); //임시 데이터
 }
 function setMyDate(year, month, date) {
     MyDate.month = month;
@@ -54,22 +60,27 @@ function getLastDate(month) {
 
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function drawMonthCalendar() {
-    // 해당 년, 월의 1일 구하기
-    var firstDate = new Date(MyDate.year, MyDate.month, 1); // 이번달 1일
-
+    // 이번달 1일, 마지막날, 1일의 요일 구하기
+    var firstDate = new Date(MyDate.year, MyDate.month, 1);
     var lastDate = getLastDate(MyDate.month);
     var firstWeekday = firstDate.getDay();
 
-    // 상단 가운데 월이름, 년도 -TODO: 나중에 함수로 뺄 예정
+    // 상단에 "January 2017" 출력
+    setMonthTitle();
+    // 달력에 숫자 출력
+    setDate(firstDate, lastDate, firstWeekday);
+}
+function setMonthTitle() {
     var monthTitle = document.querySelector(".fc-center");
     var thisMonthFullname = monthArray[MyDate.month];
-    monthTitle.innerHTML = "<h2>"+thisMonthFullname+" "+MyDate.year+"</h2>";
-
-    // 달력에 숫자 뿌리기 - TODO: 함수로 빼기
+    monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + MyDate.year + "</h2>";
+}
+function setDate(firstDate, lastDate, firstWeekday) {
     var calendar = [];
 
     var prevMonthLastDate = getLastDate(MyDate.month-1);
     var cells = document.querySelectorAll(".fc-month-view .fc-day-top");
+    var cellsBackground = document.querySelectorAll(".fc-month-view .fc-day");
 
     var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
     var currentDate = 0;
@@ -77,6 +88,7 @@ function drawMonthCalendar() {
     // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
     for(var i = prevMonthfirstDate; i<=prevMonthLastDate; i++) {
         cells[currentDate].setAttribute("data-date", formDate(MyDate.year, MyDate.month, i));
+        cellsBackground[currentDate].setAttribute("data-date", formDate(MyDate.year, MyDate.month, i));
         if(!cells[currentDate].className.includes("fc-other-month")) {
           cells[currentDate].className += " fc-other-month";
         }
@@ -86,9 +98,12 @@ function drawMonthCalendar() {
     // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
     for(var i = 1; i<=lastDate; i++) {
         cells[currentDate].setAttribute("data-date", formDate(MyDate.year, MyDate.month + 1, i));
+        cellsBackground[currentDate].setAttribute("data-date", formDate(MyDate.year, MyDate.month + 1, i));
         if(cells[currentDate].className.includes("fc-other-month")) {
             removeClass(cells[currentDate], "fc-other-month");
         }
+        if(cellsBackground[currentDate].getAttribute("data-date") === formDate(Today.year, Today.month + 1, Today.date)) setToday(cellsBackground[currentDate]);
+        else if(cellsBackground[currentDate].className.includes("fc-state-highlight")) removeToday(cellsBackground[currentDate]);
         currentDate++;
 
         calendar.push(i);
@@ -100,6 +115,7 @@ function drawMonthCalendar() {
         // 다음달 날짜 채우기
         if(calendar[i] === undefined) {
             cells[currentDate].setAttribute("data-date", formDate(MyDate.year, MyDate.month + 2, nextMonthDate));
+            cellsBackground[currentDate].setAttribute("data-date", formDate(MyDate.year, MyDate.month + 2, nextMonthDate));
             if(!cells[currentDate].className.includes("fc-other-month")) {
                 cells[currentDate].className += " fc-other-month";
             }
@@ -109,7 +125,14 @@ function drawMonthCalendar() {
         nums[i].innerText = calendar[i];
     }
 }
-
+function setToday(ele) {
+    ele.classList.add("fc-today");
+    ele.classList.add("fc-state-highlight");
+}
+function removeToday(ele) {
+    ele.classList.remove("fc-today");
+    ele.classList.remove("fc-state-highlight");
+}
 function drawWeekCalendar() {
 
 }
