@@ -29,6 +29,8 @@ function makeEvent() {
     var dateData = localStorage.getItem("dateKey");
     if (!!dateData) {
         document.getElementById("start").value = dateData + "T00:00";
+        document.getElementById("end").value = dateData + "T01:00";
+
         localStorage.removeItem("dateKey");
     }
 
