@@ -11,7 +11,9 @@ function formDate(year, month, date) {
   month = (month > 12) ? month % 12 : month;
   return year + "-" + padZero(month, 2) + "-" + padZero(date, 2);
 }
-
+function addClass(ele, name) {
+    ele.classList.add(name);
+}
 function removeClass(ele, name) {
   ele.classList.remove(name);
 }

@@ -45,7 +45,6 @@ function moveMonth(evt) {
 
     if(MyDate.month < 0) { MyDate.month = 11; MyDate.year--;}
     else if(MyDate.month > 11) { MyDate.month = 0; MyDate.year++;}
-
 }
 function moveWeek(evt){
 
@@ -61,15 +60,15 @@ function changeType(evt) {
 function setTypeButton(type) {
     inactiveAllTypeButton();
     switch(type) {
-        case "month": calendarTypeButton.month.classList.add("fc-state-active"); break;
-        case "week": calendarTypeButton.week.classList.add("fc-state-active"); break;
-        case "day": calendarTypeButton.day.classList.add("fc-state-active"); break;
+        case "month": addClass(calendarTypeButton.month, "fc-state-active"); break;
+        case "week": addClass(calendarTypeButton.week, "fc-state-active"); break;
+        case "day": addClass(calendarTypeButton.day, "fc-state-active"); break;
     }
 }
 function inactiveAllTypeButton() {
-    calendarTypeButton.month.classList.remove("fc-state-active");
-    calendarTypeButton.week.classList.remove("fc-state-active");
-    calendarTypeButton.day.classList.remove("fc-state-active");
+    removeClass(calendarTypeButton.month, "fc-state-active");
+    removeClass(calendarTypeButton.week, "fc-state-active");
+    removeClass(calendarTypeButton.day, "fc-state-active");
 }
 function isToday() {
     if(MyDate.year !== Today.year || MyDate.month !== Today.month || MyDate.date !== Today.date) {
@@ -87,25 +86,21 @@ function returnToday(evt) {
     }
 }
 function mouseoverEvent(evt) {
-    var button = evt.target.closest("button");
-    button.classList.add("fc-state-hover");
+    addClass(evt.target.closest("button"), "fc-state-hover");
 }
 function mouseoutEvent(evt) {
-    var button = evt.target.closest("button");
-    button.classList.remove("fc-state-hover");
+    removeClass(evt.target.closest("button"), "fc-state-hover");
 }
 function mousedownEvent(evt) {
-    var button = evt.target.closest("button");
-    button.classList.add("fc-state-down");
+    addClass(evt.target.closest("button"), "fc-state-down");
 }
 function mouseupEvent(evt) {
-    var button = evt.target.closest("button");
-    button.classList.remove("fc-state-down");
+    removeClass(evt.target.closest("button"), "fc-state-down");
 }
 
 function activeButton(button) {
-    button.classList.remove("fc-state-disabled");
+    removeClass(button, "fc-state-disabled");
 }
 function inactiveButton(button) {
-    button.classList.add("fc-state-disabled");
+    addClass(button, "fc-state-disabled");
 }
