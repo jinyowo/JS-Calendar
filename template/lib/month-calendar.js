@@ -92,6 +92,7 @@ function drawMonthCalendar() {
             removeClass(cells[currentDate], "fc-other-month");
         }
         if(cellsBackground[currentDate].getAttribute("data-date") === formDate(Today.year, Today.month + 1, Today.date)) setToday(cellsBackground[currentDate]);
+        else if(cellsBackground[currentDate].className.includes("fc-state-highlight")) removeToday(cellsBackground[currentDate]);
         currentDate++;
 
         calendar.push(i);
@@ -114,8 +115,14 @@ function drawMonthCalendar() {
     }
 }
 function setToday(ele) {
+    console.log(Today);
+    console.log(ele.getAttribute("data-date"));
     ele.classList.add("fc-today");
     ele.classList.add("fc-state-highlight");
+}
+function removeToday(ele) {
+    ele.classList.remove("fc-today");
+    ele.classList.remove("fc-state-highlight");
 }
 function drawWeekCalendar() {
 
