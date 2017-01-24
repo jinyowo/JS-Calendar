@@ -55,6 +55,7 @@ function moveDay(evt) {
 function changeType(evt) {
     var button = evt.target.closest("button");
     MyDate.type = button.innerText;
+    resetEvent();
     setCalendar(MyDate.type);
 }
 function setTypeButton(type) {

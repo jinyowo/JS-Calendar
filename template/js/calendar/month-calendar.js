@@ -59,4 +59,5 @@ function setMonthCalendarBody() {
         }
         nums[i].innerText = calendar[i];
     }
+    setEvent("2017-01-24"); //임시 데이터
 }
