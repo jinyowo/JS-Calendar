@@ -17,6 +17,7 @@ function addClass(ele, name) {
 function removeClass(ele, name) {
   ele.classList.remove(name);
 }
+
 function getTbodyFromThead(headEle, tdEle) {
   var tds = headEle.querySelectorAll("td");
 
@@ -29,5 +30,30 @@ function getTbodyFromThead(headEle, tdEle) {
     return headEle.nextElementSibling.firstElementChild.children[i];
   } else {
     return null;
+  }
+}
+
+function getElementPosition(ele) {
+  var i = 0;
+  while(ele.nextElementSibling !== null) {
+    i++;
+    ele = ele.nextElementSibling
+  }
+  return i;
+}
+
+function resetEvent() {
+  var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
+
+  for (var i = 0; i < eventRow.length; i++) {
+      eventRow[i].innerHTML = "<tr>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n<td></td>"
+                            + "\n</tr>";
   }
 }
