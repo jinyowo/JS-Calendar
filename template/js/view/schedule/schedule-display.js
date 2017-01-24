@@ -15,11 +15,11 @@ function ScheduleDisplay() {
   this.remainedSchedules;
 }
 
-ScheduleTeller.prototype = {
+ScheduleDisplay.prototype = {
   init: function() {
     this.schedule = this.scheduleObjects[0];
-    setEvent(this.schedule, 0);
-  }
+    this.setEvent(this.schedule, 0);
+  },
 
   setEvent: function(event, eventRow) {
     var start = new Date(event.start);
@@ -32,10 +32,9 @@ ScheduleTeller.prototype = {
     var status = {
       isStart: true,
       isEnd: true,
-      length: 0;
-      diff: diff;
-      hasNewLine: false;
-
+      length: 0,
+      diff: diff,
+      hasNewLine: false
     }
 
     var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
@@ -47,21 +46,19 @@ ScheduleTeller.prototype = {
         dateBody = this.setDateBody(dateHead);
       }
       if (dateHead !== null && dateBody !== null) {
-          var remain = diff - getElementPosition(dateBody) - 1;
-
-          addClass(dateBody, "fc-event-container");
-          if (length !== 1) {
-          dateBody.setAttribute("colspan", length);
-            for(var j = 0; j < length-1; j++) {
-              var week = weeks[i].querySelectorAll(".fc-content-skeleton tbody tr");
-              week[eventRow].removeChild(week[eventRow].lastElementChild);
-            }
+        var remain = diff - getElementPosition(dateBody) - 1;
+        addClass(dateBody, "fc-event-container");
+        if (length !== 1) {
+        dateBody.setAttribute("colspan", length);
+          for(var j = 0; j < length-1; j++) {
+            var week = weeks[i].querySelectorAll(".fc-content-skeleton tbody tr");
+            week[eventRow].removeChild(week[eventRow].lastElementChild);
           }
-          this.setEventBar(dateBody, event.title, isStart, isEnd)
         }
+        this.setEventBar(dateBody, event.title, isStart, isEnd)
       }
     }
-  }
+  },
 
   setDateBody: function(dateHead) {
     var dateBody;
@@ -72,7 +69,7 @@ ScheduleTeller.prototype = {
     dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
     }
     return dateBody;
-  }
+  },
 
   setBarStatus: function(statusObj, remain) {
     if(hasNewLine === true) {
@@ -96,7 +93,7 @@ ScheduleTeller.prototype = {
       statusObj.hasNewLine = false;
     }
     return statusObj;
-  }
+  },
 
   setEventBar: function(ele, title, isStart, isEnd) {
     ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
