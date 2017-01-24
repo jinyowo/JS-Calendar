@@ -1,0 +1,53 @@
+  /* popup css */
+
+  .scheduleBackground {
+    /* 기본값 숨김 */
+    display: none;
+    /* Stay in place */
+    position: fixed;
+    /* 제일 위에 띄우기 */
+    z-index: 11;
+    /* 팝업 배경 위치*/
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    /* 너비*/
+    width: 100%;
+    /* 높이 */
+    height: 100%;
+    /* 스크롤 가능 */
+    overflow: auto;
+  }
+
+  .container {
+    width: 50%;
+    margin-top: 3%;
+    position: absolute;
+    background-color: white;
+    z-index: 11;
+    left: 25%;
+    display: block;
+    border: 1px gray solid;
+  }
+
+  .schedule {
+    margin: 3% 0px;
+  }
+
+  .inline {
+    display: inline-block;
+    margin: 0px 1%;
+  }
+
+  .closeButton {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .closeButton:hover {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+  }
