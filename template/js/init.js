@@ -28,7 +28,7 @@ function init() {
     setMyDate(Today.year, Today.month, Today.date);
     setCalendar(MyDate.type);   // 기본 type "month"
 
-    registerButtonEvents();
+    // registerButtonEvents();
 }
 function setMyDate(year, month, date) {
     MyDate.month = month;
@@ -57,16 +57,16 @@ function getLastDate(month) {
     return lastDate;
 }
 function setDataDate(cell, cellBg, year, month, date) {
-    cell.setAttribute("data-date", formDate(year, month, date));
-    cellBg.setAttribute("data-date", formDate(year, month, date));
+    cell.setAttribute("data-date", Utility.formDate(year, month, date));
+    cellBg.setAttribute("data-date", Utility.formDate(year, month, date));
 }
 function setToday(ele) {
-    addClass(ele, "fc-today");
-    addClass(ele, "fc-state-highlight");
+    Utility.addClass(ele, "fc-today");
+    Utility.addClass(ele, "fc-state-highlight");
 }
 function removeToday(ele) {
-    removeClass(ele, "fc-today");
-    removeClass(ele, "fc-state-highlight");
+    Utility.removeClass(ele, "fc-today");
+    Utility.removeClass(ele, "fc-state-highlight");
 }
 function showCalendar(type) {
     hideAllCalendar();

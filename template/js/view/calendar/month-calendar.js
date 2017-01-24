@@ -1,5 +1,6 @@
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function drawMonthCalendar() {
+    debugger;
     // 상단에 "January 2017" 출력
     setMonthTitle();
     // 달력에 숫자 출력
@@ -30,7 +31,7 @@ function setMonthCalendarBody() {
     for(var i = prevMonthfirstDate; i<=prevMonthLastDate; i++) {
         setDataDate(cells[currentDate], cellsBackground[currentDate], MyDate.year, MyDate.month, i);
         if(!cells[currentDate].className.includes("fc-other-month")) {
-            addClass(cells[currentDate], "fc-other-month");
+            Utility.addClass(cells[currentDate], "fc-other-month");
         }
         currentDate++;
         calendar.push(i);
@@ -39,9 +40,9 @@ function setMonthCalendarBody() {
     for(var i = 1; i<=lastDate; i++) {
         setDataDate(cells[currentDate], cellsBackground[currentDate], MyDate.year, MyDate.month + 1, i);
         if(cells[currentDate].className.includes("fc-other-month")) {
-            removeClass(cells[currentDate], "fc-other-month");
+            Utility.removeClass(cells[currentDate], "fc-other-month");
         }
-        if(cellsBackground[currentDate].getAttribute("data-date") === formDate(Today.year, Today.month + 1, Today.date)) setToday(cellsBackground[currentDate]);
+        if(cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Today.year, Today.month + 1, Today.date)) setToday(cellsBackground[currentDate]);
         else if(cellsBackground[currentDate].className.includes("fc-state-highlight")) removeToday(cellsBackground[currentDate]);
 
         currentDate++;
@@ -52,7 +53,7 @@ function setMonthCalendarBody() {
         if(calendar[i] === undefined) {
             setDataDate(cells[currentDate], cellsBackground[currentDate], MyDate.year, MyDate.month + 2, nextMonthDate);
             if(!cells[currentDate].className.includes("fc-other-month")) {
-                addClass(cells[currentDate], "fc-other-month");
+                Utility.addClass(cells[currentDate], "fc-other-month");
             }
             currentDate++;
             calendar.push(nextMonthDate++);

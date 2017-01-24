@@ -1,107 +1,117 @@
-var buttons = document.querySelectorAll(".fc-toolbar button");
-var arrowButtons = document.querySelector(".fc-left .fc-button-group");
-var typeButtons = document.querySelector(".fc-right .fc-button-group");
-var todayButton = document.querySelector(".fc-left .fc-today-button");
+function Button(selector, type) {
+    this.ele = document.querySelector(selector);
+    this.type = type;
+    this.onClickEvent = type + "ButtonClickEvent";
+}
 
-var calendarTypeButton = {
-    month : document.querySelector(".fc-month-button"),
-    week : document.querySelector(".fc-agendaWeek-button"),
-    day : document.querySelector(".fc-agendaDay-button"),
-};
-function registerButtonEvents() {
-    // 공통 이벤트
-    for(var i=0; i<buttons.length; i++) {
-        buttons[i].addEventListener("mouseover", mouseoverEvent);
-        buttons[i].addEventListener("mouseout", mouseoutEvent);
-        buttons[i].addEventListener("mousedown", mousedownEvent);
-        buttons[i].addEventListener("mouseup", mouseupEvent);
+Button.prototype = {
+    init: function(option) {
+        this.ele.addEventListener("mouseover", this.onMouseOver.bind(this));
+        this.ele.addEventListener("mouseout", this.onMouseOut.bind(this));
+        this.ele.addEventListener("mousedown", this.onMouseDown.bind(this));
+        this.ele.addEventListener("mouseup", this.onMouseUp.bind(this));
+        this.ele.addEventListener("click", this[this.onClickEvent].bind(this));
+
+        this.callbackList = option;
+    },
+    onMouseOver: function() {
+        Utility.addClass(this.ele, "fc-state-hover");
+    },
+    onMouseOut: function() {
+        Utility.removeClass(this.ele, "fc-state-hover");
+    },
+    onMouseDown: function() {
+        Utility.addClass(this.ele, "fc-state-down");
+    },
+    onMouseUp: function() {
+        Utility.removeClass(this.ele, "fc-state-down");
+    },
+    arrowButtonClickEvent: function() {
+        this.moveCalendar(MyDate.type);
+        setCalendar(MyDate.type);
+    },
+    typeButtonClickEvent : function() {
+        MyDate.type = this.ele.innerText;
+        Utility.resetEvent();
+        setCalendar(MyDate.type);
+    },
+    todayButtonClickEvent : function() {
+        if (!isToday()) {
+            setMyDate(Today.year, Today.month, Today.date);
+            setCalendar(MyDate.type);
+        }
+    },
+    moveCalendar : function(type) {
+        var prevArrowClass = "fc-prev-button";
+        var nextArrowClass = "fc-next-button";
+
+        var button = this.ele.closest("button");
+        Utility.resetEvent();
+        var base = type;
+        if (button.classList.contains(prevArrowClass)) {
+            MyDate.month--;
+        } else if (button.classList.contains(nextArrowClass)) {
+            MyDate.month++;
+        }
+
+        if (MyDate.month < 0) {
+            MyDate.month = 11;
+            MyDate.year--;
+        } else if (MyDate.month > 11) {
+            MyDate.month = 0;
+            MyDate.year++;
+        }
+    },
+    active : function() {
+        Utility.removeClass(this.ele, "fc-state-disabled");
+    },
+    inactive : function() {
+        Utility.addClass(this.ele, "fc-state-disabled");
     }
-    // 화살표 달력 이동
-    arrowButtons.addEventListener("click", moveCalendar);
-    // 달력 형식 변경
-    typeButtons.addEventListener("click", changeType);
-    // today
-    todayButton.addEventListener("click", returnToday);
 }
-function moveCalendar(evt) {
-    switch(MyDate.type) {
-        case "month": moveMonth(evt); break;
-        case "week": moveWeek(evt); break;
-        case "day": moveDay(evt); break;
-    }
-    setCalendar(MyDate.type);
-}
-function moveMonth(evt) {
-    var prevArrowClass = "fc-prev-button";
-    var nextArrowClass = "fc-next-button";
 
-    var button = evt.target.closest("button");
-    resetEvent();
-    if(button.classList.contains(prevArrowClass)) {
-        MyDate.month--;
-    } else if(button.classList.contains(nextArrowClass)) {
-        MyDate.month++;
-    }
+var arrowButtons = [
+    new Button(".fc-prev-button", "arrow"),
+    new Button(".fc-next-button", "arrow"),
+];
+var typeButtons = [
+    new Button(".fc-month-button", "type"),
+    new Button(".fc-agendaWeek-button", "type"),
+    new Button(".fc-agendaDay-button", "type"),
+];
+var todayButton = new Button(".fc-left .fc-today-button", "today");
 
-    if(MyDate.month < 0) { MyDate.month = 11; MyDate.year--;}
-    else if(MyDate.month > 11) { MyDate.month = 0; MyDate.year++;}
-}
-function moveWeek(evt){
+for(var i=0; i<arrowButtons.length; i++) arrowButtons[i].init({});
+for(var i=0; i<typeButtons.length; i++) typeButtons[i].init({});
+todayButton.init({});
 
-}
-function moveDay(evt) {
-
-}
-function changeType(evt) {
-    var button = evt.target.closest("button");
-    MyDate.type = button.innerText;
-    resetEvent();
-    setCalendar(MyDate.type);
-}
 function setTypeButton(type) {
     inactiveAllTypeButton();
-    switch(type) {
-        case "month": addClass(calendarTypeButton.month, "fc-state-active"); break;
-        case "week": addClass(calendarTypeButton.week, "fc-state-active"); break;
-        case "day": addClass(calendarTypeButton.day, "fc-state-active"); break;
+    switch (type) {
+        case "month":
+            Utility.addClass(typeButtons[0].ele, "fc-state-active");
+            break;
+        case "week":
+            Utility.addClass(typeButtons[1].ele, "fc-state-active");
+            break;
+        case "day":
+            Utility.addClass(typeButtons[2].ele, "fc-state-active");
+            break;
     }
-}
-function inactiveAllTypeButton() {
-    removeClass(calendarTypeButton.month, "fc-state-active");
-    removeClass(calendarTypeButton.week, "fc-state-active");
-    removeClass(calendarTypeButton.day, "fc-state-active");
-}
-function isToday() {
-    if(MyDate.year !== Today.year || MyDate.month !== Today.month || MyDate.date !== Today.date) {
-        activeButton(todayButton);
-        return false;
-    } else {
-        inactiveButton(todayButton);
-        return true;
-    }
-}
-function returnToday(evt) {
-    if(!isToday()) {
-        setMyDate(Today.year, Today.month, Today.date);
-        setCalendar(MyDate.type);
-    }
-}
-function mouseoverEvent(evt) {
-    addClass(evt.target.closest("button"), "fc-state-hover");
-}
-function mouseoutEvent(evt) {
-    removeClass(evt.target.closest("button"), "fc-state-hover");
-}
-function mousedownEvent(evt) {
-    addClass(evt.target.closest("button"), "fc-state-down");
-}
-function mouseupEvent(evt) {
-    removeClass(evt.target.closest("button"), "fc-state-down");
 }
 
-function activeButton(button) {
-    removeClass(button, "fc-state-disabled");
+function inactiveAllTypeButton() {
+    Utility.removeClass(typeButtons[0].ele, "fc-state-active");
+    Utility.removeClass(typeButtons[1].ele, "fc-state-active");
+    Utility.removeClass(typeButtons[2].ele, "fc-state-active");
 }
-function inactiveButton(button) {
-    addClass(button, "fc-state-disabled");
+
+function isToday() {
+    if (MyDate.year !== Today.year || MyDate.month !== Today.month || MyDate.date !== Today.date) {
+        todayButton.active();
+        return false;
+    } else {
+        todayButton.inactive();
+        return true;
+    }
 }
