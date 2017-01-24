@@ -49,7 +49,6 @@ function setCalendar(type) {
     // 달력에 따라 today button 활성화/비활성화
     isToday();
     // 해당 달력에 포함되어 있는 일정 띄우기
-    setEvent("2017-01-24"); //임시 데이터
 }
 function getLastDate(month) {
     if(month < 0){ month = 11;}
