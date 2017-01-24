@@ -8,7 +8,10 @@ function padZero(number, length) {
 
 function formDate(year, month, date) {
   month = (month === 0) ? 12 : month;
-  month = (month > 12) ? month % 12 : month;
+  if (month > 12) {
+    year += Math.floor(month / 12);
+    month = month % 12;
+  }
   return year + "-" + padZero(month, 2) + "-" + padZero(date, 2);
 }
 function addClass(ele, name) {
