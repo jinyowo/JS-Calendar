@@ -10,7 +10,7 @@ function getDateInfo(event) {
     }
     if (!!dateData) {
         saveData(dateData);
-        window.location.href = "makeSchedule.html";
+        window.location.href = "schedule-form.html";
     }
 }
 //클릭한 칸의 날짜 정보를 로컬스토리지에 저장한다.
