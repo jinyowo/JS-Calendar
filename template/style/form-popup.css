@@ -19,7 +19,7 @@
     overflow: auto;
   }
 
-  .container {
+  .container.schedule {
     width: 50%;
     margin-top: 3%;
     position: absolute;
