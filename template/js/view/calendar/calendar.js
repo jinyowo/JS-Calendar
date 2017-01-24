@@ -1,3 +1,49 @@
+function setCalendar(type) {
+    // type에 따라 달력 그리기
+    switch(type) {
+        case "month": drawMonthCalendar(); break;
+        case "week": drawWeekCalendar(); break;
+        case "day": drawDayCalendar(); break;
+    }
+    // type에 따라 달력 display속성을 block
+    showCalendar(type);
+    // type에 따라 우상단의 type button 활성화
+    setTypeButton(type);
+    // 달력에 따라 today button 활성화/비활성화
+    isToday();
+    // 해당 달력에 포함되어 있는 일정 띄우기
+}
+function getLastDate(month) {
+    if(month < 0){ month = 11;}
+
+    var lastDate = new Date(MyDate.year, month+1, 0).getDate();
+    return lastDate;
+}
+function setDataDate(cell, cellBg, year, month, date) {
+    cell.setAttribute("data-date", Utility.formDate(year, month, date));
+    cellBg.setAttribute("data-date", Utility.formDate(year, month, date));
+}
+function setToday(ele) {
+    Utility.addClass(ele, "fc-today");
+    Utility.addClass(ele, "fc-state-highlight");
+}
+function removeToday(ele) {
+    Utility.removeClass(ele, "fc-today");
+    Utility.removeClass(ele, "fc-state-highlight");
+}
+function showCalendar(type) {
+    hideAllCalendar();
+    switch(type) {
+        case "month": calendarType.month.style.display = "block"; break;
+        case "week": calendarType.week.style.display = "block"; break;
+        case "day": calendarType.day.style.display = "block"; break;
+    }
+}
+function hideAllCalendar() {
+    calendarType.month.style.display = "none";
+    calendarType.week.style.display = "none";
+    calendarType.day.style.display = "none";
+}
 // 월에 맞도록 달력에 숫자를 뿌리는 함수
 function drawMonthCalendar() {
     debugger;

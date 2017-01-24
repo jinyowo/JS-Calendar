@@ -1,4 +1,34 @@
+// month이름, weekday이름, 각 달의 마지막 날짜를 저장한 배열
+var monthArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
+// 현재 보여지는 달력의 정보를 저장할 object
+var MyDate = {
+    year : -1,
+    month : -1,
+    date : -1,
+    type : "month",
+};
+// 오늘 년, 월, 일 정보를 저장할 object
+var _today = new Date();
+var Today = {
+    year : _today.getFullYear(),
+    month : _today.getMonth(),
+    date : _today.getDate(),
+};
+// 달력의 type 3가지를 저장할 object
+var calendarType = {
+    month : document.querySelector(".fc-month-view"),
+    week : document.querySelector(".fc-basicWeek-view"),
+    day : document.querySelector(".fc-agendaDay-view"),
+};
+
 var Utility = {
+    setMyDate: function(year, month, date) {
+        MyDate.month = month;
+        MyDate.year = year;
+        MyDate.date = date;
+    },
     padZero: function(number, length) {
         var result = number + '';
         while (result.length < length) {

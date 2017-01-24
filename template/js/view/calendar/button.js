@@ -37,7 +37,7 @@ Button.prototype = {
     },
     todayButtonClickEvent : function() {
         if (!isToday()) {
-            setMyDate(Today.year, Today.month, Today.date);
+            Utility.setMyDate(Today.year, Today.month, Today.date);
             setCalendar(MyDate.type);
         }
     },
