@@ -197,5 +197,4 @@ ScheduleDisplay.prototype = {
             }
         }
     },
-
 }
