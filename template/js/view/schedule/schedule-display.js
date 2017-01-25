@@ -13,12 +13,25 @@ function ScheduleDisplay() {
   this.scheduleObjects;
   this.schedule;
   this.remainedSchedules;
+  this.status;
 }
 
 ScheduleDisplay.prototype = {
-  init: function() {
+  init: function(due, type) {
+    //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
     this.scheduleObjects = JSON.parse(localStorage.getItem("2017-01-24"));
     this.schedule = this.scheduleObjects[0];
+    this.status = {
+      isStart: true,
+      isEnd: true,
+      length: 0,
+      diff: 0,
+      hasNewLine: false
+    };
+  },
+
+  setEvents: function() {
+    //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
     this.setMonthEvent(this.schedule, 0);
   },
 
@@ -26,27 +39,16 @@ ScheduleDisplay.prototype = {
     var start = new Date(event.start);
     var end = new Date(event.end);
 
-
-
     var startDate = formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
-    var endDate = formDate(end.getFullYear(), end.getMonth()+1, end.getDate());
-    var diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-
-    var status = {
-      isStart: true,
-      isEnd: true,
-      length: 0,
-      diff: diff,
-      hasNewLine: false
-    };
+    this.status.diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
     var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
     var dateHead = null;
     var dateBody = null;
     for (var i = 0; i < weeks.length; i++) {
-      if(!status.hasNewLine) {
+      if(!this.status.hasNewLine) {
         dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
-        if(status.diff != 0) {
+        if(this.status.diff !== 0) {
           var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
           dateBody = getTbodyFromThead(rowHead, dateHead);
         }
@@ -54,69 +56,69 @@ ScheduleDisplay.prototype = {
         dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
       }
       if (dateHead !== null && dateBody !== null) {
-        var remain = status.diff - getElementPosition(dateBody) - 1;
+        var remain = this.status.diff - getElementPosition(dateBody) - 1;
 
-        status = this.setBarStatus(status, remain);
+        this.setBarStatus(remain);
 
         addClass(dateBody, "fc-event-container");
-        if (status.length !== 1) {
-          dateBody.setAttribute("colspan", status.length);
+        if (this.status.length !== 1) {
+          dateBody.setAttribute("colspan", this.status.length);
 
-          for(var j = 0; j < status.length-1; j++) {
+          for(var j = 0; j < this.status.length-1; j++) {
             var week = weeks[i].querySelectorAll(".fc-content-skeleton tbody tr");
             week[eventRow].removeChild(week[eventRow].lastElementChild);
           }
         }
 
-        this.setEventBar(dateBody, event.title, status.isStart, status.isEnd)
+        this.setEventBar(dateBody, event.title, this.status.isStart, this.status.isEnd)
       }
     }
   },
 
-  setBarStatus: function(statusObj, remain) {
-    statusObj.isStart = true;
-    statusObj.isEnd = true;
+  setBarStatus: function(remain) {
+    this.status.isStart = true;
+    this.status.isEnd = true;
 
-    if(statusObj.hasNewLine === true) {
-      statusObj.isStart = false;
+    if(this.status.hasNewLine === true) {
+      this.status.isStart = false;
     }
 
     if(remain > 0) {
-      statusObj.hasNewLine = true;
-      statusObj.isEnd = false;
+      this.status.hasNewLine = true;
+      this.status.isEnd = false;
     }
 
-    if(statusObj.isEnd) {
-      statusObj.length = statusObj.diff;
-    } else if (statusObj.isStart) {
-      statusObj.length = statusObj.diff - remain;
-    } else if(!statusObj.isStart && !statusObj.isEnd) {
-      statusObj.length = 7;
+    if(this.status.isEnd) {
+      this.status.length = this.status.diff;
+    } else if (this.status.isStart) {
+      this.status.length = this.status.diff - remain;
+    } else if(!this.status.isStart && !this.status.isEnd) {
+      this.status.length = 7;
     }
 
-    statusObj.diff -= statusObj.length;
+    this.status.diff -= this.status.length;
 
-    if(statusObj.diff === 0) {
-      statusObj.isEnd = true;
-      statusObj.hasNewLine = false;
+    if(this.status.diff === 0) {
+      this.status.isEnd = true;
+      this.status.hasNewLine = false;
     }
-    return statusObj;
+    return this.status;
   },
 
-  setEventBar: function(ele, title, isStart, isEnd) {
+  setEventBar: function(ele, title) {
     ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">"
         + "<div class = \"fc-content\">"
         + "<span calss=\"fc-title\">" + title + "</span></div></a>";
 
     var eventLink = ele.querySelector("a");
 
-    if(isStart) {
+    if(this.status.isStart) {
       addClass(eventLink,"fc-start");
     }
     else {
       addClass(eventLink,"fc-not-start");
     }
-    if(isEnd) {
+    if(this.status.isEnd) {
       addClass(eventLink,"fc-end");
     }
     else {
