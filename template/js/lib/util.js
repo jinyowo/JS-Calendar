@@ -16,6 +16,11 @@ var calendarType = {
     week : document.querySelector(".fc-basicWeek-view"),
     day : document.querySelector(".fc-agendaDay-view"),
 };
+var buttonType = {
+    arrow : "arrow",
+    type : "type",
+    today : "today",
+};
 
 var Utility = {
     padZero: function(number, length) {
@@ -35,6 +40,12 @@ var Utility = {
     },
     removeClass: function(ele, name) {
         ele.classList.remove(name);
+    },
+    showElement: function(ele) {
+        ele.style.display = "block";
+    },
+    hideElement: function(ele) {
+        ele.style.display = "none";
     },
     getTbodyFromThead: function(headEle, tdEle) {
         var tds = headEle.querySelectorAll("td");

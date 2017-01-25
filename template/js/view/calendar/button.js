@@ -5,7 +5,7 @@ function Button(selector, type) {
 }
 
 Button.prototype = {
-    init: function(option) {
+    init: function(_calendar, option) {
         this.ele.addEventListener("mouseover", this.onMouseOver.bind(this));
         this.ele.addEventListener("mouseout", this.onMouseOut.bind(this));
         this.ele.addEventListener("mousedown", this.onMouseDown.bind(this));
@@ -13,6 +13,7 @@ Button.prototype = {
         this.ele.addEventListener("click", this[this.onClickEvent].bind(this));
 
         this.callbackList = option;
+        this.calendar = _calendar;
     },
     onMouseOver: function() {
         Utility.addClass(this.ele, "fc-state-hover");
@@ -27,21 +28,21 @@ Button.prototype = {
         Utility.removeClass(this.ele, "fc-state-down");
     },
     arrowButtonClickEvent: function() {
-        this.moveCalendar(calendar.myDate.type);
-        setCalendar(this.parent);
+        this.moveCalendar(this.calendar.type);
+        setCalendar(this.calendar);
     },
-    typeButtonClickEvent : function() {
-        calendar.myDate.type = this.ele.innerText;
+    typeButtonClickEvent: function() {
+        this.calendar.type = this.ele.innerText;
         Utility.resetEvent();
-        setCalendar(calendar.myDate.type);
+        setCalendar(this.calendar);
     },
-    todayButtonClickEvent : function() {
-        if (!isToday()) {
-            Utility.setMyDate(Today.year, Today.month, Today.date);
-            setCalendar(calendar.myDate.type);
+    todayButtonClickEvent: function() {
+        if (!isToday(this.calendar)) {
+            this.calendar.setMyDate(Today);
+            setCalendar(this.calendar);
         }
     },
-    moveCalendar : function(type) {
+    moveCalendar: function(type) {
         var prevArrowClass = "fc-prev-button";
         var nextArrowClass = "fc-next-button";
 
@@ -49,42 +50,26 @@ Button.prototype = {
         Utility.resetEvent();
         var base = type;
         if (button.classList.contains(prevArrowClass)) {
-            calendar.myDate.month--;
+            this.calendar.myDate.month--;
         } else if (button.classList.contains(nextArrowClass)) {
-            calendar.myDate.month++;
+            this.calendar.myDate.month++;
         }
 
-        if (calendar.myDate.month < 0) {
-            calendar.myDate.month = 11;
-            calendar.myDate.year--;
-        } else if (calendar.myDate.month > 11) {
-            calendar.myDate.month = 0;
-            calendar.myDate.year++;
+        if (this.calendar.myDate.month < 0) {
+            this.calendar.myDate.month = 11;
+            this.calendar.myDate.year--;
+        } else if (this.calendar.myDate.month > 11) {
+            this.calendar.myDate.month = 0;
+            this.calendar.myDate.year++;
         }
     },
-    active : function() {
+    active: function() {
         Utility.removeClass(this.ele, "fc-state-disabled");
     },
-    inactive : function() {
+    inactive: function() {
         Utility.addClass(this.ele, "fc-state-disabled");
     }
 }
-//
-// var arrowButtons = [
-//     new Button(".fc-prev-button", "arrow"),
-//     new Button(".fc-next-button", "arrow"),
-// ];
-// var typeButtons = [
-//     new Button(".fc-month-button", "type"),
-//     new Button(".fc-agendaWeek-button", "type"),
-//     new Button(".fc-agendaDay-button", "type"),
-// ];
-// var todayButton = new Button(".fc-left .fc-today-button", "today");
-
-// for(var i=0; i<arrowButtons.length; i++) arrowButtons[i].init({});
-// for(var i=0; i<typeButtons.length; i++) typeButtons[i].init({});
-// todayButton.init({});
-
 function setTypeButton(type, typeButtons) {
     inactiveAllTypeButton(typeButtons);
     switch (type) {
@@ -98,6 +83,7 @@ function setTypeButton(type, typeButtons) {
             Utility.addClass(typeButtons[2].ele, "fc-state-active");
             break;
     }
+    return typeButtons;
 }
 
 function inactiveAllTypeButton(typeButtons) {

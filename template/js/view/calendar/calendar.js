@@ -12,15 +12,15 @@ function Calendar() {
 
     // Button set
     this.arrowButtons = [
-        new Button(".fc-prev-button", "arrow"),
-        new Button(".fc-next-button", "arrow"),
+        new Button(".fc-prev-button", buttonType.arrow),
+        new Button(".fc-next-button", buttonType.arrow),
     ];
     this.typeButtons = [
-        new Button(".fc-month-button", "type"),
-        new Button(".fc-agendaWeek-button", "type"),
-        new Button(".fc-agendaDay-button", "type"),
+        new Button(".fc-month-button", buttonType.type),
+        new Button(".fc-agendaWeek-button", buttonType.type),
+        new Button(".fc-agendaDay-button", buttonType.type),
     ];
-    this.todayButton = new Button(".fc-left .fc-today-button", "today");
+    this.todayButton = new Button(".fc-left .fc-today-button", buttonType.today);
 }
 
 Calendar.prototype = {
@@ -28,14 +28,15 @@ Calendar.prototype = {
         this.setMyDate(base);
         this.callbackList = option;
         // Button init
-        for (var i = 0; i < this.arrowButtons.length; i++) this.arrowButtons[i].init({});
-        for (var i = 0; i < this.typeButtons.length; i++) this.typeButtons[i].init({});
-        this.todayButton.init({});
+        for (var i = 0; i < this.arrowButtons.length; i++) this.arrowButtons[i].init(this,{});
+        for (var i = 0; i < this.typeButtons.length; i++) this.typeButtons[i].init(this,{});
+        this.todayButton.init(this,{});
     },
     setType: function(type) {
         this.type = type;
     },
     setMyDate: function(base) {
+        // this.myDate = base;
         this.myDate.month = base.month;
         this.myDate.year = base.year;
         this.myDate.date = base.date;
@@ -49,11 +50,22 @@ Calendar.prototype = {
         Utility.removeClass(ele, "fc-state-highlight");
     },
     // 월에 맞도록 달력에 숫자를 뿌리는 함수
-    drawMonthCalendar: function() {
-        // 상단에 "January 2017" 출력
-        this.setMonthTitle();
-        // 달력에 숫자 출력
-        this.setMonthCalendarBody();
+    drawCalendar: function() {
+        switch (this.type) {
+            case "month":
+                this.setMonthTitle();
+                this.setMonthCalendarBody();
+                break;
+            case "week":
+                this.setWeekTitle();
+                this.setWeekCalendarBody();
+                break;
+            case "day":
+                this.setDayTitle();
+                this.setDayCalendarBody();
+                break;
+        }
+
     },
     setMonthTitle: function() {
         var thisMonthFullname = monthArray[this.myDate.month];
@@ -107,11 +119,18 @@ Calendar.prototype = {
         }
         setEvent("2017-01-24"); //임시 데이터
     },
-    getLastDate: function(month) {
-        if (month < 0) {
-            month = 11;
-        }
+    setWeekTitle: function() {
 
+    },
+    setWeekCalendarBody: function() {
+    },
+    setDayTitle: function() {
+    },
+    setDayCalendarBody: function() {
+
+    },
+    getLastDate: function(month) {
+        if (month < 0) { month = 11;}
         var lastDate = new Date(this.myDate.year, month + 1, 0).getDate();
         return lastDate;
     },
@@ -119,45 +138,17 @@ Calendar.prototype = {
         cell.setAttribute("data-date", Utility.formDate(year, month, date));
         cellBg.setAttribute("data-date", Utility.formDate(year, month, date));
     },
-    showCalendar: function(type) {
+    showCalendar: function() {
         this.hideAllCalendar();
-        switch (type) {
-            case "month":
-                calendarType.month.style.display = "block";
-                break;
-            case "week":
-                calendarType.week.style.display = "block";
-                break;
-            case "day":
-                calendarType.day.style.display = "block";
-                break;
+        switch (this.type) {
+            case "month": Utility.showElement(calendarType.month); break;
+            case "week": Utility.showElement(calendarType.week); break;
+            case "day": Utility.showElement(calendarType.day); break;
         }
     },
     hideAllCalendar: function() {
-        calendarType.month.style.display = "none";
-        calendarType.week.style.display = "none";
-        calendarType.day.style.display = "none";
+        Utility.hideElement(calendarType.month);
+        Utility.hideElement(calendarType.week);
+        Utility.hideElement(calendarType.day);
     }
 };
-
-function setCalendar(calendar) {
-    // type에 따라 달력 그리기
-    switch (calendar.type) {
-        case "month":
-            calendar.drawMonthCalendar();
-            break;
-        case "week":
-            drawWeekCalendar();
-            break;
-        case "day":
-            drawDayCalendar();
-            break;
-    }
-    // type에 따라 달력 display속성을 block
-    calendar.showCalendar(calendar.type);
-    // type에 따라 우상단의 type button 활성화
-    setTypeButton(calendar.type, calendar.typeButtons);
-    // 달력에 따라 today button 활성화/비활성화
-    isToday(calendar);
-    // 해당 달력에 포함되어 있는 일정 띄우기
-}
