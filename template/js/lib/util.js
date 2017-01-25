@@ -32,7 +32,10 @@ var Utility = {
     },
     formDate: function(year, month, date) {
         month = (month === 0) ? 12 : month;
-        month = (month > 12) ? month % 12 : month;
+        if (month > 12) {
+            year += Math.floor(month / 12);
+            month = month % 12;
+        }
         return year + "-" + this.padZero(month, 2) + "-" + this.padZero(date, 2);
     },
     addClass: function(ele, name) {
@@ -62,6 +65,7 @@ var Utility = {
         }
     },
     getElementPosition: function(ele) {
+        debugger;
         var i = 0;
         while (ele.nextElementSibling !== null) {
             i++;

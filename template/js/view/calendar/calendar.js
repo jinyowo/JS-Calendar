@@ -9,7 +9,8 @@ function Calendar() {
     this.cells = document.querySelectorAll(".fc-month-view .fc-day-top");
     this.cellsBackground = document.querySelectorAll(".fc-month-view .fc-day");
     this.nums = document.querySelectorAll(".fc-content-skeleton a.fc-day-number");
-
+    this.firstDay = "";
+    this.lastDay = "";
     // Button set
     this.arrowButtons = [
         new Button(".fc-prev-button", buttonType.arrow),
@@ -117,8 +118,11 @@ Calendar.prototype = {
             }
             this.nums[i].innerText = numArr[i];
         }
+        this.firstDay = this.cells[0].getAttribute("data-date");
+        console.log(Date.parse(this.firstDay));
+        this.lastDay =  this.cells[currentDate-1].getAttribute("data-date");
         var schedule = new ScheduleDisplay();
-        schedule.init();
+        schedule.init(this, 0, "month");
         schedule.setEvents();
     },
     setWeekTitle: function() {
