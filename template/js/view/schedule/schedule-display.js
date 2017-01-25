@@ -2,7 +2,7 @@
 localStorage.setItem("2017-01-24",JSON.stringify([{
   title: "일정",
   start: "2017-01-24T00:00:00Z",
-  end: "2017-02-07T23:59:00Z",
+  end: "2017-02-07T01:59:00Z",
   allDay: "false",
   repeat: "none",
   place: "where",
@@ -10,20 +10,23 @@ localStorage.setItem("2017-01-24",JSON.stringify([{
 }]));
 
 function ScheduleDisplay() {
-  this.scheduleObjects = JSON.parse(localStorage.getItem(date));
+  this.scheduleObjects;
   this.schedule;
   this.remainedSchedules;
 }
 
 ScheduleDisplay.prototype = {
   init: function() {
+    this.scheduleObjects = JSON.parse(localStorage.getItem("2017-01-24"));
     this.schedule = this.scheduleObjects[0];
-    this.setEvent(this.schedule, 0);
+    this.setMonthEvent(this.schedule, 0);
   },
 
-  setEvent: function(event, eventRow) {
+  setMonthEvent: function(event, eventRow) {
     var start = new Date(event.start);
     var end = new Date(event.end);
+
+
 
     var startDate = formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
     var endDate = formDate(end.getFullYear(), end.getMonth()+1, end.getDate());
@@ -35,60 +38,65 @@ ScheduleDisplay.prototype = {
       length: 0,
       diff: diff,
       hasNewLine: false
-    }
+    };
 
     var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
+    var dateHead = null;
+    var dateBody = null;
     for (var i = 0; i < weeks.length; i++) {
-        var dateHead = null;
-        var dateBody = null;
-      if(!hasNewLine) {
+      if(!status.hasNewLine) {
         dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
-        dateBody = this.setDateBody(dateHead);
+        if(status.diff != 0) {
+          var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
+          dateBody = getTbodyFromThead(rowHead, dateHead);
+        }
+      } else {
+        dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
       }
       if (dateHead !== null && dateBody !== null) {
-        var remain = diff - getElementPosition(dateBody) - 1;
+        var remain = status.diff - getElementPosition(dateBody) - 1;
+
+        status = this.setBarStatus(status, remain);
+
         addClass(dateBody, "fc-event-container");
-        if (length !== 1) {
-        dateBody.setAttribute("colspan", length);
-          for(var j = 0; j < length-1; j++) {
+        if (status.length !== 1) {
+          dateBody.setAttribute("colspan", status.length);
+
+          for(var j = 0; j < status.length-1; j++) {
             var week = weeks[i].querySelectorAll(".fc-content-skeleton tbody tr");
             week[eventRow].removeChild(week[eventRow].lastElementChild);
           }
         }
-        this.setEventBar(dateBody, event.title, isStart, isEnd)
+
+        this.setEventBar(dateBody, event.title, status.isStart, status.isEnd)
       }
     }
   },
 
-  setDateBody: function(dateHead) {
-    var dateBody;
-    if(diff != 0) {
-      var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
-      dateBody = getTbodyFromThead(rowHead, dateHead);
-    } else {
-    dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
-    }
-    return dateBody;
-  },
-
   setBarStatus: function(statusObj, remain) {
-    if(hasNewLine === true) {
+    statusObj.isStart = true;
+    statusObj.isEnd = true;
+
+    if(statusObj.hasNewLine === true) {
       statusObj.isStart = false;
     }
+
     if(remain > 0) {
       statusObj.hasNewLine = true;
       statusObj.isEnd = false;
     }
-    if(isEnd) {
-      statusObj.length = diff;
-    } else if (isStart) {
-      statusObj.length = diff - remain;
-    } else if(!isStart && !isEnd) {
+
+    if(statusObj.isEnd) {
+      statusObj.length = statusObj.diff;
+    } else if (statusObj.isStart) {
+      statusObj.length = statusObj.diff - remain;
+    } else if(!statusObj.isStart && !statusObj.isEnd) {
       statusObj.length = 7;
     }
+
     statusObj.diff -= statusObj.length;
 
-    if(diff === 0) {
+    if(statusObj.diff === 0) {
       statusObj.isEnd = true;
       statusObj.hasNewLine = false;
     }
@@ -96,8 +104,8 @@ ScheduleDisplay.prototype = {
   },
 
   setEventBar: function(ele, title, isStart, isEnd) {
-    ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
-        "<div class = \"fc-content\">"
+    ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">"
+        + "<div class = \"fc-content\">"
         + "<span calss=\"fc-title\">" + title + "</span></div></a>";
 
     var eventLink = ele.querySelector("a");
