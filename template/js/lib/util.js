@@ -22,6 +22,14 @@ var buttonType = {
     today : "today",
 };
 
+var _$ = function(selector) {
+  return document.querySelector(selector);
+}
+
+Element.prototype._$ = function(selector) {
+  return this.querySelector(selector);
+};
+
 var Utility = {
     padZero: function(number, length) {
         var result = number + '';
