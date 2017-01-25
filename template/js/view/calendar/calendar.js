@@ -119,7 +119,6 @@ Calendar.prototype = {
             this.nums[i].innerText = numArr[i];
         }
         this.firstDay = this.cells[0].getAttribute("data-date");
-        console.log(Date.parse(this.firstDay));
         this.lastDay =  this.cells[currentDate-1].getAttribute("data-date");
         var schedule = new ScheduleDisplay();
         schedule.init(this, 0, "month");

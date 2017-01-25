@@ -1,10 +1,10 @@
 //temp data
 localStorage.setItem("2017-01-24", JSON.stringify([{
     title: "일정",
-    start: "2017-01-03T00:00:00Z",
-    end: "2017-01-03T01:59:00Z",
+    start: "2016-12-03T00:00:00Z",
+    end: "2016-12-05T02:59:00Z",
     allDay: "false",
-    repeat: "D",
+    repeat: "Y",
     place: "where",
     desc: "dddddd"
 }]));
@@ -22,7 +22,6 @@ ScheduleDisplay.prototype = {
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
         this.scheduleObjects = JSON.parse(localStorage.getItem("2017-01-24"));
         this.schedule = this.scheduleObjects[0];
-        console.log(this.schedule);
         this.status = {
             isStart: true,
             isEnd: true,
@@ -132,8 +131,10 @@ ScheduleDisplay.prototype = {
         var repeatCycle = 0;
         switch (event.repeat) {
             case "Y":
+                repeatCycle = 365;
                 break;
             case "M":
+                repeatCycle = 30;
                 break;
             case "W":
                 repeatCycle = 7;
@@ -146,21 +147,54 @@ ScheduleDisplay.prototype = {
         var nextEnd = new Date(event.end);
         var first = new Date(this.calendar.firstDay);
         var last = new Date(this.calendar.lastDay);
+        first.setHours(0);
+        first.setMinutes(0);
+        first.setSeconds(0);
+        last.setHours(23);
+        last.setMinutes(59);
+        last.setSeconds(59);
+        if (repeatCycle < 10) {
+            while (first >= nextStart) {
+                nextStart.setDate(nextStart.getDate() + repeatCycle);
+                nextEnd.setDate(nextEnd.getDate() + repeatCycle);
+            }
+            while (last >= nextEnd) {
+                var repeatSchedule = event;
+                repeatSchedule.start = nextStart;
+                repeatSchedule.end = nextEnd;
+                this.setMonthEvent(repeatSchedule, 0);
 
-        while (first >= nextStart) {
-            nextStart.setDate(nextStart.getDate() + repeatCycle);
-            nextEnd.setDate(nextEnd.getDate() + repeatCycle);
-        }
-        while (last >= nextEnd) {
-            var repeatSchedule = event;
-            repeatSchedule.start = nextStart;
-            repeatSchedule.end = nextEnd;
-            this.setMonthEvent(repeatSchedule, 0);
+                nextStart.setDate(nextStart.getDate() + repeatCycle);
+                nextEnd.setDate(nextEnd.getDate() + repeatCycle);
+            }
+        } else if (repeatCycle === 30) {
+            while (first >= nextStart) {
+                nextStart.setMonth(nextStart.getMonth() + 1);
+                nextEnd.setMonth(nextEnd.getMonth() + 1);
+            }
+            while (last >= nextEnd) {
+                var repeatSchedule = event;
+                repeatSchedule.start = nextStart;
+                repeatSchedule.end = nextEnd;
+                this.setMonthEvent(repeatSchedule, 0);
 
-            console.log(nextStart, nextEnd);
+                nextStart.setMonth(nextStart.getMonth() + 1);
+                nextEnd.setMonth(nextEnd.getMonth() + 1);
+            }
+        } else {
+            while (first >= nextStart) {
+                nextStart.setFullYear(nextStart.getFullYear() + 1);
+                nextEnd.setFullYear(nextEnd.getFullYear() + 1);
+            }
+            while (last >= nextEnd) {
+                var repeatSchedule = event;
+                repeatSchedule.start = nextStart;
+                repeatSchedule.end = nextEnd;
+                this.setMonthEvent(repeatSchedule, 0);
 
-            nextStart.setDate(nextStart.getDate() + repeatCycle);
-            nextEnd.setDate(nextEnd.getDate() + repeatCycle);
+                nextStart.setFullYear(nextStart.getFullYear() + 1);
+                nextEnd.setFullYear(nextEnd.getFullYear() + 1);
+            }
         }
     },
 
