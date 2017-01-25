@@ -1,5 +1,5 @@
 //temp data
-localStorage.setItem("2017-01-24",JSON.stringify([{
+localStorage.setItem("2017-01-24S2017-02-07E",JSON.stringify([{
   title: "일정",
   start: "2017-01-24T00:00:00Z",
   end: "2017-02-07T01:59:00Z",
@@ -47,18 +47,18 @@ ScheduleDisplay.prototype = {
     var dateBody = null;
     for (var i = 0; i < weeks.length; i++) {
       if(!this.status.hasNewLine) {
-        dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+        dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
         if(this.status.diff !== 0) {
-          var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
+          var rowHead = weeks[i]._$(".fc-content-skeleton thead");
           dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
         }
       } else {
-        dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
+        dateBody = weeks[i]._$(".fc-content-skeleton tbody tr").firstElementChild;
       }
       if (dateHead !== null && dateBody !== null) {
         var remain = this.status.diff - Utility.getElementPosition(dateBody) - 1;
 
-        this.setBarStatus(remain);
+        this.setBarStatus(remain,this.status);
 
         Utility.addClass(dateBody, "fc-event-container");
         if (this.status.length !== 1) {
@@ -75,34 +75,33 @@ ScheduleDisplay.prototype = {
     }
   },
 
-  setBarStatus: function(remain) {
-    this.status.isStart = true;
-    this.status.isEnd = true;
+  setBarStatus: function(remain, status) {
+    status.isStart = true;
+    status.isEnd = true;
 
-    if(this.status.hasNewLine === true) {
-      this.status.isStart = false;
+    if(status.hasNewLine === true) {
+      status.isStart = false;
     }
 
     if(remain > 0) {
-      this.status.hasNewLine = true;
-      this.status.isEnd = false;
+      status.hasNewLine = true;
+      status.isEnd = false;
     }
 
-    if(this.status.isEnd) {
-      this.status.length = this.status.diff;
-    } else if (this.status.isStart) {
-      this.status.length = this.status.diff - remain;
-    } else if(!this.status.isStart && !this.status.isEnd) {
-      this.status.length = 7;
+    if(status.isEnd) {
+      status.length = status.diff;
+    } else if (status.isStart) {
+      status.length = status.diff - remain;
+    } else if(!status.isStart && !status.isEnd) {
+      status.length = 7;
     }
 
-    this.status.diff -= this.status.length;
+    status.diff -= status.length;
 
-    if(this.status.diff === 0) {
-      this.status.isEnd = true;
-      this.status.hasNewLine = false;
+    if(status.diff === 0) {
+      status.isEnd = true;
+      status.hasNewLine = false;
     }
-    return this.status;
   },
 
   setEventBar: function(ele, title) {
@@ -110,7 +109,7 @@ ScheduleDisplay.prototype = {
         + "<div class = \"fc-content\">"
         + "<span class=\"fc-title\">" + title + "</span></div></a>";
 
-    var eventLink = ele.querySelector("a");
+    var eventLink = ele._$("a");
 
     if(this.status.isStart) {
       Utility.addClass(eventLink,"fc-start");
@@ -124,5 +123,6 @@ ScheduleDisplay.prototype = {
     else {
       Utility.addClass(eventLink,"fc-not-end");
     }
-  }
+  },
+  getFirstDate: function(){}
 }
