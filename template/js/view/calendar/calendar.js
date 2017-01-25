@@ -5,7 +5,7 @@ function Calendar() {
         date: -1,
     };
     this.type = "";
-    this.monthTitle = document.querySelector(".fc-center");
+    this.monthTitle = _$(".fc-center");
     this.cells = document.querySelectorAll(".fc-month-view .fc-day-top");
     this.cellsBackground = document.querySelectorAll(".fc-month-view .fc-day");
     this.nums = document.querySelectorAll(".fc-content-skeleton a.fc-day-number");

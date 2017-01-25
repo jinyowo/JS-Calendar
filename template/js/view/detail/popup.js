@@ -16,10 +16,10 @@ var repeat = {
     none: "반복안함"
 };
 
-var popupBackground = document.querySelector('.popupBackground');
-var popupContent = document.querySelector('.popupContent');
-var span = document.querySelector('.popupClose');
-var deleteButton = document.querySelector('.delete');
+var popupBackground = _$('.popupBackground');
+var popupContent = _$('.popupContent');
+var span = _$('.popupClose');
+var deleteButton = _$('.delete');
 // x클릭시 팝업 닫기
 span.addEventListener("click", closePopup);
 // 팝업 바깥영역 클릭시 팝업 닫기
@@ -80,7 +80,7 @@ function insertPopupContent() {
     var stringData = "<strong><%= title %></strong><br><label >시간: </label><span>" + parsedStart + " ~ " + parsedEnd + "</span><br><label >반복: </label><span>" + repeat[schedule['repeat']] + "<span><br><label >장소: </label><span><%= place %></span><br><label >설명: </label><span><%= desc %></span>";
     var compiled = _.template(stringData);
     var str = compiled(schedule);
-    document.querySelector('.parsedContent').innerHTML = str;
+    _$('.parsedContent').innerHTML = str;
 }
 
 function deleteSchedule() {
