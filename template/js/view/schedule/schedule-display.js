@@ -108,7 +108,7 @@ ScheduleDisplay.prototype = {
   setEventBar: function(ele, title) {
     ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">"
         + "<div class = \"fc-content\">"
-        + "<span calss=\"fc-title\">" + title + "</span></div></a>";
+        + "<span class=\"fc-title\">" + title + "</span></div></a>";
 
     var eventLink = ele.querySelector("a");
 
