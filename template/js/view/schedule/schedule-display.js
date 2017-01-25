@@ -39,7 +39,7 @@ ScheduleDisplay.prototype = {
     var start = new Date(event.start);
     var end = new Date(event.end);
 
-    var startDate = formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
+    var startDate = Utility.formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
     this.status.diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
     var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
@@ -50,17 +50,17 @@ ScheduleDisplay.prototype = {
         dateHead = weeks[i].querySelector(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
         if(this.status.diff !== 0) {
           var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
-          dateBody = getTbodyFromThead(rowHead, dateHead);
+          dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
         }
       } else {
         dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
       }
       if (dateHead !== null && dateBody !== null) {
-        var remain = this.status.diff - getElementPosition(dateBody) - 1;
+        var remain = this.status.diff - Utility.getElementPosition(dateBody) - 1;
 
         this.setBarStatus(remain);
 
-        addClass(dateBody, "fc-event-container");
+        Utility.addClass(dateBody, "fc-event-container");
         if (this.status.length !== 1) {
           dateBody.setAttribute("colspan", this.status.length);
 
@@ -113,16 +113,16 @@ ScheduleDisplay.prototype = {
     var eventLink = ele.querySelector("a");
 
     if(this.status.isStart) {
-      addClass(eventLink,"fc-start");
+      Utility.addClass(eventLink,"fc-start");
     }
     else {
-      addClass(eventLink,"fc-not-start");
+      Utility.addClass(eventLink,"fc-not-start");
     }
     if(this.status.isEnd) {
-      addClass(eventLink,"fc-end");
+      Utility.addClass(eventLink,"fc-end");
     }
     else {
-      addClass(eventLink,"fc-not-end");
+      Utility.addClass(eventLink,"fc-not-end");
     }
   }
 }

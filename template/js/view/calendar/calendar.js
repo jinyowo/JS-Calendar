@@ -117,7 +117,9 @@ Calendar.prototype = {
             }
             this.nums[i].innerText = numArr[i];
         }
-        setEvent("2017-01-24"); //임시 데이터
+        var schedule = new ScheduleDisplay();
+        schedule.init();
+        schedule.setEvents();
     },
     setWeekTitle: function() {
 
