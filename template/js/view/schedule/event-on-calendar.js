@@ -18,8 +18,8 @@ function setMonthEvent(event, row) {
   var start = new Date(event[row].start);
   var end = new Date(event[row].end);
 
-  var startDate = formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
-  var endDate = formDate(end.getFullYear(), end.getMonth()+1, end.getDate());
+  var startDate = Utility.formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
+  var endDate = Utility.formDate(end.getFullYear(), end.getMonth()+1, end.getDate());
   var diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
   var hasNewLine = false;
@@ -34,13 +34,13 @@ function setMonthEvent(event, row) {
       if(!hasNewLine) {
         if(diff != 0) {
           var rowHead = weeks[i].querySelector(".fc-content-skeleton thead");
-          dateBody = getTbodyFromThead(rowHead, dateHead);
+          dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
 
         }
       } else {
         dateBody = weeks[i].querySelector(".fc-content-skeleton tbody tr").firstElementChild;
       }
-        var remain = diff - getElementPosition(dateBody) - 1;
+        var remain = diff - Utility.getElementPosition(dateBody) - 1;
       if (dateBody !== null) {
         var isStart = true;
         var isEnd = true;
