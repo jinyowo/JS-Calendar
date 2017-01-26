@@ -17,10 +17,10 @@ function ScheduleDisplay() {
 }
 
 ScheduleDisplay.prototype = {
-  init: function(due, type) {
-    //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
-    this.scheduleObjects = JSON.parse(localStorage.getItem("2017-01-24"));
-    this.schedule = this.scheduleObjects[0];
+  init: function(type) {
+    //TODO:type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
+    this.scheduleObjects = [];
+    this.getThisMonthEvent();
     this.status = {
       isStart: true,
       isEnd: true,
@@ -31,28 +31,39 @@ ScheduleDisplay.prototype = {
   },
 
   setEvents: function() {
+    for(var i = 0; i < this.scheduleObjects.length; i++) {
+      var schedules = JSON.parse(this.scheduleObjects[i])
+      for (var j = 0; j < schedules.length; j++) {
+        this.schedule = schedules[j];
+        this.initStatus();
+        this.setMonthEvent(this.schedule, 0);
+      }
+    }
+
     //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
-    this.setMonthEvent(this.schedule, 0);
+
   },
 
   setMonthEvent: function(event, eventRow) {
-    var start = new Date(event.start);
-    var end = new Date(event.end);
-
+    var start = new Date(this.schedule.start);
     var startDate = Utility.formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
-    this.status.diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
 
     var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
     var dateHead = null;
     var dateBody = null;
     for (var i = 0; i < weeks.length; i++) {
       if(!this.status.hasNewLine) {
-        dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+        if (this.status.isStart) {
+          dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+        } else {
+          dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
+        }
         if(this.status.diff !== 0) {
           var rowHead = weeks[i]._$(".fc-content-skeleton thead");
           dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
         }
       } else {
+        dataHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
         dateBody = weeks[i]._$(".fc-content-skeleton tbody tr").firstElementChild;
       }
       if (dateHead !== null && dateBody !== null) {
@@ -70,15 +81,16 @@ ScheduleDisplay.prototype = {
           }
         }
 
-        this.setEventBar(dateBody, event.title, this.status.isStart, this.status.isEnd)
+        this.setEventBar(dateBody, event.title);
+        if (this.status.isEnd === true) {
+          break;
+        }
       }
     }
   },
 
   setBarStatus: function(remain, status) {
-    status.isStart = true;
     status.isEnd = true;
-
     if(status.hasNewLine === true) {
       status.isStart = false;
     }
@@ -124,5 +136,50 @@ ScheduleDisplay.prototype = {
       Utility.addClass(eventLink,"fc-not-end");
     }
   },
-  getFirstDate: function(){}
+
+  getThisMonthEvent: function() {
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i)
+      var due = key.split("S");
+      var eStart = due[0];
+      var eEnd = due[1].replace("E","");
+
+      if (eEnd < this.getLastDate()) {
+        if (eEnd > this.getFirstDate()) {
+          this.scheduleObjects.push(localStorage.getItem(key));
+        }
+      } else if (eStart > this.getFirstDate()) {
+        if (eStart < this.getLastDate()) {
+          this.scheduleObjects.push(localStorage.getItem(key));
+        }
+      } else {
+        this.scheduleObjects.push(localStorage.getItem(key));
+      }
+    }
+  },
+
+  getFirstDate: function() {
+    return _$(".fc-day-top").getAttribute("data-date");
+  },
+
+  getLastDate: function() {
+    return document.querySelectorAll(".fc-day-top")[41].getAttribute("data-date");
+  },
+
+  initStatus: function() {
+    var start = new Date(this.schedule.start);
+    var end = new Date(this.schedule.end);
+    var firstDate = Date.parse(this.getFirstDate());
+
+    if (start < firstDate) {
+      this.status.diff = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
+      this.status.isStart = false;
+    } else {
+      this.status.diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      this.status.isStart = true;
+    }
+    this.status.isEnd = true;
+    this.status.length = 0;
+    this.status.hasNewLine = false;
+  }
 }
