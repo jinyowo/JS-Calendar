@@ -1,9 +1,9 @@
-var div = document.querySelector('.fc-widget-content');
-var scheduleBackground = document.querySelector('.scheduleBackground');
-var closeButton = document.querySelector('.closeButton');
-var container = document.querySelector('.scheduleBackground');
-var allDayButton = document.querySelector('#allDay');
-var submitButton = document.querySelector('#submit');
+var div = _$('.fc-widget-content');
+var scheduleBackground = _$('.scheduleBackground');
+var closeButton = _$('.closeButton');
+var container = _$('.scheduleBackground');
+var allDayButton = _$('#allDay');
+var submitButton = _$('#submit');
 var defaultStart="";
 var defaultEnd="";
 var inputList1 = ["title", "place", "desc"];
@@ -48,7 +48,7 @@ function getValue() {
         var timeValue = document.getElementById(inputList2[j]).value;
         scheduleInfo[inputList2[j]] = timeValue + ":00Z";
     }
-    var repeatValue = document.querySelector('input[name="optradio"]:checked').value;
+    var repeatValue = _$('input[name="optradio"]:checked').value;
     scheduleInfo['repeat'] = repeatValue;
     if (!!alreadyHas) {
         var parsedArray = JSON.parse(alreadyHas);

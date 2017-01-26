@@ -1,5 +1,5 @@
 function Button(selector, type) {
-    this.ele = document.querySelector(selector);
+    this.ele = _$(selector);
     this.type = type;
     this.onClickEvent = type + "ButtonClickEvent";
 }
