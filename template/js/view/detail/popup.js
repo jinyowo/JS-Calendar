@@ -7,7 +7,6 @@ var schedule = {
     place: "startup campus",
     desc: "FE 인턴 education"
 };
-
 function ShowDetail() {
     this.repeat = {
         Y: "매년",
@@ -88,7 +87,6 @@ ShowDetail.prototype = {
 function deleteSchedule() {
     this.deleteButton = document.querySelector('.delete');
 }
-
 deleteSchedule.prototype = {
 
     init: function() {
@@ -123,12 +121,9 @@ modifySchedule.prototype = {
         this.modifyButton.addEventListener("click", this.changeForm.bind(this));
     },
     changeForm: function() {
-
       document.querySelector(".scheduleBackground").style.display="block";
       document.querySelector(".popupBackground").style.display="none";
     }
-
-
 };
 
 var showDetail = new ShowDetail();

@@ -3,6 +3,14 @@ var monthArray = ["January", "February", "March", "April", "May", "June", "July"
 var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
 
+var _$ = function(selector) {
+  return document.querySelector(selector);
+}
+
+Element.prototype._$ = function(selector) {
+  return this.querySelector(selector);
+};
+
 // 오늘 년, 월, 일 정보를 저장할 object
 var _today = new Date();
 var Today = {
@@ -12,9 +20,9 @@ var Today = {
 };
 // 달력의 type 3가지를 저장할 object
 var calendarType = {
-    month : document.querySelector(".fc-month-view"),
-    week : document.querySelector(".fc-basicWeek-view"),
-    day : document.querySelector(".fc-agendaDay-view"),
+    month : _$(".fc-month-view"),
+    week : _$(".fc-basicWeek-view"),
+    day : _$(".fc-agendaDay-view"),
 };
 var buttonType = {
     arrow : "arrow",
@@ -32,7 +40,10 @@ var Utility = {
     },
     formDate: function(year, month, date) {
         month = (month === 0) ? 12 : month;
-        month = (month > 12) ? month % 12 : month;
+        if (month > 12) {
+            year += Math.floor(month / 12);
+            month = month % 12;
+        }
         return year + "-" + this.padZero(month, 2) + "-" + this.padZero(date, 2);
     },
     addClass: function(ele, name) {

@@ -2,8 +2,8 @@ function ShowFormPopup() {
     this.div = document.querySelector('.fc-widget-content');
     this.container = document.querySelector('.scheduleBackground');
     this.closeButton = document.querySelector('.closeButton');
-}
 
+}
 ShowFormPopup.prototype = {
     init: function() {
         this.div.addEventListener("click", this.getDateInfo.bind(this));
@@ -131,11 +131,6 @@ submitInfo.prototype = {
       this.allDayButton.checked = false;
     }
 };
-
-
-
-
-
 var showForm = new ShowFormPopup();
 
 showForm.init();
