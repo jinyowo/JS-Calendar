@@ -2,7 +2,7 @@
 localStorage.setItem("2017-01-24S2017-02-07E",JSON.stringify([{
   title: "일정",
   start: "2017-01-24T00:00:00Z",
-  end: "2017-02-07T01:59:00Z",
+  end: "2017-01-29T01:59:00Z",
   allDay: "false",
   repeat: "none",
   place: "where",
@@ -73,13 +73,11 @@ ScheduleDisplay.prototype = {
         if (dateHead !== null && dateBody !== null) {
           for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
             this.setEventBar(dateBody, event.title);
-            this.setBarStatus(this.status);
+
             dateBody = dateBody.nextElementSibling;
           }
         }
           if (this.status.isEnd === true) {
-            this.setEventBar(dateBody, event.title);
-
             break;
           }
       }
@@ -129,6 +127,7 @@ ScheduleDisplay.prototype = {
     else {
       Utility.addClass(eventLink,"fc-not-start");
     }
+    this.setBarStatus(this.status);
     if(this.status.isEnd) {
       Utility.addClass(eventLink,"fc-end");
     }
