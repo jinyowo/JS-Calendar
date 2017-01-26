@@ -32,13 +32,11 @@ ScheduleDisplay.prototype = {
     this.scheduleObjects = [];
     this.calendarType = type;
     this.calendar = calendar;
-    this.getThisMonthEvent()
+    this.getThisMonthEvent();
     this.status = {
         isStart: true,
         isEnd: true,
-        length: 0,
-        diff: 0,
-        hasNewLine: false
+        remain: 0
     };
   },
 
@@ -63,78 +61,69 @@ ScheduleDisplay.prototype = {
       var dateHead = null;
       var dateBody = null;
       for (var i = 0; i < weeks.length; i++) {
-        if(!this.status.hasNewLine) {
-          if (this.status.isStart) {
-            dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
-          } else {
-            dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
-          }
-          if(this.status.diff !== 0) {
-            var rowHead = weeks[i]._$(".fc-content-skeleton thead");
-            dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
-          }
+        if (this.status.isStart) {
+          dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
         } else {
-          dataHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
-          dateBody = weeks[i]._$(".fc-content-skeleton tbody tr").firstElementChild;
+          dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
         }
+        var rowHead = weeks[i]._$(".fc-content-skeleton thead");
+        dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
+
+
         if (dateHead !== null && dateBody !== null) {
-          var remain = this.status.diff - Utility.getElementPosition(dateBody) - 1;
-
-          this.setBarStatus(remain,this.status);
-
-          Utility.addClass(dateBody, "fc-event-container");
-          if (this.status.length !== 1) {
-            dateBody.setAttribute("colspan", this.status.length);
-
-            for(var j = 0; j < this.status.length-1; j++) {
-              var week = weeks[i].querySelectorAll(".fc-content-skeleton tbody tr");
-              week[eventRow].removeChild(week[eventRow].lastElementChild);
-            }
+          for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
+            this.setEventBar(dateBody, event.title);
+            this.setBarStatus(this.status);
+            dateBody = dateBody.nextElementSibling;
           }
-
-          this.setEventBar(dateBody, event.title);
+        }
           if (this.status.isEnd === true) {
+            this.setEventBar(dateBody, event.title);
+
             break;
           }
-        }
       }
+  },
+
+    initStatus: function() {
+      var start = new Date(this.schedule.start);
+      var end = new Date(this.schedule.end);
+      var firstDate = Date.parse(this.calendar.firstDay);
+
+      if (start < firstDate) {
+        this.status.remain = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
+        this.status.isStart = false;
+      } else {
+        this.status.remain = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        this.status.isStart = true;
+      }
+      this.status.isEnd = false;
     },
 
-    setBarStatus: function(remain, status) {
-      status.isEnd = true;
-      if(status.hasNewLine === true) {
+    setBarStatus: function(status) {
+
+      if(status.isStart) {
         status.isStart = false;
       }
-      if(remain > 0) {
-        status.hasNewLine = true;
-        status.isEnd = false;
-      }
 
-      if(status.isEnd) {
-        status.length = status.diff;
-      } else if (status.isStart) {
-        status.length = status.diff - remain;
-      } else if(!status.isStart && !status.isEnd) {
-        status.length = 7;
-      }
+      status.remain --;
 
-      status.diff -= status.length;
-
-      if(status.diff === 0) {
+      if(status.remain === 0) {
         status.isEnd = true;
         status.hasNewLine = false;
       }
     },
 
-
-
   setEventBar: function(ele, title) {
+    Utility.addClass(ele, "fc-event-container");
     ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">"
         + "<div class = \"fc-content\">"
-        + "<span class=\"fc-title\">" + title + "</span></div></a>";
-
+        +"</div></a>";
     var eventLink = ele._$("a");
 
+    if (ele.isEqualNode(ele.parentNode.firstElementChild) || this.status.isStart) {
+      eventLink._$("div").innerHTML = "<span class = \"fc-title\">" + title + "</span>";
+    }
     if(this.status.isStart) {
       Utility.addClass(eventLink,"fc-start");
     }
@@ -168,23 +157,6 @@ ScheduleDisplay.prototype = {
         this.scheduleObjects.push(localStorage.getItem(key));
       }
     }
-  },
-
-  initStatus: function() {
-    var start = new Date(this.schedule.start);
-    var end = new Date(this.schedule.end);
-    var firstDate = Date.parse(this.calendar.firstDay);
-
-    if (start < firstDate) {
-      this.status.diff = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
-      this.status.isStart = false;
-    } else {
-      this.status.diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-      this.status.isStart = true;
-    }
-    this.status.isEnd = true;
-    this.status.length = 0;
-    this.status.hasNewLine = false;
   },
 
   repeatEvent: function(event) {
