@@ -4,9 +4,11 @@ var schedule = {
     start: "2017-01-02T08:00:00Z",
     end: "2017-02-10T19:00:00Z",
     repeat: "W",
+    allDay: true,
     place: "startup campus",
     desc: "FE 인턴 education"
 };
+
 function ShowDetail() {
     this.repeat = {
         Y: "매년",
@@ -15,22 +17,17 @@ function ShowDetail() {
         D: "매일",
         none: "반복안함"
     };
-
-    this.popupBackground = document.querySelector('.popupBackground');
-    this.popupContent = document.querySelector('.popupContent');
-    this.span = document.querySelector('.popupClose');
-    this.parsedContent = document.querySelector('.parsedContent');
+    this.popupBackground = _$('.popupBackground');
+    this.popupContent = _$('.popupContent');
+    this.span = _$('.popupClose');
+    this.parsedContent = _$('.parsedContent');
 }
-
 ShowDetail.prototype = {
     init: function() {
         this.span.addEventListener("click", this.closePopup.bind(this));
-
         this.popupBackground.addEventListener("click", this.closePopup.bind(this));
-
         document.addEventListener("click", this.executeEvent.bind(this));
     },
-
     executeEvent: function(event) {
         if (this.confirmTarget(event)) {
             Utility.showElement(this.popupBackground);
@@ -80,23 +77,20 @@ ShowDetail.prototype = {
         var stringData = "<strong><%= title %></strong><br><label >시간: </label><span>" + timeData[0] + " ~ " + timeData[1] + "</span><br><label >반복: </label><span>" + this.repeat[schedule['repeat']] + "<span><br><label >장소: </label><span><%= place %></span><br><label >설명: </label><span><%= desc %></span>";
         var compiled = _.template(stringData);
         var str = compiled(schedule);
-        document.querySelector('.parsedContent').innerHTML = str;
+        _$('.parsedContent').innerHTML = str;
     }
 };
 
 function deleteSchedule() {
-    this.deleteButton = document.querySelector('.delete');
+    this.deleteButton = _$('.delete');
 }
 deleteSchedule.prototype = {
-
     init: function() {
         this.deleteButton.addEventListener("click", this.showConfirm);
     },
-
     showConfirm: function() {
             var msg = confirm("일정을 삭제하시겠습니까?");
             if (msg) { // Yes click
-
             } else {
                 // no click
             }
@@ -111,27 +105,33 @@ deleteSchedule.prototype = {
 };
 
 function modifySchedule() {
-    this.modifyButton = document.querySelector('.modify');
+    this.modifyButton = _$('.modify');
 }
-
 modifySchedule.prototype = {
     init: function(option) {
         this.callbacklist = option;
-
         this.modifyButton.addEventListener("click", this.changeForm.bind(this));
     },
     changeForm: function() {
-      document.querySelector(".scheduleBackground").style.display="block";
-      document.querySelector(".popupBackground").style.display="none";
-    }
+        _$(".scheduleBackground").style.display = "block";
+        _$(".popupBackground").style.display = "none";
+        // this.insertForm();
+    },
+    // insertForm: function() {
+    //     _$("#title").value = schedule["title"];
+    //     _$("#start").value = schedule["start"].replace(':00Z',"");
+    //     _$("#end").value = schedule["end"].replace(':00Z',"");
+    //     _$("#place").value = schedule["place"];
+    //     _$("#desc").value = schedule["desc"];
+    //     if(schedule["allDay"]) _$('#allDay').checked =true;
+    //     _$('input[value='+schedule["repeat"]+']').checked =true;
+    // }
 };
-
 var showDetail = new ShowDetail();
 showDetail.init();
 var deleteEvent = new deleteSchedule();
 deleteEvent.init();
 var modifyEvent = new modifySchedule();
 modifyEvent.init({
-    DETAIL_VIEW: showDetail.closePopup,
-    FORM: showForm.showInputForm,
+    POPUP_CONTENT: showDetail.insertPopupContent
 });
