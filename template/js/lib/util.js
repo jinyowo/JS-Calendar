@@ -96,4 +96,14 @@ var Utility = {
                 "\n</tr>";
         }
     },
+    setTimeByGMT: function(date) {
+      var converted = new Date();
+      converted.setYear(date.getUTCFullYear());
+      converted.setMonth(date.getUTCMonth());
+      converted.setDate(date.getUTCDate());
+      converted.setHours(date.getUTCHours());
+      converted.setMinutes(date.getUTCMinutes());
+      converted.setSeconds(date.getUTCSeconds());
+      return converted;
+    }
 };

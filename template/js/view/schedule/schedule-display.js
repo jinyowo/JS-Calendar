@@ -53,7 +53,7 @@ ScheduleDisplay.prototype = {
   },
 
   setMonthEvent: function(event, eventRow) {
-      var start = new Date(this.schedule.start);
+      var start = Utility.setTimeByGMT(new Date(this.schedule.start));
       var startDate = Utility.formDate(start.getFullYear(), start.getMonth()+1, start.getDate());
 
       this.initStatus();
@@ -86,8 +86,8 @@ ScheduleDisplay.prototype = {
   },
 
     initStatus: function() {
-      var start = new Date(this.schedule.start);
-      var end = new Date(this.schedule.end);
+      var start = Utility.setTimeByGMT(new Date(this.schedule.start));
+      var end = Utility.setTimeByGMT(new Date(this.schedule.end));
       var firstDate = Date.parse(this.calendar.firstDay);
 
       if (start < firstDate) {
@@ -110,7 +110,6 @@ ScheduleDisplay.prototype = {
 
       if(status.remain === 0) {
         status.isEnd = true;
-        status.hasNewLine = false;
       }
     },
 
@@ -175,10 +174,10 @@ ScheduleDisplay.prototype = {
             repeatCycle = 1;
             break;
     }
-    var nextStart = new Date(event.start);
-    var nextEnd = new Date(event.end);
-    var first = new Date(this.calendar.firstDay);
-    var last = new Date(this.calendar.lastDay);
+    var nextStart = Utility.setTimeByGMT(new Date(event.start));
+    var nextEnd = Utility.setTimeByGMT(new Date(event.end));
+    var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
+    var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
     first.setHours(0);
     first.setMinutes(0);
     first.setSeconds(0);
