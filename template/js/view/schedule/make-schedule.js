@@ -24,11 +24,11 @@ ShowFormPopup.prototype = {
     makeEvent: function() {
         this.defaultStart = this.dateData + 'T' + this.Date1[0] + ':' + this.Date1[1];
         this.defaultEnd = this.dateData + 'T' + this.Date2[0] + ':' + this.Date2[1];
-        document.getElementById("start").defaultValue = this.defaultStart;
-        document.getElementById("end").defaultValue = this.defaultEnd;
-
-        this.getScheduleInfo.defaultStart= this.defaultStart;
-        this.getScheduleInfo.defaultEnd=this.defaultEnd;
+        this.getScheduleInfo.startInput.value = this.defaultStart;
+        this.getScheduleInfo.endInput.value = this.defaultEnd;
+        console.log(this.defaultStart);
+        this.getScheduleInfo.defaultStart = this.defaultStart;
+        this.getScheduleInfo.defaultEnd = this.defaultEnd;
         this.getScheduleInfo.init();
     },
     getCurrentTime: function() {
@@ -90,8 +90,8 @@ submitInfo.prototype = {
             var timeValue = document.getElementById(this.inputIdList2[j]).value;
             scheduleInfo[this.inputIdList2[j]] = timeValue + ":00Z";
         }
-        if (this.allDayButton.checked) scheduleInfo["allDay"]=true;
-        else  scheduleInfo["allDay"]=false;
+        if (this.allDayButton.checked) scheduleInfo["allDay"] = true;
+        else scheduleInfo["allDay"] = false;
 
         var repeatValue = document.querySelector('input[name="optradio"]:checked').value;
         scheduleInfo['repeat'] = repeatValue;
@@ -117,18 +117,19 @@ submitInfo.prototype = {
             this.startInput.value = this.defaultStart;
             this.endInput.value = this.defaultEnd;
             return;
+        } else if (this.allDayButton.checked) {
+            var parsedDate1 = this.defaultStart.split('T', 1);
+            var parsedDate2 = this.defaultEnd.split('T', 1);
+            this.startInput.value = parsedDate1 + "T00:00";
+            this.endInput.value = parsedDate2 + "T23:59";
         }
-        var parsedDate1 = this.defaultStart.split('T', 1);
-        var parsedDate2 = this.defaultEnd.split('T', 1);
-        this.startInput.value = parsedDate1 + "T00:00";
-        this.endInput.value = parsedDate2 + "T23:59";
     },
-    clearInput: function(){
-      for (var i = 0; i < this.inputIdList1.length; i++) {
-          document.getElementById(this.inputIdList1[i]).value = "";
-      }
-      document.querySelector(".basicValue").checked = true;
-      this.allDayButton.checked = false;
+    clearInput: function() {
+        for (var i = 0; i < this.inputIdList1.length; i++) {
+            document.getElementById(this.inputIdList1[i]).value = "";
+        }
+        document.querySelector(".basicValue").checked = true;
+        this.allDayButton.checked = false;
     }
 };
 var showForm = new ShowFormPopup();
