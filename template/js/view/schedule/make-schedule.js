@@ -86,11 +86,11 @@ SubmitInfo.prototype = {
     getScheduleInfo: function(){
       var scheduleInfo = {};
       for (var i = 0; i < this.inputIdList1.length; i++) {
-          var inputValue = document.getElementById(this.inputIdList1[i]).value;
+          var inputValue = _$("#"+this.inputIdList1[i]).value;
           scheduleInfo[this.inputIdList1[i]] = inputValue;
       }
       for (var j = 0; j < this.inputIdList2.length; j++) {
-          var timeValue = document.getElementById(this.inputIdList2[j]).value;
+          var timeValue = _$("#"+this.inputIdList2[j]).value;
           scheduleInfo[this.inputIdList2[j]] = timeValue + ":00Z";
       }
       if (this.allDayButton.checked) scheduleInfo["allDay"] = true;
@@ -120,7 +120,7 @@ SubmitInfo.prototype = {
     },
     clearInput: function() {
         for (var i = 0; i < this.inputIdList1.length; i++) {
-            document.getElementById(this.inputIdList1[i]).value = "";
+            _$("#"+this.inputIdList1[i]).value = "";
         }
         _$(".basicValue").checked = true;
         this.allDayButton.checked = false;
