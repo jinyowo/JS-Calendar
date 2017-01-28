@@ -10,6 +10,7 @@ ShowFormPopup.prototype = {
     },
     getDateInfo: function() {
         this.dateData = event.target.getAttribute("data-date");
+        //모든 코드에 이렇게 css classname이 하드코딩되어 있는데, css수정시에 js코드를 수정해야 하는 일이 생기니, 팀차원에서 해결방법을 찾아서 수정하세요.
         if (event.target.className === "fc-day-number") {
             this.dateData = event.target.parentNode.getAttribute("data-date");
         }
@@ -46,6 +47,7 @@ ShowFormPopup.prototype = {
             this.submitInfo.clearInput();
         }
     },
+    //event.target만 쓸꺼면 event객체를 받지 않고 event.target을 인자로 받는게 좋겠네요.
     isTarget: function(event) {
         var evtClass = event.target.className;
         var evtId = event.target.id;
@@ -85,6 +87,7 @@ SubmitInfo.prototype = {
     },
     getScheduleInfo: function(){
       var scheduleInfo = {};
+      //아래 두 개의 for문은 중복인데.. 해결할 수 없을까요?
       for (var i = 0; i < this.inputIdList1.length; i++) {
           var inputValue = _$("#"+this.inputIdList1[i]).value;
           scheduleInfo[this.inputIdList1[i]] = inputValue;
@@ -126,5 +129,6 @@ SubmitInfo.prototype = {
         this.allDayButton.checked = false;
     }
 };
+//아래코드를 여기서 호출하지말고 js/init.js 에서 호출하도록 하면 어때요?
 var showForm = new ShowFormPopup();
 showForm.init();

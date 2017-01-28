@@ -1,9 +1,15 @@
 // month이름, weekday이름, 각 달의 마지막 날짜를 저장한 배열
+
+//여기서부터 utility 전까지 여러개의 전역변수를 쓰고 있는데, namespace로 객체형태로 모아두면 좋겠음. 
+
+//array와 같은이름을 궂이 쓰지 않아도 될 듯. 그냥 month, week, weekdayclass 라고해도 좋을듯.
 var monthArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
 
+//이건뭐고 Element.prototype._$ 이건뭐에요? 
 var _$ = function(selector) {
+    //그리고 이렇게 기준을 모두 document로 찾으면 dom을 찾는데 느려요. 가급적 부모엘리먼트를 지정하는게 좋죠.
   return document.querySelector(selector);
 }
 
@@ -82,8 +88,10 @@ var Utility = {
     },
 
     resetEvent: function() {
+        //utility에 있기에는 너무 특별한 녀석이 정의되어 있네요. 한군데에서만 사용하면 거기로 옮겨주시거나, eventRow엘리먼트리스트를 매개변수로 받도록 하고요.
         var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
 
+        //꼭 개행이 필요한가요?(잘몰라서)
         for (var i = 0; i < eventRow.length; i++) {
             eventRow[i].innerHTML = "<tr>" +
                 "\n<td></td>" +
