@@ -15,27 +15,52 @@ ShowFormPopup.prototype = {
         }
         if (!!this.dateData) {
             this.showInputForm();
-            this.getCurrentTime();
+            // this.getCurrentTime()
             this.makeEvent();
+            this.compareTime.bind(this)();
+        }
+    },
+    compareTime: function() {
+        var time = _$("#startTime").value;
+        var a = time.split(':');
+        var ts = ((a[0] * 60) * 60) + (a[1] * 60); // 현재시간을 초로 변환
+
+        console.log(ts);
+
+        if (ts >= 82800) { // 원하는 시간을 초로 바꿔서 현재시간을 초로 변환한 값과 비교
+            var parsedDate = this.dateData.split("-", 3);
+            var day = parseInt(parsedDate[2]) + 1;
+            _$("#endDay").value = parsedDate[0] + "-" + parsedDate[1] + "-" + day;
         }
     },
     makeEvent: function() {
-        this.defaultStart = this.dateData + 'T' + this.Date1[0] + ':' + this.Date1[1];
-        this.defaultEnd = this.dateData + 'T' + this.Date2[0] + ':' + this.Date2[1];
-        this.submitInfo.startInput.value = this.defaultStart;
-        this.submitInfo.endInput.value = this.defaultEnd;
-        console.log(this.defaultStart);
-        this.submitInfo.defaultStart = this.defaultStart;
-        this.submitInfo.defaultEnd = this.defaultEnd;
-        this.submitInfo.init();
+        this.getCurrentTime();
+        var StartDay = this.dateData;
+        var StartTime = this.Date1[0] + ':' + this.Date1[1];
+        var EndDay = this.dateData;
+        var EndTime = this.Date2[0] + ':' + this.Date2[1];
+        this.submitInfo.startDayInput.value = StartDay;
+        this.submitInfo.startTimeInput.value = StartTime;
+        this.submitInfo.endDayInput.value = EndDay;
+        this.submitInfo.endTimeInput.value = EndTime;
+
+        console.log(StartDay);
+        console.log(StartTime);
+        // this.submitInfo.defaultStartDay = StartDay;
+        // this.submitInfo.defaultStartTime = StartTime;
+        // this.submitInfo.defaultEndDay = EndDay;
+        // this.submitInfo.defaultEndTime = EndTime;
+        //this.submitInfo.init();
     },
     getCurrentTime: function() {
         var date = new Date();
+        // date.setHours(23);
+        // date.setMinutes(0);
         var timedate1 = date.toTimeString();
-        this.Date1 = timedate1.split(':', 3);
+        this.Date1 = timedate1.split(':', 2);
         date.setHours(date.getHours() + 1);
         var timedate2 = date.toTimeString();
-        this.Date2 = timedate2.split(':', 3);
+        this.Date2 = timedate2.split(':', 2);
     },
     showInputForm: function() {
         Utility.showElement(this.container);
@@ -56,74 +81,148 @@ ShowFormPopup.prototype = {
 };
 
 function SubmitInfo() {
-  this.allDayButton = _$('#allDay');
-  this.submitButton = _$('#submit');
-  this.inputIdList1 = ["title", "place", "desc"];
-  this.inputIdList2 = ["start", "end"];
-  this.startInput = _$("#start");
-  this.endInput = _$("#end");
+    this.titleInput = _$("#title");
+    this.allDayButton = _$('#allDay');
+    this.submitButton = _$('#submit');
+    this.inputIdList1 = ["title", "place", "desc"];
+    this.inputIdList2 = [
+        ["startDay", "startTime"],
+        ["endDay", "endTime"]
+    ];
+    this.startDayInput = _$("#startDay");
+    this.startTimeInput = _$("#startTime");
+    this.endDayInput = _$("#endDay");
+    this.endTimeInput = _$("#endTime");
 }
 SubmitInfo.prototype = {
     init: function() {
-        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this));
         this.allDayButton.addEventListener("click", this.setAllDay.bind(this));
+        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this));//,testPosition));
+        this.timeAlert.bind(this)();
     },
-    saveScheduleInfo: function() {
-        this.setDayKey();
-        var scheduleInfo=this.getScheduleInfo.bind(this)();
-        var alreadyHas = localStorage.getItem(this.keyValue);
-        var scheduleArray = [];
-        if (!!alreadyHas) {
-            var parsedArray = JSON.parse(alreadyHas);
-            parsedArray.push(scheduleInfo);
-            localStorage.setItem(this.keyValue, JSON.stringify(parsedArray));
-        } else {
-            scheduleArray.push(scheduleInfo);
-            localStorage.setItem(this.keyValue, JSON.stringify(scheduleArray));
+    timeAlert: function() {
+        var elements = document.querySelectorAll(".timeInput");
+        for (var i = 0; i < elements.length; i++) {
+            elements[i].addEventListener("focusout", this.compareDate.bind(this));
         }
-
     },
-    getScheduleInfo: function(){
-      var scheduleInfo = {};
-      for (var i = 0; i < this.inputIdList1.length; i++) {
-          var inputValue = _$("#"+this.inputIdList1[i]).value;
-          scheduleInfo[this.inputIdList1[i]] = inputValue;
-      }
-      for (var j = 0; j < this.inputIdList2.length; j++) {
-          var timeValue = _$("#"+this.inputIdList2[j]).value;
-          scheduleInfo[this.inputIdList2[j]] = timeValue + ":00Z";
-      }
-      if (this.allDayButton.checked) scheduleInfo["allDay"] = true;
-      else scheduleInfo["allDay"] = false;
-      var repeatValue = _$('input[name="optradio"]:checked').value;
-      scheduleInfo['repeat'] = repeatValue;
-      return scheduleInfo;
+    compareDate: function() {
+        var timeArray = this.getTime();
+        var timeStart = this.dateFromISO(timeArray[0]);
+        var timeEnd = this.dateFromISO(timeArray[1]);
+        if ((timeStart - timeEnd) > 0) {
+            alert("기간을 잘못입력하셨습니다!");
+            this.fixTime(event.target.id);
+        }
+    },
+    fixTime: function(id) {
+        if (id === 'startTime' || id === 'endTime') {
+            _$('#endTime').value = _$('#startTime').value;
+        } else if (id === 'startDay' || id === 'endDay') {
+            _$("#endDay").value = _$('#startDay').value;
+        }  },
+    dateFromISO: function(isostr) {
+        var parts = isostr.match(/\d+/g);
+        return new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+    },
+    saveScheduleInfo: function(x) {
+      console.log(x);
+        if ( typeof x === 'number') {
+          console.log(x);
+            this.getInputValue.bind(this, 0)();
+        } else if(typeof x !== 'number'){
+            this.setDayKey();
+            var scheduleInfo = this.getScheduleInfo.bind(this)();
+            var alreadyHas = localStorage.getItem(this.keyValue);
+            var scheduleArray = [];
+            if (!!alreadyHas) {
+                var parsedArray = JSON.parse(alreadyHas);
+                parsedArray.push(scheduleInfo);
+                localStorage.setItem(this.keyValue, JSON.stringify(parsedArray));
+            } else {
+                scheduleArray.push(scheduleInfo);
+                localStorage.setItem(this.keyValue, JSON.stringify(scheduleArray));
+            }
+        }
+    },
+    getInputValue: function(position) {
+        var scheduleInfo = this.getScheduleInfo.bind(this)();
+        console.log(scheduleInfo); // 테스트용
+        var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
+        var parsedArray = JSON.parse(alreadyHas);
+        parsedArray.splice(position, 1, scheduleInfo);
+        localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
+
+        //테스트용 출력
+        var test = localStorage.getItem("2017-01-04S2017-01-04E");
+        console.log(test);
+    },
+    getScheduleInfo: function() {
+        var scheduleInfo = {};
+        for (var i = 0; i < this.inputIdList1.length; i++) {
+            var inputValue = _$("#" + this.inputIdList1[i]).value;
+            scheduleInfo[this.inputIdList1[i]] = inputValue;
+        }
+        var timeArray = this.getTime();
+        scheduleInfo["start"] = timeArray[0];
+        scheduleInfo["end"] = timeArray[1];
+        if (this.allDayButton.checked) scheduleInfo["allDay"] = true;
+        else scheduleInfo["allDay"] = false;
+        var repeatValue = _$('input[name="optradio"]:checked').value;
+        scheduleInfo['repeat'] = repeatValue;
+        return scheduleInfo;
+    },
+    getTime: function() {
+        var timeArray = [];
+        for (var j = 0; j < this.inputIdList2.length; j++) {
+            var timeValue = "";
+            for (var k = 0; k < this.inputIdList2[j].length; k++) {
+                timeValue += _$("#" + this.inputIdList2[j][k]).value;
+            }
+            timeValue = timeValue.substr(0, 10) + 'T' + timeValue.substr(10);
+            timeValue += ":00Z";
+            console.log(timeValue);
+            timeArray.push(timeValue);
+        }
+        return timeArray;
     },
     setDayKey: function() {
-        var startTime = this.startInput.value;
-        var startDay = startTime.split('T', 1);
-        var endTime = this.endInput.value;
-        var endDay = endTime.split('T', 1);
+        var startDay = this.startDayInput.value;
+        var endDay = this.endDayInput.value;
         this.keyValue = startDay + 'S' + endDay + 'E';
     },
     setAllDay: function() {
-        if (!this.allDayButton.checked) {
-            this.startInput.value = this.defaultStart;
-            this.endInput.value = this.defaultEnd;
-            return;
-        } else if (this.allDayButton.checked) {
-            var parsedDate1 = this.defaultStart.split('T', 1);
-            var parsedDate2 = this.defaultEnd.split('T', 1);
-            this.startInput.value = parsedDate1 + "T00:00";
-            this.endInput.value = parsedDate2 + "T23:59";
+        //this.getCurrentTime();
+        var startTimeInput = this.startTimeInput;
+        var endTimeInput = this.endTimeInput;
+        if (this.allDayButton.checked) {
+            this.defaultStart = startTimeInput.value;
+            this.defaultEnd = endTimeInput.value;
+            startTimeInput.value = "00:00";
+            endTimeInput.value = "23:59";
+            startTimeInput.readOnly = true;
+            endTimeInput.readOnly = true;
+            startTimeInput.style.backgroundColor = "LightGray";
+            endTimeInput.style.backgroundColor = "LightGray";
+        } else if (!this.allDayButton.checked) {
+            startTimeInput.style.backgroundColor = "White";
+            endTimeInput.style.backgroundColor = "White";
+            startTimeInput.readOnly = false;
+            endTimeInput.readOnly = false;
+            startTimeInput.value = this.defaultStart; //this.Date1[0] + ':' + this.Date1[1];
+            endTimeInput.value = this.defaultEnd; //this.Date2[0] + ':' + this.Date2[1];
         }
     },
     clearInput: function() {
         for (var i = 0; i < this.inputIdList1.length; i++) {
-            _$("#"+this.inputIdList1[i]).value = "";
+            _$("#" + this.inputIdList1[i]).value = "";
         }
         _$(".basicValue").checked = true;
         this.allDayButton.checked = false;
+        this.startTimeInput.style.backgroundColor = "White";
+        this.endTimeInput.style.backgroundColor = "White";
+        this.defaultStart = "";
+        this.defalutEnd = "";
     }
 };
 var showForm = new ShowFormPopup();
