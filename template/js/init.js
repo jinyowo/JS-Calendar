@@ -13,7 +13,7 @@ function setCalendar(calendar) {
     // type에 따라 달력 display속성을 block
     calendar.showCalendar();
     // type에 따라 우상단의 type button 활성화
-    setTypeButton(calendar.type, calendar.typeButtons);
+    calendar.setTypeButton(calendar.type, calendar.typeButtons);
     // 달력에 따라 today button 활성화/비활성화
     isToday(calendar);
     // 해당 달력에 포함되어 있는 일정 띄우기

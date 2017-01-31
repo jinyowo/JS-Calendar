@@ -30,21 +30,24 @@ Calendar.prototype = {
         this.callbackList = option;
         // Button init
         for (var i = 0; i < this.arrowButtons.length; i++) {
-            this.arrowButtons[i].init(this,{});
+            this.arrowButtons[i].init(this, this.arrowButtonClickEvent.bind(this), {});
         }
         for (var i = 0; i < this.typeButtons.length; i++) {
-            this.typeButtons[i].init(this,{});
+            this.typeButtons[i].init(this, this.typeButtonClickEvent.bind(this), {});
         }
-        this.todayButton.init(this,{});
+        this.todayButton.init(this, this.todayButtonClickEvent.bind(this), {});
     },
     setType: function(type) {
         this.type = type;
     },
     setMyDate: function(base) {
-        // this.myDate = base;
-        this.myDate.month = base.month;
-        this.myDate.year = base.year;
-        this.myDate.date = base.date;
+        for(var i in this.myDate) {
+            this.myDate[i] = base[i];
+        }
+        // // this.myDate = base;
+        // this.myDate.month = base.month;
+        // this.myDate.year = base.year;
+        // this.myDate.date = base.date;
     },
     setToday: function(ele) {
         Utility.addClass(ele, "fc-today");
@@ -158,5 +161,49 @@ Calendar.prototype = {
         Utility.hideElement(calendarType.month);
         Utility.hideElement(calendarType.week);
         Utility.hideElement(calendarType.day);
+    },
+    // button event
+    arrowButtonClickEvent: function(evt) {
+        this.moveCalendar(evt.target);
+        setCalendar(this);
+    },
+    typeButtonClickEvent: function(evt) {
+        this.type = evt.target.innerText;
+        Utility.resetEvent();
+        setCalendar(this);
+    },
+    todayButtonClickEvent: function() {
+        if (!isToday(this)) {
+            this.setMyDate(Today);
+            Utility.resetEvent();
+            setCalendar(this);
+        }
+    },
+    moveCalendar: function(target) {
+        var prevArrowClass = "fc-prev-button";
+        var nextArrowClass = "fc-next-button";
+        var button = target.closest("button");
+        var mydate = this.myDate;
+        Utility.resetEvent();
+
+        if (button.classList.contains(prevArrowClass)) {
+            mydate.month--;
+        } else if (button.classList.contains(nextArrowClass)) {
+            mydate.month++;
+        }
+        if (mydate.month < 0) {
+            mydate.month = 11;
+            mydate.year--;
+        } else if (mydate.month > 11) {
+            mydate.month = 0;
+            mydate.year++;
+        }
+    },
+    setTypeButton: function(type, typeButtons) {
+        Utility.inactiveButtonSet(typeButtons, "fc-state-active");
+        var typeOrder = ["month", "week", "day"];
+        Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, "fc-state-active");
+
+        return typeButtons;
     }
 };
