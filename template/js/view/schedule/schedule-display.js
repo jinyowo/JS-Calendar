@@ -87,6 +87,12 @@ ScheduleDisplay.prototype = {
       var end = Utility.setTimeByGMT(new Date(this.schedule.end));
       var firstDate = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
 
+      start.setHours(0);
+      start.setMinutes(0);
+
+      end.setHours(0);
+      end.setMinutes(0);
+
       if (start < firstDate) {
         this.status.remain = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
         this.status.isStart = false;
@@ -103,10 +109,10 @@ ScheduleDisplay.prototype = {
         status.isStart = false;
       }
 
-      status.remain --;
-
       if(status.remain === 0) {
         status.isEnd = true;
+      } else {
+        status.remain --;
       }
     },
 
