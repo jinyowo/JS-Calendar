@@ -109,11 +109,8 @@ DetailView.prototype = {
     insertPopupContent: function() {
         var timeData = this.getParsedTime();
         var stringData = _$("#popup-template").innerHTML;
-        Handlebars.registerHelper('time1', function(){
-          return timeData[0];
-        });
-        Handlebars.registerHelper('time2', function(){
-          return timeData[1];
+        Handlebars.registerHelper('time', function(){
+          return timeData[0]+'~'+timeData[1];
         });
         Handlebars.registerHelper('repeat', function(){
           return this.repeat[testArray[position]['repeat']];
