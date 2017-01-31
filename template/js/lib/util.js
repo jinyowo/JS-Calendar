@@ -98,12 +98,13 @@ var Utility = {
     },
     setTimeByGMT: function(date) {
       var converted = new Date();
-      converted.setYear(date.getUTCFullYear());
-      converted.setMonth(date.getUTCMonth());
-      converted.setDate(date.getUTCDate());
-      converted.setHours(date.getUTCHours());
-      converted.setMinutes(date.getUTCMinutes());
       converted.setSeconds(date.getUTCSeconds());
+      converted.setMinutes(date.getUTCMinutes());
+      converted.setHours(date.getUTCHours());
+      converted.setDate(date.getUTCDate());
+      converted.setMonth(date.getUTCMonth());
+      converted.setYear(date.getUTCFullYear());
+
       return converted;
     }
 };
