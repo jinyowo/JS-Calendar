@@ -62,12 +62,17 @@ ScheduleDisplay.prototype = {
       var dateHead = null;
       var dateBody = null;
       for (var i = 0; i < weeks.length; i++) {
+        var rowHead = weeks[i]._$(".fc-content-skeleton thead");
+        if (!this.status.isEnd) {
+          for (var j = 0; j < this.status.row; j++) {
+            this.addRow(rowHead);
+          }
+        }
         if (this.status.isStart) {
           dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
         } else {
           dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
         }
-        var rowHead = weeks[i]._$(".fc-content-skeleton thead");
         dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
 
         if (dateHead !== null && dateBody !== null) {
@@ -81,7 +86,7 @@ ScheduleDisplay.prototype = {
             dateBody = dateBody.nextElementSibling;
           }
         }
-          if (this.status.isEnd === true) {
+          if (this.status.isEnd) {
             break;
           }
       }
