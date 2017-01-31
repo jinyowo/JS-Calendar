@@ -106,5 +106,16 @@ var Utility = {
       converted.setYear(date.getUTCFullYear());
 
       return converted;
-    }
+  },
+  setTimeDefault: function(date, type) {
+      if(type === 0) {
+          date.setHours(0);
+          date.setMinutes(0);
+          date.setSeconds(0);
+      } else {
+          date.setHours(23);
+          date.setMinutes(59);
+          date.setSeconds(59);
+      }
+  }
 };
