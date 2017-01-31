@@ -39,6 +39,7 @@ Button.prototype = {
     todayButtonClickEvent: function() {
         if (!isToday(this.calendar)) {
             this.calendar.setMyDate(Today);
+            Utility.resetEvent();
             setCalendar(this.calendar);
         }
     },
