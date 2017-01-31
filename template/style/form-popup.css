@@ -20,7 +20,7 @@
   }
 
   .container.schedule {
-    width: 50%;
+    width: 52%;
     margin-top: 3%;
     position: absolute;
     background-color: white;
@@ -50,4 +50,11 @@
     color: #000;
     text-decoration: none;
     cursor: pointer;
+  }
+
+  #startDay,#endDay{
+    width:160px;
+  }
+  #startTime,#endTime{
+    width:110px;
   }
