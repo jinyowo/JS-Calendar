@@ -106,5 +106,8 @@ var Utility = {
       converted.setYear(date.getUTCFullYear());
 
       return converted;
+    },
+    on: function(target, evt, func ){ //evt는 문자열로 전달!!
+      return target.addEventListener(evt, func);
     }
 };
