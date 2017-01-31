@@ -43,7 +43,7 @@ var testPosition = undefined ;
 
 // 테스트용 coding
 
-function ShowDetail() {
+function DetailView() {
     this.repeat = {
         Y: "매년",
         M: "매월",
@@ -56,7 +56,7 @@ function ShowDetail() {
     this.span = _$('.popupClose');
     this.parsedContent = _$('.parsedContent');
 }
-ShowDetail.prototype = {
+DetailView.prototype = {
     init: function() {
         this.span.addEventListener("click", this.closePopup.bind(this));
         this.popupBackground.addEventListener("click", this.closePopup.bind(this));
@@ -108,8 +108,14 @@ ShowDetail.prototype = {
     },
     insertPopupContent: function() {
         var timeData = this.getParsedTime();
-        var stringData = '<strong id="popupTitle"><%= title %></strong><br><label >시간: </label><span id="popupTime">' + timeData[0] + " ~ " + timeData[1] + '</span><br><label >반복: </label><span id="popupRepeat">' + this.repeat[testArray[position]['repeat']] + '</span><br><label>장소: </label><span id="popupPlace"><%= place %></span><br><label>설명: </label><span id="popupDesc" ><%= desc %></span>';
-        var compiled = _.template(stringData);
+        var stringData = _$("#popup-template").innerHTML;
+        Handlebars.registerHelper('time', function(){
+          return timeData[0]+'~'+timeData[1];
+        });
+        Handlebars.registerHelper('repeat', function(){
+          return this.repeat[testArray[position]['repeat']];
+        }.bind(this));
+        var compiled = Handlebars.compile(stringData);
         var str = compiled(testArray[position]);
         _$('.parsedContent').innerHTML = str;
     }
@@ -123,8 +129,9 @@ deleteSchedule.prototype = {
         this.deleteButton.addEventListener("click", this.showConfirm.bind(this));
     },
     showConfirm: function() {
-        var msg = confirm("일정을 삭제하시겠습니까?");
-        if (msg) { // Yes click
+        var message= "일정을 삭제하시겠습니까?";
+        var deleteConfirm = confirm(message);
+        if (deleteConfirm) { // Yes click
             this.deleteInfo();
         }
     },
@@ -181,7 +188,7 @@ modifySchedule.prototype = {
 //         console.log(test);
 //     }
 };
-var showDetail = new ShowDetail();
+var showDetail = new DetailView();
 showDetail.init();
 var deleteEvent = new deleteSchedule();
 deleteEvent.init();

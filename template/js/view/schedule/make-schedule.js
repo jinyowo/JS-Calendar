@@ -66,14 +66,14 @@ ShowFormPopup.prototype = {
         Utility.showElement(this.container);
     },
     hideInputForm: function(event) {
-        if (this.isTarget(event)) {
+        if (this.isTarget(event.target)) {
             Utility.hideElement(this.container);
             this.submitInfo.clearInput();
         }
     },
-    isTarget: function(event) {
-        var evtClass = event.target.className;
-        var evtId = event.target.id;
+    isTarget: function(target) {
+        var evtClass = target.className;
+        var evtId = target.id;
         if (evtClass === "scheduleBackground" || evtClass === "closeButton" || evtId === "cancel") {
             return true;
         } else return false;
