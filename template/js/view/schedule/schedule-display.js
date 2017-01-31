@@ -183,74 +183,48 @@ ScheduleDisplay.prototype = {
         return false;
     },
     repeatEvent: function(event) {
-        var repeatCycle = 0;
-        switch (event.repeat) {
-            case "Y":
-                repeatCycle = 365;
-                break;
-            case "M":
-                repeatCycle = 30;
-                break;
-            case "W":
-                repeatCycle = 7;
-                break;
-            case "D":
-                repeatCycle = 1;
-                break;
-        }
+        var repeatType = event.repeat;
         var nextStart = new Date(event.start);
         var nextEnd = new Date(event.end);
-        var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
         var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
+        Utility.setTimeDefault(last, 9);
 
-        last.setHours(23);
-        last.setMinutes(59);
-        last.setSeconds(59);
-        if (repeatCycle < 10) {
-            while (first >= nextStart) {
-                nextStart.setDate(nextStart.getDate() + repeatCycle);
-                nextEnd.setDate(nextEnd.getDate() + repeatCycle);
-            }
-            while (last >= nextEnd) {
-                var repeatSchedule = event;
-                repeatSchedule.start = nextStart;
-                repeatSchedule.end = nextEnd;
-                this.setMonthEvent(repeatSchedule, 0);
+        this.findThisMonthEvent(nextStart, nextEnd, repeatType);
 
-                nextStart.setDate(nextStart.getDate() + repeatCycle);
-                nextEnd.setDate(nextEnd.getDate() + repeatCycle);
-            }
-        } else if (repeatCycle === 30) {
-            while (first >= nextStart) {
-                nextStart.setMonth(nextStart.getMonth() + 1);
-                nextEnd.setMonth(nextEnd.getMonth() + 1);
-            }
-            while (last >= nextEnd) {
-                var repeatSchedule = event;
-                repeatSchedule.start = nextStart;
-                repeatSchedule.end = nextEnd;
-                this.setMonthEvent(repeatSchedule, 0);
-
-                nextStart.setMonth(nextStart.getMonth() + 1);
-                nextEnd.setMonth(nextEnd.getMonth() + 1);
-            }
-        } else {
-            while (first >= nextStart) {
-                nextStart.setFullYear(nextStart.getFullYear() + 1);
-                nextEnd.setFullYear(nextEnd.getFullYear() + 1);
-            }
-            while (last >= nextEnd) {
-                var repeatSchedule = event;
-                repeatSchedule.start = nextStart;
-                repeatSchedule.end = nextEnd;
-                this.setMonthEvent(repeatSchedule, 0);
-
-                nextStart.setFullYear(nextStart.getFullYear() + 1);
-                nextEnd.setFullYear(nextEnd.getFullYear() + 1);
-            }
+        while (last >= nextEnd) {
+            this.showRepeatEvent(event, nextStart, nextEnd);
+            this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
         }
     },
+    findThisMonthEvent: function(nextStart, nextEnd, repeatType) {
+       var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
+       Utility.setTimeDefault(first, 0);
 
+       while (first >= nextStart) {
+           this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
+       }
+   },
+    showRepeatEvent: function(event, nextStart, nextEnd) {
+        var repeatSchedule = event;
+        repeatSchedule.start = nextStart;
+        repeatSchedule.end = nextEnd;
+        this.setMonthEvent(repeatSchedule, 0);
+    },
+    moveNextRepeatEvent: function(nextStart, nextEnd, type) {
+        if(type === "D") {
+            nextStart.setDate(nextStart.getDate() + 1);
+            nextEnd.setDate(nextEnd.getDate() + 1);
+        } else if(type === "W") {
+            nextStart.setDate(nextStart.getDate() + 7);
+            nextEnd.setDate(nextEnd.getDate() + 7);
+        } else if(type === "M") {
+            nextStart.setMonth(nextStart.getMonth() + 1);
+            nextEnd.setMonth(nextEnd.getMonth() + 1);
+        } else if(type === "Y") {
+            nextStart.setFullYear(nextStart.getFullYear() + 1);
+            nextEnd.setFullYear(nextEnd.getFullYear() + 1);
+        }
+    },
     addRow: function(headEle) {
         var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
         for (var i = 0; i < 7; i++) {
