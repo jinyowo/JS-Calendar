@@ -1,6 +1,6 @@
 //temp data
 localStorage.setItem("2017-01-24S2017-02-07E",JSON.stringify([{
-  title: "일정",
+  title: "1/24~2/7",
   start: "2017-01-24T00:00:00Z",
   end: "2017-02-07T01:59:00Z",
   allDay: "false",
@@ -9,7 +9,7 @@ localStorage.setItem("2017-01-24S2017-02-07E",JSON.stringify([{
   desc: "dddddd"
 }]));
 localStorage.setItem("2016-12-06S2016-12-08E", JSON.stringify([{
-    title: "일정",
+    title: "12/6~/12/8반",
     start: "2016-12-06T00:00:00Z",
     end: "2016-12-08T02:59:00Z",
     allDay: "false",
@@ -142,7 +142,11 @@ ScheduleDisplay.prototype = {
       var eStart = due[0];
       var eEnd = due[1].replace("E","");
 
+
       if (eEnd < this.calendar.lastDay) {
+        // 지난달과 이번달에 해당하는 repeatEvent를 받아온다
+        if(this.isRepeatEvent(key)) continue;
+
         if (eEnd > this.calendar.firstDay) {
           this.scheduleObjects.push(localStorage.getItem(key));
         }
@@ -155,7 +159,17 @@ ScheduleDisplay.prototype = {
       }
     }
   },
-
+  isRepeatEvent: function(key) {
+      var schedules = JSON.parse(localStorage.getItem(key));
+      for (var i = 0; i < schedules.length; i++) {
+        var schedule = schedules[i];
+        if (schedule.repeat !== "none") {
+          this.scheduleObjects.push(localStorage.getItem(key));
+          return true;
+      }
+      }
+      return false;
+  },
   repeatEvent: function(event) {
     var repeatCycle = 0;
     switch (event.repeat) {
