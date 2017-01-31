@@ -6,14 +6,16 @@ function Button(selector, type) {
 
 Button.prototype = {
     init: function(_calendar, option) {
+        this.registEvent();
+        this.calendar = _calendar;
+        this.callbackList = option;
+    },
+    registEvent: function() {
         this.ele.addEventListener("mouseover", this.onMouseOver.bind(this));
         this.ele.addEventListener("mouseout", this.onMouseOut.bind(this));
         this.ele.addEventListener("mousedown", this.onMouseDown.bind(this));
         this.ele.addEventListener("mouseup", this.onMouseUp.bind(this));
-        this.ele.addEventListener("click", this[this.onClickEvent].bind(this));
-
-        this.callbackList = option;
-        this.calendar = _calendar;
+        this.ele.addEventListener("click", this[this.onClickEvent].bind(this))
     },
     onMouseOver: function() {
         Utility.addClass(this.ele, "fc-state-hover");
@@ -46,22 +48,21 @@ Button.prototype = {
     moveCalendar: function(type) {
         var prevArrowClass = "fc-prev-button";
         var nextArrowClass = "fc-next-button";
-
         var button = this.ele.closest("button");
+        var mydate = this.calendar.myDate;
         Utility.resetEvent();
-        var base = type;
-        if (button.classList.contains(prevArrowClass)) {
-            this.calendar.myDate.month--;
-        } else if (button.classList.contains(nextArrowClass)) {
-            this.calendar.myDate.month++;
-        }
 
-        if (this.calendar.myDate.month < 0) {
-            this.calendar.myDate.month = 11;
-            this.calendar.myDate.year--;
-        } else if (this.calendar.myDate.month > 11) {
-            this.calendar.myDate.month = 0;
-            this.calendar.myDate.year++;
+        if (button.classList.contains(prevArrowClass)) {
+            mydate.month--;
+        } else if (button.classList.contains(nextArrowClass)) {
+            mydate.month++;
+        }
+        if (mydate.month < 0) {
+            mydate.month = 11;
+            mydate.year--;
+        } else if (mydate.month > 11) {
+            mydate.month = 0;
+            mydate.year++;
         }
     },
     active: function() {
@@ -73,28 +74,21 @@ Button.prototype = {
 }
 function setTypeButton(type, typeButtons) {
     inactiveAllTypeButton(typeButtons);
-    switch (type) {
-        case "month":
-            Utility.addClass(typeButtons[0].ele, "fc-state-active");
-            break;
-        case "week":
-            Utility.addClass(typeButtons[1].ele, "fc-state-active");
-            break;
-        case "day":
-            Utility.addClass(typeButtons[2].ele, "fc-state-active");
-            break;
-    }
+    var typeOrder = ["month", "week", "day"];
+    Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, "fc-state-active");
+
     return typeButtons;
 }
 
 function inactiveAllTypeButton(typeButtons) {
-    Utility.removeClass(typeButtons[0].ele, "fc-state-active");
-    Utility.removeClass(typeButtons[1].ele, "fc-state-active");
-    Utility.removeClass(typeButtons[2].ele, "fc-state-active");
+    for(var i in typeButtons) {
+        Utility.removeClass(typeButtons[i].ele, "fc-state-active");
+    }
 }
 
 function isToday(calendar) {
-    if (calendar.myDate.year !== Today.year || calendar.myDate.month !== Today.month || calendar.myDate.date !== Today.date) {
+    var mydate = calendar.myDate;
+    if (mydate.year !== Today.year || mydate.month !== Today.month || mydate.date !== Today.date) {
         calendar.todayButton.active();
         return false;
     } else {

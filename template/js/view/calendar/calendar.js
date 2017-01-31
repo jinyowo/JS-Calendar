@@ -29,8 +29,12 @@ Calendar.prototype = {
         this.setMyDate(base);
         this.callbackList = option;
         // Button init
-        for (var i = 0; i < this.arrowButtons.length; i++) this.arrowButtons[i].init(this,{});
-        for (var i = 0; i < this.typeButtons.length; i++) this.typeButtons[i].init(this,{});
+        for (var i = 0; i < this.arrowButtons.length; i++) {
+            this.arrowButtons[i].init(this,{});
+        }
+        for (var i = 0; i < this.typeButtons.length; i++) {
+            this.typeButtons[i].init(this,{});
+        }
         this.todayButton.init(this,{});
     },
     setType: function(type) {
@@ -148,11 +152,7 @@ Calendar.prototype = {
     },
     showCalendar: function() {
         this.hideAllCalendar();
-        switch (this.type) {
-            case "month": Utility.showElement(calendarType.month); break;
-            case "week": Utility.showElement(calendarType.week); break;
-            case "day": Utility.showElement(calendarType.day); break;
-        }
+        Utility.showElement(calendarType[this.type]);
     },
     hideAllCalendar: function() {
         Utility.hideElement(calendarType.month);
