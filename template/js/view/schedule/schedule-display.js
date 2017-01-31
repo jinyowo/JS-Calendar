@@ -2,7 +2,7 @@
 localStorage.setItem("2017-01-24S2017-02-07E",JSON.stringify([{
   title: "일정",
   start: "2017-01-24T00:00:00Z",
-  end: "2017-01-29T01:59:00Z",
+  end: "2017-02-07T01:59:00Z",
   allDay: "false",
   repeat: "none",
   place: "where",
@@ -73,7 +73,6 @@ ScheduleDisplay.prototype = {
         if (dateHead !== null && dateBody !== null) {
           for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
             this.setEventBar(dateBody, event.title);
-
             dateBody = dateBody.nextElementSibling;
           }
         }
@@ -86,7 +85,7 @@ ScheduleDisplay.prototype = {
     initStatus: function() {
       var start = Utility.setTimeByGMT(new Date(this.schedule.start));
       var end = Utility.setTimeByGMT(new Date(this.schedule.end));
-      var firstDate = Date.parse(this.calendar.firstDay);
+      var firstDate = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
 
       if (start < firstDate) {
         this.status.remain = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
@@ -173,8 +172,8 @@ ScheduleDisplay.prototype = {
             repeatCycle = 1;
             break;
     }
-    var nextStart = Utility.setTimeByGMT(new Date(event.start));
-    var nextEnd = Utility.setTimeByGMT(new Date(event.end));
+    var nextStart = new Date(event.start);
+    var nextEnd = new Date(event.end);
     var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
     var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
     first.setHours(0);
