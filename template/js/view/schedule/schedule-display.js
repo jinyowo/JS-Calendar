@@ -36,7 +36,8 @@ ScheduleDisplay.prototype = {
     this.status = {
         isStart: true,
         isEnd: true,
-        remain: 0
+        remain: 0,
+        row: 0
     };
   },
 
@@ -61,22 +62,31 @@ ScheduleDisplay.prototype = {
       var dateHead = null;
       var dateBody = null;
       for (var i = 0; i < weeks.length; i++) {
+        var rowHead = weeks[i]._$(".fc-content-skeleton thead");
+        if (!this.status.isEnd) {
+          for (var j = 0; j < this.status.row; j++) {
+            this.addRow(rowHead);
+          }
+        }
         if (this.status.isStart) {
           dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
         } else {
           dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
         }
-        var rowHead = weeks[i]._$(".fc-content-skeleton thead");
-        dateBody = Utility.getTbodyFromThead(rowHead, dateHead);
-
+        dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
 
         if (dateHead !== null && dateBody !== null) {
+          while (dateBody.classList.contains("fc-event-container")) {
+            this.status.row++;
+            this.addRow(rowHead);
+            dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
+          }
           for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
             this.setEventBar(dateBody, event.title);
             dateBody = dateBody.nextElementSibling;
           }
         }
-          if (this.status.isEnd === true) {
+          if (this.status.isEnd) {
             break;
           }
       }
@@ -101,6 +111,9 @@ ScheduleDisplay.prototype = {
         this.status.isStart = true;
       }
       this.status.isEnd = false;
+      if (this.status.isStart) {
+        this.status.row = 0;
+      }
     },
 
     setBarStatus: function(status) {
@@ -246,4 +259,13 @@ ScheduleDisplay.prototype = {
         }
     }
   },
+
+  addRow: function(headEle) {
+    var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
+    for (var i = 0; i < 7; i++) {
+      newRow.children[i].innerHTML = "";
+      newRow.children[i].className = "";
+    }
+    headEle.nextElementSibling.appendChild(newRow);
+  }
 }
