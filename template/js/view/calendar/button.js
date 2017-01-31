@@ -1,7 +1,7 @@
-function Button(selector, type) {
+var Button = function(selector, type) {
     this.ele = _$(".fc-toolbar")._$(selector);
     this.type = type;
-}
+};
 Button.prototype = {
     init: function(_calendar, onClickEvent, option) {
         this.calendar = _calendar;
@@ -34,4 +34,4 @@ Button.prototype = {
     inactive: function() {
         Utility.addClass(this.ele, "fc-state-disabled");
     }
-}
+};

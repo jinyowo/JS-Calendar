@@ -1,8 +1,3 @@
-// month이름, weekday이름, 각 달의 마지막 날짜를 저장한 배열
-var monthArray = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var weekdayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-var weekdayClassArray = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
-
 var _$ = function(selector) {
   return document.querySelector(selector);
 }
@@ -11,26 +6,31 @@ Element.prototype._$ = function(selector) {
   return this.querySelector(selector);
 };
 
-// 오늘 년, 월, 일 정보를 저장할 object
 var _today = new Date();
-var Today = {
-    year : _today.getFullYear(),
-    month : _today.getMonth(),
-    date : _today.getDate(),
-};
-// 달력의 type 3가지를 저장할 object
-var calendarType = {
-    month : _$(".fc-month-view"),
-    week : _$(".fc-basicWeek-view"),
-    day : _$(".fc-agendaDay-view"),
-};
-var buttonType = {
-    arrow : "arrow",
-    type : "type",
-    today : "today",
-};
 
 var Utility = {
+    // month이름, weekday이름, 각 달의 마지막 날짜를 저장한 배열
+    months : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    // var weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    // var weekdayClass = ["fc-sun", "fc-mon", "fc-tue", "fc-wed", "fc-thu", "fc-fri", "fc-sat"];
+    // 오늘 년, 월, 일 정보를 저장할 object
+    Today : {
+        year : _today.getFullYear(),
+        month : _today.getMonth(),
+        date : _today.getDate(),
+    },
+    // 달력의 type 3가지를 저장할 object
+    calendarType : {
+        month : _$(".fc-month-view"),
+        week : _$(".fc-basicWeek-view"),
+        day : _$(".fc-agendaDay-view"),
+    },
+    buttonType : {
+        arrow : "arrow",
+        type : "type",
+        today : "today",
+    },
+
     padZero: function(number, length) {
         var result = number + '';
         while (result.length < length) {
@@ -124,3 +124,26 @@ var Utility = {
       }
   }
 };
+// var Style = {
+//     : "fc-content-skeleton",
+//
+//     : "fc-other-month",
+//
+//     : "fc-event-container",
+//
+//     : "fc-toolbar",
+//     : "fc-today-button",
+//     : "fc-month-button",
+//     : "fc-agendaWeek-button",
+//     : "fc-agendaDay-button",
+//     : "fc-prev-button",
+//     : "fc-next-button",
+//
+//     : "fc-state-hover",
+//     : "fc-state-down",
+//     : "fc-state-disabled",
+//     : "fc-state-active",
+//
+//     : "fc-today",
+//     : "fc-state-highlight",
+// };

@@ -1,4 +1,4 @@
-function Calendar() {
+var Calendar = function() {
     this.myDate = {
         year: -1,
         month: -1,
@@ -13,16 +13,16 @@ function Calendar() {
     this.lastDay = "";
     // Button set
     this.arrowButtons = [
-        new Button(".fc-prev-button", buttonType.arrow),
-        new Button(".fc-next-button", buttonType.arrow),
+        new Button(".fc-prev-button", Utility.buttonType.arrow),
+        new Button(".fc-next-button", Utility.buttonType.arrow),
     ];
     this.typeButtons = [
-        new Button(".fc-month-button", buttonType.type),
-        new Button(".fc-agendaWeek-button", buttonType.type),
-        new Button(".fc-agendaDay-button", buttonType.type),
+        new Button(".fc-month-button", Utility.buttonType.type),
+        new Button(".fc-agendaWeek-button", Utility.buttonType.type),
+        new Button(".fc-agendaDay-button", Utility.buttonType.type),
     ];
-    this.todayButton = new Button(".fc-left .fc-today-button", buttonType.today);
-}
+    this.todayButton = new Button(".fc-left .fc-today-button", Utility.buttonType.today);
+};
 
 Calendar.prototype = {
     init: function(base, option) {
@@ -82,7 +82,7 @@ Calendar.prototype = {
 
     },
     setMonthTitle: function() {
-        var thisMonthFullname = monthArray[this.myDate.month];
+        var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + this.myDate.year + "</h2>";
     },
     setMonthCalendarBody: function() {
@@ -116,7 +116,7 @@ Calendar.prototype = {
             if (this.cells[currentDate].className.includes("fc-other-month")) {
                 Utility.removeClass(this.cells[currentDate], "fc-other-month");
             }
-            if (this.cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Today.year, Today.month + 1, Today.date)) this.setToday(this.cellsBackground[currentDate]);
+            if (this.cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[currentDate]);
             else if (this.cellsBackground[currentDate].className.includes("fc-state-highlight")) this.removeToday(this.cellsBackground[currentDate]);
 
             currentDate++;
@@ -161,12 +161,12 @@ Calendar.prototype = {
     },
     showCalendar: function() {
         this.hideAllCalendar();
-        Utility.showElement(calendarType[this.type]);
+        Utility.showElement(Utility.calendarType[this.type]);
     },
     hideAllCalendar: function() {
-        Utility.hideElement(calendarType.month);
-        Utility.hideElement(calendarType.week);
-        Utility.hideElement(calendarType.day);
+        Utility.hideElement(Utility.calendarType.month);
+        Utility.hideElement(Utility.calendarType.week);
+        Utility.hideElement(Utility.calendarType.day);
     },
     // button event
     arrowButtonClickEvent: function(evt) {
@@ -180,7 +180,7 @@ Calendar.prototype = {
     },
     todayButtonClickEvent: function() {
         if (!this.isToday(this)) {
-            this.setMyDate(Today);
+            this.setMyDate(Utility.Today);
             Utility.resetEvent();
             this.setCalendar(this);
         }
@@ -214,7 +214,7 @@ Calendar.prototype = {
     },
     isToday: function() {
         var mydate = this.myDate;
-        if (mydate.year !== Today.year || mydate.month !== Today.month || mydate.date !== Today.date) {
+        if (mydate.year !== Utility.Today.year || mydate.month !== Utility.Today.month || mydate.date !== Utility.Today.date) {
             this.todayButton.active();
             return false;
         } else {
