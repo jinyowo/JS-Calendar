@@ -58,6 +58,11 @@ var Utility = {
     hideElement: function(ele) {
         ele.style.display = "none";
     },
+    inactiveButtonSet: function(buttons, className) {
+        for(var i in buttons) {
+            this.removeClass(buttons[i].ele, className);
+        }
+    },
     getTbodyFromThead: function(headEle, tdEle, row) {
         var tds = headEle.querySelectorAll("td");
 
