@@ -80,14 +80,17 @@ Calendar.prototype = {
 
         var numArr = [];
 
+        var prevYear = this.myDate.year;
+        if(this.myDate.month===0) { prevYear--;}
         var prevMonthLastDate = this.getLastDate(this.myDate.month - 1);
+
         var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
         var currentDate = 0;
         var nextMonthDate = 1;
 
         // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
         for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
-            this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month, i);
+            this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], prevYear, this.myDate.month, i);
             if (!this.cells[currentDate].className.includes("fc-other-month")) {
                 Utility.addClass(this.cells[currentDate], "fc-other-month");
             }
