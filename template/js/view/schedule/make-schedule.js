@@ -111,7 +111,6 @@ SubmitInfo.prototype = {
         var timeStart = this.dateFromISO(timeArray[0]);
         var timeEnd = this.dateFromISO(timeArray[1]);
         if ((timeStart - timeEnd) > 0) {
-            alert("기간을 잘못입력하셨습니다!");
             this.fixTime(event.target.id);
         }
     },
