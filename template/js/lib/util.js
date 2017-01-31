@@ -122,6 +122,9 @@ var Utility = {
           date.setMinutes(59);
           date.setSeconds(59);
       }
+  },
+  on: function(target, evt, func ){ //evt는 문자열로 전달!!
+      return target.addEventListener(evt, func);
   }
 };
 // var Style = {
