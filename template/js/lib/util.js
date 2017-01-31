@@ -58,7 +58,7 @@ var Utility = {
     hideElement: function(ele) {
         ele.style.display = "none";
     },
-    getTbodyFromThead: function(headEle, tdEle) {
+    getTbodyFromThead: function(headEle, tdEle, row) {
         var tds = headEle.querySelectorAll("td");
 
         for (var i = 0; i < tds.length; i++) {
@@ -67,7 +67,7 @@ var Utility = {
             }
         }
         if (i < tds.length) {
-            return headEle.nextElementSibling.firstElementChild.children[i];
+            return headEle.nextElementSibling.children[row].children[i];
         } else {
             return null;
         }
