@@ -172,8 +172,8 @@ ScheduleDisplay.prototype = {
             repeatCycle = 1;
             break;
     }
-    var nextStart = Utility.setTimeByGMT(new Date(event.start));
-    var nextEnd = Utility.setTimeByGMT(new Date(event.end));
+    var nextStart = new Date(event.start);
+    var nextEnd = new Date(event.end);
     var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
     var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
     first.setHours(0);
