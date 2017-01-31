@@ -39,6 +39,7 @@ ScheduleDisplay.prototype = {
         remain: 0,
         row: 0
     };
+    this.initRow = 0;
   },
 
   setEvents: function() {
@@ -46,8 +47,11 @@ ScheduleDisplay.prototype = {
       var schedules = JSON.parse(this.scheduleObjects[i])
       for (var j = 0; j < schedules.length; j++) {
         this.schedule = schedules[j];
-        if (this.schedule.repeat !== "none") this.repeatEvent(this.schedule);
-        this.setMonthEvent(this.schedule, 0);
+        if (this.schedule.repeat !== "none") {
+          this.repeatEvent(this.schedule);
+          this.initRow++;
+        }
+        else this.setMonthEvent(this.schedule, 0);
       }
     }
     //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
@@ -111,9 +115,7 @@ ScheduleDisplay.prototype = {
         this.status.isStart = true;
       }
       this.status.isEnd = false;
-      if (this.status.isStart) {
-        this.status.row = 0;
-      }
+      this.status.row = this.initRow;
     },
 
     setBarStatus: function(status) {
@@ -261,11 +263,13 @@ ScheduleDisplay.prototype = {
   },
 
   addRow: function(headEle) {
-    var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
-    for (var i = 0; i < 7; i++) {
-      newRow.children[i].innerHTML = "";
-      newRow.children[i].className = "";
+    if (headEle.nextElementSibling.children.length <= this.status.row) {
+      var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
+      for (var i = 0; i < 7; i++) {
+        newRow.children[i].innerHTML = "";
+        newRow.children[i].className = "";
+      }
+      headEle.nextElementSibling.appendChild(newRow);
     }
-    headEle.nextElementSibling.appendChild(newRow);
   }
 }
