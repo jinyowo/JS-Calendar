@@ -44,10 +44,6 @@ Calendar.prototype = {
         for(var i in this.myDate) {
             this.myDate[i] = base[i];
         }
-        // // this.myDate = base;
-        // this.myDate.month = base.month;
-        // this.myDate.year = base.year;
-        // this.myDate.date = base.date;
     },
     setToday: function(ele) {
         Utility.addClass(ele, "fc-today");
@@ -56,6 +52,16 @@ Calendar.prototype = {
     removeToday: function(ele) {
         Utility.removeClass(ele, "fc-today");
         Utility.removeClass(ele, "fc-state-highlight");
+    },
+    setCalendar: function() {
+        this.drawCalendar();
+        // type에 따라 달력 display속성을 block
+        this.showCalendar();
+        // type에 따라 우상단의 type button 활성화
+        this.setTypeButton(this.type, this.typeButtons);
+        // 달력에 따라 today button 활성화/비활성화
+        this.isToday();
+        // 해당 달력에 포함되어 있는 일정 띄우기
     },
     // 월에 맞도록 달력에 숫자를 뿌리는 함수
     drawCalendar: function() {
@@ -165,18 +171,18 @@ Calendar.prototype = {
     // button event
     arrowButtonClickEvent: function(evt) {
         this.moveCalendar(evt.target);
-        setCalendar(this);
+        this.setCalendar(this);
     },
     typeButtonClickEvent: function(evt) {
         this.type = evt.target.innerText;
         Utility.resetEvent();
-        setCalendar(this);
+        this.setCalendar(this);
     },
     todayButtonClickEvent: function() {
-        if (!isToday(this)) {
+        if (!this.isToday(this)) {
             this.setMyDate(Today);
             Utility.resetEvent();
-            setCalendar(this);
+            this.setCalendar(this);
         }
     },
     moveCalendar: function(target) {
@@ -205,5 +211,15 @@ Calendar.prototype = {
         Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, "fc-state-active");
 
         return typeButtons;
+    },
+    isToday: function() {
+        var mydate = this.myDate;
+        if (mydate.year !== Today.year || mydate.month !== Today.month || mydate.date !== Today.date) {
+            this.todayButton.active();
+            return false;
+        } else {
+            this.todayButton.inactive();
+            return true;
+        }
     }
 };

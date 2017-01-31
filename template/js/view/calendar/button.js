@@ -35,14 +35,3 @@ Button.prototype = {
         Utility.addClass(this.ele, "fc-state-disabled");
     }
 }
-
-function isToday(calendar) {
-    var mydate = calendar.myDate;
-    if (mydate.year !== Today.year || mydate.month !== Today.month || mydate.date !== Today.date) {
-        calendar.todayButton.active();
-        return false;
-    } else {
-        calendar.todayButton.inactive();
-        return true;
-    }
-}
