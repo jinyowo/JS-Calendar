@@ -126,8 +126,6 @@ deleteSchedule.prototype = {
         var msg = confirm("일정을 삭제하시겠습니까?");
         if (msg) { // Yes click
             this.deleteInfo();
-        } else {
-            // no click
         }
     },
     deleteInfo: function() {
