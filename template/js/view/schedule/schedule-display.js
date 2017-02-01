@@ -5,33 +5,37 @@ function ScheduleDisplay() {
     this.status;
 }
 ScheduleDisplay.prototype = {
+
     init: function(calendar, due, type) {
-        //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
-        // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-        this.scheduleObjects = [];
-        this.calendarType = type;
-        this.calendar = calendar;
-        this.getThisMonthEvent();
-        this.status = {
-            isStart: true,
-            isEnd: true,
-            remain: 0,
-            row: 0
-        };
+      //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
+      // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
+      this.scheduleObjects = [];
+      this.calendarType = type;
+      this.calendar = calendar;
+      this.getThisMonthEvent();
+      this.status = {
+          isStart: true,
+          isEnd: true,
+          remain: 0,
+          row: 0
+      };
+      this.initRow = 0;
     },
 
     setEvents: function() {
-        for (var i = 0; i < this.scheduleObjects.length; i++) {
-            var schedules = JSON.parse(this.scheduleObjects[i])
-            for (var j = 0; j < schedules.length; j++) {
-                this.schedule = schedules[j];
-                if (this.schedule.repeat !== "none") this.repeatEvent(this.schedule);
-                this.setMonthEvent(this.schedule, 0);
-            }
+      for(var i = 0; i < this.scheduleObjects.length; i++) {
+        var schedules = JSON.parse(this.scheduleObjects[i])
+        for (var j = 0; j < schedules.length; j++) {
+          this.schedule = schedules[j];
+          if (this.schedule.repeat !== "none") {
+            this.repeatEvent(this.schedule);
+            this.initRow++;
+          }
+          else this.setMonthEvent(this.schedule, 0);
         }
-        //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
+      }
+      //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
     },
-
     setMonthEvent: function(event, eventRow) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var startDate = Utility.formDate(start.getFullYear(), start.getMonth() + 1, start.getDate());
@@ -205,11 +209,13 @@ ScheduleDisplay.prototype = {
         }
     },
     addRow: function(headEle) {
-        var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
-        for (var i = 0; i < 7; i++) {
+        if (headEle.nextElementSibling.children.length <= this.status.row) {
+          var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
+          for (var i = 0; i < 7; i++) {
             newRow.children[i].innerHTML = "";
             newRow.children[i].className = "";
+          }
+          headEle.nextElementSibling.appendChild(newRow);
         }
-        headEle.nextElementSibling.appendChild(newRow);
     }
 }
