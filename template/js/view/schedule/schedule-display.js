@@ -153,15 +153,17 @@ ScheduleDisplay.prototype = {
         }
     },
     isRepeatEvent: function(key) {
+        var count = 0;
         var schedules = JSON.parse(localStorage.getItem(key));
         for (var i = 0; i < schedules.length; i++) {
             var schedule = schedules[i];
             if (schedule.repeat !== "none") {
-                this.scheduleObjects.push(localStorage.getItem(key));
-                return true;
+                this.scheduleObjects.push("["+JSON.stringify(schedule)+"]");
+                count++;
             }
         }
-        return false;
+        if(count === schedules.length) return true;
+        else return false;
     },
     repeatEvent: function(event) {
         var repeatType = event.repeat;

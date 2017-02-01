@@ -14,7 +14,7 @@ var Data = {
         "start": "2017-01-04T16:08:00Z",
         "end": "2017-01-04T17:08:00Z",
         "allDay": true,
-        "repeat": "none"
+        "repeat": "W"
     }, {
         "title": "제목3",
         "place": "장소3",
