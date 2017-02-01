@@ -39,8 +39,8 @@ ScheduleDisplay.prototype = {
           else this.setMonthEvent(this.schedule);
         }
       }
-      //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
     },
+
     setMonthEvent: function(event) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var end = Utility.setTimeByGMT(new Date(this.schedule.end));
@@ -66,10 +66,24 @@ ScheduleDisplay.prototype = {
             dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
 
             if (dateHead !== null && dateBody !== null) {
-                while (dateBody.classList.contains("fc-event-container")) {
+                while (dateBody.classList.contains("fc-event-container") || dateBody.classList.contains("fc-more-cell")) {
                     this.status.row++;
                     this.addRow(rowHead);
                     dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
+                }
+                if (this.status.row === 3) {
+                  this.setMoreCell(dateBody);
+                  this.status.row++;
+                  this.addRow(rowHead);
+                  dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
+                  this.status.isEnd = true;
+                  this.setLimitedEvent(dateBody, event.title);
+                  break;
+                }
+                if (this.status.row > 3) {
+                  this.status.isEnd = true;
+                  this.setLimitedEvent(dateBody, event.title);
+                  break;
                 }
                 for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
                     this.setEventBar(dateBody, event.title);
@@ -137,6 +151,18 @@ ScheduleDisplay.prototype = {
         } else {
             Utility.addClass(eventLink, "fc-not-end");
         }
+    },
+
+    setLimitedEvent: function(ele, title) {
+        Utility.addClass(ele.parentNode, "fc-limited");
+        this.setEventBar(ele, title);
+    },
+
+    setMoreCell: function(ele) {
+        Utility.addClass(ele, "fc-more-cell");
+        ele.innerHTML = "<div><a class=\"fc-more\">more...</a></div>";
+
+        ele._$(".fc-more").addEventListener('click',this.showMore);
     },
 
     getThisMonthEvent: function() {
@@ -229,6 +255,17 @@ ScheduleDisplay.prototype = {
             newRow.children[i].className = "";
           }
           headEle.nextElementSibling.appendChild(newRow);
+        }
+    },
+
+    showMore: function(evt) {
+        var moreButton = evt.target
+        var table = moreButton.parentNode.parentNode.parentNode.parentNode;
+        var hidden = table.querySelectorAll(".fc-limited");
+        Utility.hideElement(moreButton.parentNode);
+        table.closest(".fc-row").style.height = (table.children.length * 20) + "px";
+        for(var i = 0; i < hidden.length; i++) {
+            Utility.removeClass(hidden[i], "fc-limited");
         }
     }
 }
