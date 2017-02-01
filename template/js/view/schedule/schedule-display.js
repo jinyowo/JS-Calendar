@@ -90,9 +90,7 @@ ScheduleDisplay.prototype = {
             this.status.isStart = true;
         }
         this.status.isEnd = false;
-        if (this.status.isStart) {
-            this.status.row = 0;
-        }
+        this.status.row = this.initRow;
     },
 
     setBarStatus: function(status) {
