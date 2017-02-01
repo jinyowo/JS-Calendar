@@ -153,6 +153,8 @@ SubmitInfo.prototype = {
                 localStorage.setItem(this.keyValue, JSON.stringify(scheduleArray));
             }
         }
+
+
     },
     getInputValue: function(position) {
         var scheduleInfo = this.getScheduleInfo.bind(this)();
@@ -180,13 +182,14 @@ SubmitInfo.prototype = {
         else scheduleInfo["allDay"] = false;
 
         var repeatValue = _$('input[name="optradio"]:checked').value;
-        var form = document.getElementById("schedule");
-        form.onsubmit = this.checkRepeatEvent(repeatValue, this.dateFromISO(scheduleInfo["start"]), this.dateFromISO(scheduleInfo["end"]));
-
         scheduleInfo['repeat'] = repeatValue;
-        if(!form.onsubmit) {
-            scheduleInfo = undefined;
-        }
+
+        // check repeatEvent date
+        var form = document.getElementById("schedule");
+        var correntEvent = this.checkRepeatEvent(repeatValue, this.dateFromISO(scheduleInfo["start"]), this.dateFromISO(scheduleInfo["end"]));
+        form.onsubmit = correntEvent;
+        if(!correntEvent)   scheduleInfo = undefined;
+
         return scheduleInfo;
     },
     getTime: function() {
@@ -242,7 +245,6 @@ SubmitInfo.prototype = {
         this.defalutEnd = "";
     },
     checkRepeatEvent: function(repeat, start, end) {
-
         var currDay = 24 * 60 * 60 * 1000;
         var currWeek = currDay * 7;
         var currMonth = currDay * 30;
@@ -253,7 +255,7 @@ SubmitInfo.prototype = {
         if(repeat === "D") {
             result = diff > currDay ? false : true;
         } else if(repeat === "W") {
-            result = diff > currWeek > 7 ? false : true;
+            result = diff > currWeek ? false : true;
         } else if(repeat === "M") {
             result = diff > currMonth ? false : true;
         } else {
