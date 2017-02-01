@@ -1,4 +1,4 @@
-function Calendar() {
+var Calendar = function() {
     this.myDate = {
         year: -1,
         month: -1,
@@ -13,34 +13,37 @@ function Calendar() {
     this.lastDay = "";
     // Button set
     this.arrowButtons = [
-        new Button(".fc-prev-button", buttonType.arrow),
-        new Button(".fc-next-button", buttonType.arrow),
+        new Button(".fc-prev-button", Utility.buttonType.arrow),
+        new Button(".fc-next-button", Utility.buttonType.arrow),
     ];
     this.typeButtons = [
-        new Button(".fc-month-button", buttonType.type),
-        new Button(".fc-agendaWeek-button", buttonType.type),
-        new Button(".fc-agendaDay-button", buttonType.type),
+        new Button(".fc-month-button", Utility.buttonType.type),
+        new Button(".fc-agendaWeek-button", Utility.buttonType.type),
+        new Button(".fc-agendaDay-button", Utility.buttonType.type),
     ];
-    this.todayButton = new Button(".fc-left .fc-today-button", buttonType.today);
-}
+    this.todayButton = new Button(".fc-left .fc-today-button", Utility.buttonType.today);
+};
 
 Calendar.prototype = {
     init: function(base, option) {
         this.setMyDate(base);
         this.callbackList = option;
         // Button init
-        for (var i = 0; i < this.arrowButtons.length; i++) this.arrowButtons[i].init(this,{});
-        for (var i = 0; i < this.typeButtons.length; i++) this.typeButtons[i].init(this,{});
-        this.todayButton.init(this,{});
+        for (var i = 0; i < this.arrowButtons.length; i++) {
+            this.arrowButtons[i].init(this, this.arrowButtonClickEvent.bind(this), {});
+        }
+        for (var i = 0; i < this.typeButtons.length; i++) {
+            this.typeButtons[i].init(this, this.typeButtonClickEvent.bind(this), {});
+        }
+        this.todayButton.init(this, this.todayButtonClickEvent.bind(this), {});
     },
     setType: function(type) {
         this.type = type;
     },
     setMyDate: function(base) {
-        // this.myDate = base;
-        this.myDate.month = base.month;
-        this.myDate.year = base.year;
-        this.myDate.date = base.date;
+        for(var i in this.myDate) {
+            this.myDate[i] = base[i];
+        }
     },
     setToday: function(ele) {
         Utility.addClass(ele, "fc-today");
@@ -49,6 +52,16 @@ Calendar.prototype = {
     removeToday: function(ele) {
         Utility.removeClass(ele, "fc-today");
         Utility.removeClass(ele, "fc-state-highlight");
+    },
+    setCalendar: function() {
+        this.drawCalendar();
+        // type에 따라 달력 display속성을 block
+        this.showCalendar();
+        // type에 따라 우상단의 type button 활성화
+        this.setTypeButton(this.type, this.typeButtons);
+        // 달력에 따라 today button 활성화/비활성화
+        this.isToday();
+        // 해당 달력에 포함되어 있는 일정 띄우기
     },
     // 월에 맞도록 달력에 숫자를 뿌리는 함수
     drawCalendar: function() {
@@ -69,7 +82,7 @@ Calendar.prototype = {
 
     },
     setMonthTitle: function() {
-        var thisMonthFullname = monthArray[this.myDate.month];
+        var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + this.myDate.year + "</h2>";
     },
     setMonthCalendarBody: function() {
@@ -103,7 +116,7 @@ Calendar.prototype = {
             if (this.cells[currentDate].className.includes("fc-other-month")) {
                 Utility.removeClass(this.cells[currentDate], "fc-other-month");
             }
-            if (this.cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Today.year, Today.month + 1, Today.date)) this.setToday(this.cellsBackground[currentDate]);
+            if (this.cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[currentDate]);
             else if (this.cellsBackground[currentDate].className.includes("fc-state-highlight")) this.removeToday(this.cellsBackground[currentDate]);
 
             currentDate++;
@@ -148,15 +161,65 @@ Calendar.prototype = {
     },
     showCalendar: function() {
         this.hideAllCalendar();
-        switch (this.type) {
-            case "month": Utility.showElement(calendarType.month); break;
-            case "week": Utility.showElement(calendarType.week); break;
-            case "day": Utility.showElement(calendarType.day); break;
-        }
+        Utility.showElement(Utility.calendarType[this.type]);
     },
     hideAllCalendar: function() {
-        Utility.hideElement(calendarType.month);
-        Utility.hideElement(calendarType.week);
-        Utility.hideElement(calendarType.day);
+        Utility.hideElement(Utility.calendarType.month);
+        Utility.hideElement(Utility.calendarType.week);
+        Utility.hideElement(Utility.calendarType.day);
+    },
+    // button event
+    arrowButtonClickEvent: function(evt) {
+        this.moveCalendar(evt.target);
+        this.setCalendar(this);
+    },
+    typeButtonClickEvent: function(evt) {
+        this.type = evt.target.innerText;
+        Utility.resetEvent();
+        this.setCalendar(this);
+    },
+    todayButtonClickEvent: function() {
+        if (!this.isToday(this)) {
+            this.setMyDate(Utility.Today);
+            Utility.resetEvent();
+            this.setCalendar(this);
+        }
+    },
+    moveCalendar: function(target) {
+        var prevArrowClass = "fc-prev-button";
+        var nextArrowClass = "fc-next-button";
+        var button = target.closest("button");
+        var mydate = this.myDate;
+        Utility.resetEvent();
+
+        if (button.classList.contains(prevArrowClass)) {
+            mydate.month--;
+        } else if (button.classList.contains(nextArrowClass)) {
+            mydate.month++;
+        }
+        if (mydate.month < 0) {
+            mydate.month = 11;
+            mydate.year--;
+        } else if (mydate.month > 11) {
+            mydate.month = 0;
+            mydate.year++;
+        }
+    },
+    setTypeButton: function(type, typeButtons) {
+        Utility.inactiveButtonSet(typeButtons, "fc-state-active");
+        var typeOrder = ["month", "week", "day"];
+        Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, "fc-state-active");
+
+        return typeButtons;
+    },
+    isToday: function() {
+        var mydate = this.myDate;
+        if (mydate.year !== Utility.Today.year || mydate.month !== Utility.Today.month || mydate.date !== Utility.Today.date) {
+            this.todayButton.active();
+            return false;
+        } else {
+            this.todayButton.inactive();
+            return true;
+        }
     }
 };
