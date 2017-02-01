@@ -264,6 +264,7 @@ ScheduleDisplay.prototype = {
         var hidden = table.querySelectorAll(".fc-limited");
         Utility.hideElement(moreButton.parentNode);
         table.closest(".fc-row").style.height = (table.children.length * 20) + "px";
+        _$(".fc-scroller").style.height = 647 + (table.children.length * 20) - 107 + "px";
         for(var i = 0; i < hidden.length; i++) {
             Utility.removeClass(hidden[i], "fc-limited");
         }
