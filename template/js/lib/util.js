@@ -126,26 +126,30 @@ var Utility = {
       return target.addEventListener(evt, func);
   }
 };
-// var Style = {
-//     : "fc-content-skeleton",
-//
-//     : "fc-other-month",
-//
-//     : "fc-event-container",
-//
-//     : "fc-toolbar",
-//     : "fc-today-button",
-//     : "fc-month-button",
-//     : "fc-agendaWeek-button",
-//     : "fc-agendaDay-button",
-//     : "fc-prev-button",
-//     : "fc-next-button",
-//
-//     : "fc-state-hover",
-//     : "fc-state-down",
-//     : "fc-state-disabled",
-//     : "fc-state-active",
-//
-//     : "fc-today",
-//     : "fc-state-highlight",
-// };
+/** CSS class중 Selector로 주로 사용하는 class모음 */
+var Selector = {
+    monthView : "fc-month-view",
+    // : "fc-content-skeleton",
+    topDiv: "fc-toolbar",
+    cellTop: "fc-day-top",
+    cellBg: "fc-day",
+
+    today : "fc-today",
+    otherMonth : "fc-other-month",
+    schedule : "fc-event-container",
+
+    todayButton : "fc-today-button",
+    monthTypeButton : "fc-month-button",
+    weekTypeButton : "fc-agendaWeek-button",
+    dayTypeButton : "fc-agendaDay-button",
+    prevButton : "fc-prev-button",
+    nextButton : "fc-next-button",
+};
+/** CSS class중 Style을 조정하는 class모음 */
+var Style = {
+    hoverEffect : "fc-state-hover",
+    clickEffect : "fc-state-down",
+    disabledEffect : "fc-state-disabled",
+    activeEffect : "fc-state-active",
+    todayEffect : "fc-state-highlight",
+};
