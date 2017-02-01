@@ -101,17 +101,16 @@ var Utility = {
                 "\n</tr>";
         }
     },
-    setTimeByGMT: function(date) {
-      var converted = new Date();
-      converted.setSeconds(date.getUTCSeconds());
-      converted.setMinutes(date.getUTCMinutes());
-      converted.setHours(date.getUTCHours());
-      converted.setDate(date.getUTCDate());
-      converted.setMonth(date.getUTCMonth());
-      converted.setYear(date.getUTCFullYear());
 
+    setTimeByGMT: function(date) {
+      var converted = date;
+      var offset = date.getTimezoneOffset()/60;
+      var hours = date.getHours();
+
+      converted.setHours(hours + offset);
       return converted;
-  },
+    },
+
   setTimeDefault: function(date, type) {
       if(type === 0) {
           date.setHours(0);
