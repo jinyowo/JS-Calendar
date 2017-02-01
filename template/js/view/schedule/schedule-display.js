@@ -35,9 +35,11 @@ ScheduleDisplay.prototype = {
         }
         //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
     },
-    setMonthEvent: function(event, eventRow) {
+    setMonthEvent: function(event) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
+        var end = Utility.setTimeByGMT(new Date(this.schedule.end));
         var startDate = Utility.formDate(start.getFullYear(), start.getMonth() + 1, start.getDate());
+        var endDate = Utility.formDate(end.getFullYear(), end.getMonth() + 1, end.getDate());
 
         this.initStatus();
         var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
@@ -112,6 +114,9 @@ ScheduleDisplay.prototype = {
             "</div></a>";
         var eventLink = ele._$("a");
 
+        eventLink.setAttribute("data-key", this.status.key);
+        eventLink.setAttribute("data-pos", this.status.position);
+
         if (ele.isEqualNode(ele.parentNode.firstElementChild) || this.status.isStart) {
             eventLink._$("div").innerHTML = "<span class = \"fc-title\">" + title + "</span>";
         }
@@ -143,13 +148,16 @@ ScheduleDisplay.prototype = {
             if (eEnd < this.calendar.lastDay) {
                 if (eEnd > this.calendar.firstDay) {
                     this.scheduleObjects.push(items);
+                    this.keys.push(key);
                 }
             } else if (eStart > this.calendar.firstDay) {
                 if (eStart < this.calendar.lastDay) {
                     this.scheduleObjects.push(items);
+                    this.keys.push(key);
                 }
             } else {
                 this.scheduleObjects.push(items);
+                this.keys.push(key);
             }
         }
     },
@@ -161,6 +169,7 @@ ScheduleDisplay.prototype = {
             var schedule = schedules[i];
             if (schedule.repeat !== "none") {
                 this.scheduleObjects.push("[" + JSON.stringify(schedule) + "]");
+                this.keys.push(key);
                 count++;
             } else {
                 this.noRepeatEvent.push(JSON.stringify(schedule));
