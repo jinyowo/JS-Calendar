@@ -9,34 +9,6 @@ var schedule = {
     desc: "FE 인턴 education"
 };
 
-var test1 = [{
-    "title": "제목1",
-    "place": "장소1",
-    "desc": "설명1",
-    "start": "2017-01-04T16:07:00Z",
-    "end": "2017-01-04T17:07:00Z",
-    "allDay": false,
-    "repeat": "none"
-}, {
-    "title": "제목2",
-    "place": "장소2",
-    "desc": "설명2",
-    "start": "2017-01-04T16:08:00Z",
-    "end": "2017-01-04T17:08:00Z",
-    "allDay": true,
-    "repeat": "none"
-}, {
-    "title": "제목3",
-    "place": "장소3",
-    "desc": "설명3",
-    "start": "2017-01-04T18:08:00Z",
-    "end": "2017-01-04T22:08:00Z",
-    "allDay": false,
-    "repeat": "none"
-}];
-
-localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(test1));
-
 var testArray = JSON.parse(localStorage.getItem("2017-01-04S2017-01-04E"));
 var position = 0;
 var testPosition = undefined ;

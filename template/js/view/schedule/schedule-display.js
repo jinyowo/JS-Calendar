@@ -1,30 +1,9 @@
-//temp data
-localStorage.setItem("2017-01-24S2017-02-07E", JSON.stringify([{
-    title: "1/24~2/7",
-    start: "2017-01-24T00:00:00Z",
-    end: "2017-02-07T01:59:00Z",
-    allDay: "false",
-    repeat: "none",
-    place: "where",
-    desc: "dddddd"
-}]));
-localStorage.setItem("2016-12-06S2016-12-08E", JSON.stringify([{
-    title: "12/6~/12/8반",
-    start: "2016-12-06T00:00:00Z",
-    end: "2016-12-08T02:59:00Z",
-    allDay: "false",
-    repeat: "W",
-    place: "where",
-    desc: "dddddd"
-}]));
-
 function ScheduleDisplay() {
     this.scheduleObjects;
     this.schedule;
     this.remainedSchedules;
     this.status;
 }
-
 ScheduleDisplay.prototype = {
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함

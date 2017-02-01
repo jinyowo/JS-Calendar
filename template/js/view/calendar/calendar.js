@@ -1,4 +1,4 @@
-var Calendar = function() {
+function Calendar() {
     this.myDate = {
         year: -1,
         month: -1,

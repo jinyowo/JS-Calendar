@@ -1,4 +1,4 @@
-var Button = function(selector, type) {
+function Button(selector, type) {
     this.ele = _$(".fc-toolbar")._$(selector);
     this.type = type;
 };
