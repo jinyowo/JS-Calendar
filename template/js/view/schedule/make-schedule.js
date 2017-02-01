@@ -97,7 +97,7 @@ function SubmitInfo() {
 SubmitInfo.prototype = {
     init: function() {
         this.allDayButton.addEventListener("click", this.setAllDay.bind(this));
-        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this));//,testPosition));
+        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this)); //,testPosition));
         this.timeAlert.bind(this)();
     },
     timeAlert: function() {
@@ -110,26 +110,35 @@ SubmitInfo.prototype = {
         var timeArray = this.getTime();
         var timeStart = this.dateFromISO(timeArray[0]);
         var timeEnd = this.dateFromISO(timeArray[1]);
-        if ((timeStart - timeEnd) > 0) {
+        if ((timeStart - timeEnd) >= 0) {
             this.fixTime(event.target.id);
         }
     },
     fixTime: function(id) {
         if (id === 'startTime' || id === 'endTime') {
-            _$('#endTime').value = _$('#startTime').value;
+            _$('#endTime').value = this.addMinutes(_$('#startTime').value, '5');
         } else if (id === 'startDay' || id === 'endDay') {
             _$("#endDay").value = _$('#startDay').value;
-        }  },
+        }
+    },
+    addMinutes: function(time, minsToAdd) {
+        function D(J) {
+            return (J < 10 ? '0' : '') + J;
+        }
+        var piece = time.split(':');
+        var mins = piece[0] * 60 + +piece[1] + +minsToAdd;
+        return D(mins % (24 * 60) / 60 | 0) + ':' + D(mins % 60);
+    },
     dateFromISO: function(isostr) {
         var parts = isostr.match(/\d+/g);
         return new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
     },
     saveScheduleInfo: function(x) {
-      console.log(x);
-        if ( typeof x === 'number') {
-          console.log(x);
+        console.log(x);
+        if (typeof x === 'number') {
+            console.log(x);
             this.getInputValue.bind(this, 0)();
-        } else if(typeof x !== 'number'){
+        } else if (typeof x !== 'number') {
             this.setDayKey();
             var scheduleInfo = this.getScheduleInfo.bind(this)();
             var alreadyHas = localStorage.getItem(this.keyValue);
