@@ -182,11 +182,11 @@ ScheduleDisplay.prototype = {
         var repeatType = event.repeat;
         var nextStart = new Date(event.start);
         var nextEnd = new Date(event.end);
-        var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
-        Utility.setTimeDefault(last, 9);
 
         this.findThisMonthEvent(nextStart, nextEnd, repeatType);
 
+        var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
+        Utility.setTimeDefault(last, 9);
         while (last >= nextEnd) {
             this.showRepeatEvent(event, nextStart, nextEnd);
             this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
