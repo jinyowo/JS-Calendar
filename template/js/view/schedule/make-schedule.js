@@ -185,10 +185,8 @@ SubmitInfo.prototype = {
         scheduleInfo['repeat'] = repeatValue;
 
         // check repeatEvent date
-        var form = document.getElementById("schedule");
         var correntEvent = this.checkRepeatEvent(repeatValue, this.dateFromISO(scheduleInfo["start"]), this.dateFromISO(scheduleInfo["end"]));
-        form.onsubmit = correntEvent;
-        if(!correntEvent)   scheduleInfo = undefined;
+        if(!correntEvent) scheduleInfo = undefined;
 
         return scheduleInfo;
     },
