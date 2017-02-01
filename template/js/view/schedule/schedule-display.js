@@ -10,6 +10,7 @@ ScheduleDisplay.prototype = {
       //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
       // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
       this.scheduleObjects = [];
+      this.keys = [];
       this.calendarType = type;
       this.calendar = calendar;
       this.getThisMonthEvent();
@@ -17,28 +18,34 @@ ScheduleDisplay.prototype = {
           isStart: true,
           isEnd: true,
           remain: 0,
-          row: 0
+          row: 0,
+          key: "",
+          position: 0
       };
       this.initRow = 0;
     },
 
     setEvents: function() {
       for(var i = 0; i < this.scheduleObjects.length; i++) {
-        var schedules = JSON.parse(this.scheduleObjects[i])
+        var schedules = JSON.parse(this.scheduleObjects[i]);
+        this.status.key = this.keys[i];
         for (var j = 0; j < schedules.length; j++) {
           this.schedule = schedules[j];
+          this.status.position = j;
           if (this.schedule.repeat !== "none") {
             this.repeatEvent(this.schedule);
             this.initRow++;
           }
-          else this.setMonthEvent(this.schedule, 0);
+          else this.setMonthEvent(this.schedule);
         }
       }
       //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
     },
-    setMonthEvent: function(event, eventRow) {
+    setMonthEvent: function(event) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
+        var end = Utility.setTimeByGMT(new Date(this.schedule.end));
         var startDate = Utility.formDate(start.getFullYear(), start.getMonth() + 1, start.getDate());
+        var endDate = Utility.formDate(end.getFullYear(), end.getMonth() + 1, end.getDate());
 
         this.initStatus();
         var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
@@ -113,6 +120,9 @@ ScheduleDisplay.prototype = {
             "</div></a>";
         var eventLink = ele._$("a");
 
+        eventLink.setAttribute("data-key", this.status.key);
+        eventLink.setAttribute("data-pos", this.status.position);
+
         if (ele.isEqualNode(ele.parentNode.firstElementChild) || this.status.isStart) {
             eventLink._$("div").innerHTML = "<span class = \"fc-title\">" + title + "</span>";
         }
@@ -138,17 +148,21 @@ ScheduleDisplay.prototype = {
 
             if (eEnd < this.calendar.lastDay) {
                 // 지난달과 이번달에 해당하는 repeatEvent를 받아온다
-                if (this.isRepeatEvent(key)) continue;
-
+                if (this.isRepeatEvent(key)) {
+                  continue;
+                }
                 if (eEnd > this.calendar.firstDay) {
                     this.scheduleObjects.push(localStorage.getItem(key));
+                    this.keys.push(key);
                 }
             } else if (eStart > this.calendar.firstDay) {
                 if (eStart < this.calendar.lastDay) {
                     this.scheduleObjects.push(localStorage.getItem(key));
+                    this.keys.push(key);
                 }
             } else {
                 this.scheduleObjects.push(localStorage.getItem(key));
+                this.keys.push(key);
             }
         }
     },
@@ -158,6 +172,7 @@ ScheduleDisplay.prototype = {
             var schedule = schedules[i];
             if (schedule.repeat !== "none") {
                 this.scheduleObjects.push(localStorage.getItem(key));
+                this.keys.push(key);
                 return true;
             }
         }
