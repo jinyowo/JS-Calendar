@@ -93,12 +93,35 @@ function SubmitInfo() {
     this.startTimeInput = _$("#startTime");
     this.endDayInput = _$("#endDay");
     this.endTimeInput = _$("#endTime");
+    this.cell = document.querySelectorAll("td.fc-day.fc-widget-content:not(.fc-past)");
 }
 SubmitInfo.prototype = {
-    init: function() {
+    init: function(option) {
+        this.callbacklist = option;
+        var keyset = this.callbacklist["KEYSET"]();
         this.allDayButton.addEventListener("click", this.setAllDay.bind(this));
-        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this)); //,testPosition));
+        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
+        document.addEventListener("click", this.clickCalendarCell.bind(this));
+    },
+    clickCalendarCell: function(event) {
+        if (event.target.tagName === "TD" && event.target.className === "") {
+            for (var i = 0; i < this.cell.length; i++) {
+                var mouseX = event.clientX;
+                var mouseY = event.clientY;
+                var rect = this.cell[i].getBoundingClientRect();
+                var width = this.cell[i].offsetWidth;
+                var height = this.cell[i].offsetHeight;
+                if ((mouseX > rect.left &&
+                        mouseX < rect.left + width &&
+                        mouseY > rect.top &&
+                        mouseY < rect.top + height
+                    )) {
+                    this.cell[i].click(); // force click event
+                    return true;
+                }
+            }
+        }
     },
     timeAlert: function() {
         var elements = document.querySelectorAll(".timeInput");
@@ -154,15 +177,16 @@ SubmitInfo.prototype = {
         }
     },
     getInputValue: function(position) {
+        var keyset = this.callbacklist["KEYSET"]();
         var scheduleInfo = this.getScheduleInfo.bind(this)();
         console.log(scheduleInfo); // 테스트용
-        var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
+        var alreadyHas = localStorage.getItem(keyset[0]);
         var parsedArray = JSON.parse(alreadyHas);
-        parsedArray.splice(position, 1, scheduleInfo);
-        localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
+        parsedArray.splice(keyset[1], 1, scheduleInfo);
+        localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
 
         //테스트용 출력
-        var test = localStorage.getItem("2017-01-04S2017-01-04E");
+        var test = localStorage.getItem(keyset[0]);
         console.log(test);
     },
     getScheduleInfo: function() {
@@ -217,8 +241,8 @@ SubmitInfo.prototype = {
             endTimeInput.style.backgroundColor = "White";
             startTimeInput.readOnly = false;
             endTimeInput.readOnly = false;
-            startTimeInput.value = this.defaultStart; //this.Date1[0] + ':' + this.Date1[1];
-            endTimeInput.value = this.defaultEnd; //this.Date2[0] + ':' + this.Date2[1];
+            startTimeInput.value = this.defaultStart;
+            endTimeInput.value = this.defaultEnd;
         }
     },
     clearInput: function() {
@@ -233,5 +257,7 @@ SubmitInfo.prototype = {
         this.defalutEnd = "";
     }
 };
+
+
 var showForm = new ShowFormPopup();
 showForm.init();
