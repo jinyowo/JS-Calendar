@@ -47,11 +47,11 @@ Calendar.prototype = {
     },
     setToday: function(ele) {
         Utility.addClass(ele, "fc-today");
-        Utility.addClass(ele, "fc-state-highlight");
+        Utility.addClass(ele, Style.todayEffect);
     },
     removeToday: function(ele) {
         Utility.removeClass(ele, "fc-today");
-        Utility.removeClass(ele, "fc-state-highlight");
+        Utility.removeClass(ele, Style.todayEffect);
     },
     setCalendar: function() {
         this.drawCalendar();
@@ -206,9 +206,9 @@ Calendar.prototype = {
         }
     },
     setTypeButton: function(type, typeButtons) {
-        Utility.inactiveButtonSet(typeButtons, "fc-state-active");
+        Utility.inactiveButtonSet(typeButtons, Style.activeEffect);
         var typeOrder = ["month", "week", "day"];
-        Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, "fc-state-active");
+        Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, Style.activeEffect);
 
         return typeButtons;
     },

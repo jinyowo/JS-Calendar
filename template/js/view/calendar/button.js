@@ -17,21 +17,21 @@ Button.prototype = {
         this.ele.addEventListener("click", this.onClickEvent.bind(this));
     },
     onMouseOver: function() {
-        Utility.addClass(this.ele, "fc-state-hover");
+        Utility.addClass(this.ele, Style.hoverEffect);
     },
     onMouseOut: function() {
-        Utility.removeClass(this.ele, "fc-state-hover");
+        Utility.removeClass(this.ele, Style.hoverEffect);
     },
     onMouseDown: function() {
-        Utility.addClass(this.ele, "fc-state-down");
+        Utility.addClass(this.ele, Style.clickEffect);
     },
     onMouseUp: function() {
-        Utility.removeClass(this.ele, "fc-state-down");
+        Utility.removeClass(this.ele, Style.clickEffect);
     },
     active: function() {
-        Utility.removeClass(this.ele, "fc-state-disabled");
+        Utility.removeClass(this.ele, Style.disabledEffect);
     },
     inactive: function() {
-        Utility.addClass(this.ele, "fc-state-disabled");
+        Utility.addClass(this.ele, Style.disabledEffect);
     }
 };
