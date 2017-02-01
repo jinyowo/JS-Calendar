@@ -7,34 +7,33 @@ function ScheduleDisplay() {
 ScheduleDisplay.prototype = {
 
     init: function(calendar, due, type) {
-      //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
-      // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-      this.scheduleObjects = [];
-      this.calendarType = type;
-      this.calendar = calendar;
-      this.getThisMonthEvent();
-      this.status = {
-          isStart: true,
-          isEnd: true,
-          remain: 0,
-          row: 0
-      };
-      this.initRow = 0;
+        //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
+        // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
+        this.scheduleObjects = [];
+        this.calendarType = type;
+        this.calendar = calendar;
+        this.getThisMonthEvent();
+        this.status = {
+            isStart: true,
+            isEnd: true,
+            remain: 0,
+            row: 0
+        };
+        this.initRow = 0;
     },
 
     setEvents: function() {
-      for(var i = 0; i < this.scheduleObjects.length; i++) {
-        var schedules = JSON.parse(this.scheduleObjects[i])
-        for (var j = 0; j < schedules.length; j++) {
-          this.schedule = schedules[j];
-          if (this.schedule.repeat !== "none") {
-            this.repeatEvent(this.schedule);
-            this.initRow++;
-          }
-          else this.setMonthEvent(this.schedule, 0);
+        for (var i = 0; i < this.scheduleObjects.length; i++) {
+            var schedules = JSON.parse(this.scheduleObjects[i]);
+            for (var j = 0; j < schedules.length; j++) {
+                this.schedule = schedules[j];
+                if (this.schedule.repeat !== "none") {
+                    this.repeatEvent(this.schedule);
+                    this.initRow++;
+                } else this.setMonthEvent(this.schedule, 0);
+            }
         }
-      }
-      //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
+        //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
     },
     setMonthEvent: function(event, eventRow) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
@@ -131,39 +130,44 @@ ScheduleDisplay.prototype = {
 
     getThisMonthEvent: function() {
         for (var i = 0; i < localStorage.length; i++) {
-            var key = localStorage.key(i)
+            var key = localStorage.key(i);
             var due = key.split("S");
             var eStart = due[0];
             var eEnd = due[1].replace("E", "");
+            var items = localStorage.getItem(key);
+            // 지난달과 이번달에 해당하는 repeatEvent를 받아온다
+            var isRepeat = this.isRepeatEvent(key);
+            if (isRepeat[0]) continue;
+            else if (isRepeat[1] > 0) items = "[" + this.noRepeatEvent + "]";
 
             if (eEnd < this.calendar.lastDay) {
-                // 지난달과 이번달에 해당하는 repeatEvent를 받아온다
-                if (this.isRepeatEvent(key)) continue;
-
                 if (eEnd > this.calendar.firstDay) {
-                    this.scheduleObjects.push(localStorage.getItem(key));
+                    this.scheduleObjects.push(items);
                 }
             } else if (eStart > this.calendar.firstDay) {
                 if (eStart < this.calendar.lastDay) {
-                    this.scheduleObjects.push(localStorage.getItem(key));
+                    this.scheduleObjects.push(items);
                 }
             } else {
-                this.scheduleObjects.push(localStorage.getItem(key));
+                this.scheduleObjects.push(items);
             }
         }
     },
     isRepeatEvent: function(key) {
+        this.noRepeatEvent = [];
         var count = 0;
         var schedules = JSON.parse(localStorage.getItem(key));
         for (var i = 0; i < schedules.length; i++) {
             var schedule = schedules[i];
             if (schedule.repeat !== "none") {
-                this.scheduleObjects.push("["+JSON.stringify(schedule)+"]");
+                this.scheduleObjects.push("[" + JSON.stringify(schedule) + "]");
                 count++;
+            } else {
+                this.noRepeatEvent.push(JSON.stringify(schedule));
             }
         }
-        if(count === schedules.length) return true;
-        else return false;
+        if (count === schedules.length) return [true, 0];
+        else return [false, count];
     },
     repeatEvent: function(event) {
         var repeatType = event.repeat;
@@ -180,13 +184,13 @@ ScheduleDisplay.prototype = {
         }
     },
     findThisMonthEvent: function(nextStart, nextEnd, repeatType) {
-       var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
-       Utility.setTimeDefault(first, 0);
+        var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
+        Utility.setTimeDefault(first, 0);
 
-       while (first >= nextStart) {
-           this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
-       }
-   },
+        while (first >= nextStart) {
+            this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
+        }
+    },
     showRepeatEvent: function(event, nextStart, nextEnd) {
         var repeatSchedule = event;
         repeatSchedule.start = nextStart;
@@ -194,28 +198,28 @@ ScheduleDisplay.prototype = {
         this.setMonthEvent(repeatSchedule, 0);
     },
     moveNextRepeatEvent: function(nextStart, nextEnd, type) {
-        if(type === "D") {
+        if (type === "D") {
             nextStart.setDate(nextStart.getDate() + 1);
             nextEnd.setDate(nextEnd.getDate() + 1);
-        } else if(type === "W") {
+        } else if (type === "W") {
             nextStart.setDate(nextStart.getDate() + 7);
             nextEnd.setDate(nextEnd.getDate() + 7);
-        } else if(type === "M") {
+        } else if (type === "M") {
             nextStart.setMonth(nextStart.getMonth() + 1);
             nextEnd.setMonth(nextEnd.getMonth() + 1);
-        } else if(type === "Y") {
+        } else if (type === "Y") {
             nextStart.setFullYear(nextStart.getFullYear() + 1);
             nextEnd.setFullYear(nextEnd.getFullYear() + 1);
         }
     },
     addRow: function(headEle) {
         if (headEle.nextElementSibling.children.length <= this.status.row) {
-          var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
-          for (var i = 0; i < 7; i++) {
-            newRow.children[i].innerHTML = "";
-            newRow.children[i].className = "";
-          }
-          headEle.nextElementSibling.appendChild(newRow);
+            var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
+            for (var i = 0; i < 7; i++) {
+                newRow.children[i].innerHTML = "";
+                newRow.children[i].className = "";
+            }
+            headEle.nextElementSibling.appendChild(newRow);
         }
     }
 }
