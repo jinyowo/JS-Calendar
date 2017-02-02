@@ -300,8 +300,9 @@ ScheduleDisplay.prototype = {
         for (var i = 0; i < mores.length; i++) {
           Utility.hideElement(mores[i]);
         }
-        table.closest(".fc-row").style.height = ((table.children.length) * 20) + "px";
-        _$(".fc-scroller").style.height = 647 + ((table.children.length) * 20) - 107 + "px";
+        var cellHeight = ((table.children.length) * 20);
+        table.closest(".fc-row").style.height = cellHeight + "px";
+        _$(".fc-scroller").style.height = 647 + cellHeight - 107 + "px";
 
         for(i = 0; i < hidden.length; i++) {
             Utility.removeClass(hidden[i], "fc-limited");
@@ -318,7 +319,10 @@ ScheduleDisplay.prototype = {
         for (var i = 4; i < limited.length; i++) {
           Utility.addClass(limited[i], "fc-limited");
         }
-        Utility.resetField();
+        var totalHeight = parseInt(_$(".fc-scroller").style.height);
+        var cellHeight = parseInt(table.closest(".fc-row").style.height);
+        table.closest(".fc-row").style.height = 107 + "px";
+        _$(".fc-scroller").style.height = totalHeight - (cellHeight-107) + "px";
     },
     getEventRowCount: function(row) {
       var count = 0;
