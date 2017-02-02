@@ -5,7 +5,6 @@ function ScheduleDisplay() {
     this.status;
 }
 ScheduleDisplay.prototype = {
-
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
@@ -24,7 +23,6 @@ ScheduleDisplay.prototype = {
         };
         this.initRow = 0;
     },
-
     setEvents: function() {
         for (var i = 0; i < this.scheduleObjects.length; i++) {
             var schedules = JSON.parse(this.scheduleObjects[i]);
@@ -32,11 +30,11 @@ ScheduleDisplay.prototype = {
             for (var j = 0; j < schedules.length; j++) {
                 this.schedule = schedules[j];
                 this.status.position = j;
-                if(this.schedule.length === 0) continue;
+                if (this.schedule.length === 0) continue;
                 if (this.schedule.repeat !== "none") {
                     this.repeatEvent(this.schedule);
                     this.initRow++;
-                } else  {
+                } else {
                     this.setMonthEvent(this.schedule);
                 }
             }
@@ -82,7 +80,6 @@ ScheduleDisplay.prototype = {
             }
         }
     },
-
     initStatus: function() {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var end = Utility.setTimeByGMT(new Date(this.schedule.end));
@@ -100,9 +97,7 @@ ScheduleDisplay.prototype = {
         this.status.isEnd = false;
         this.status.row = this.initRow;
     },
-
     setBarStatus: function(status) {
-
         if (status.isStart) {
             status.isStart = false;
         }
@@ -113,7 +108,6 @@ ScheduleDisplay.prototype = {
             status.remain--;
         }
     },
-
     setEventBar: function(ele, title) {
         Utility.addClass(ele, "fc-event-container");
         ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
@@ -139,7 +133,6 @@ ScheduleDisplay.prototype = {
             Utility.addClass(eventLink, "fc-not-end");
         }
     },
-
     getThisMonthEvent: function() {
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
@@ -154,13 +147,13 @@ ScheduleDisplay.prototype = {
             var isRepeat = this.isRepeatEvent(key, eStart, eEnd);
             if (isRepeat[0] || isRepeat[1].length > 0) order = isRepeat[1];
 
-            if(order.length > 0) {
+            if (order.length > 0) {
                 var temp = [];
-                for(var j=0; j< schedules.length; j++) {
+                for (var j = 0; j < schedules.length; j++) {
                     var schedule = schedules[j];
-                    if(order.indexOf(j) !== -1) {
+                    if (order.indexOf(j) !== -1) {
                         temp.push(JSON.stringify(schedule));
-                    }else {
+                    } else {
                         temp.push("{}");
                     }
                 }
@@ -168,18 +161,7 @@ ScheduleDisplay.prototype = {
                 this.keys.push(key);
                 continue;
             }
-
-            if (eEnd < this.calendar.lastDay) {
-                if (eEnd > this.calendar.firstDay) {
-                    this.scheduleObjects.push(items);
-                    this.keys.push(key);
-                }
-            } else if (eStart > this.calendar.firstDay) {
-                if (eStart < this.calendar.lastDay) {
-                    this.scheduleObjects.push(items);
-                    this.keys.push(key);
-                }
-            } else {
+            if(this.checkThisMonth(key)) {
                 this.scheduleObjects.push(items);
                 this.keys.push(key);
             }
@@ -197,21 +179,30 @@ ScheduleDisplay.prototype = {
                 // this.keys.push(key);
                 count++;
             } else {
-                if (eEnd < this.calendar.lastDay) {
-                    if (eEnd > this.calendar.firstDay) {
-                        order.push(i);
-                    }
-                } else if (eStart > this.calendar.firstDay) {
-                    if (eStart < this.calendar.lastDay) {
-                        order.push(i);
-                    }
-                } else {
-                    order.push(i);
-                }
+                if(this.checkThisMonth(key)) order.push(i);
             }
         }
         if (count === schedules.length) return [true, []];
         else return [false, order];
+    },
+    checkThisMonth: function(key) {
+        var result = false;
+        var due = key.split("S");
+        var eStart = due[0];
+        var eEnd = due[1].replace("E", "");
+
+        if (eEnd < this.calendar.lastDay) {
+            if (eEnd > this.calendar.firstDay) {
+                result = true;
+            }
+        } else if (eStart > this.calendar.firstDay) {
+            if (eStart < this.calendar.lastDay) {
+                result = true;
+            }
+        } else {
+            result = true;
+        }
+        return result;
     },
     repeatEvent: function(event) {
         var repeatType = event.repeat;
