@@ -175,13 +175,13 @@ Calendar.prototype = {
     },
     typeButtonClickEvent: function(evt) {
         this.type = evt.target.innerText;
-        Utility.resetEvent();
+        this.resetEvent();
         this.setCalendar(this);
     },
     todayButtonClickEvent: function() {
         if (!this.isToday(this)) {
             this.setMyDate(Utility.Today);
-            Utility.resetEvent();
+            this.resetEvent();
             this.setCalendar(this);
         }
     },
@@ -190,7 +190,7 @@ Calendar.prototype = {
         var nextArrowClass = "fc-next-button";
         var button = target.closest("button");
         var mydate = this.myDate;
-        Utility.resetEvent();
+        this.resetEvent();
 
         if (button.classList.contains(prevArrowClass)) {
             mydate.month--;
@@ -221,5 +221,28 @@ Calendar.prototype = {
             this.todayButton.inactive();
             return true;
         }
-    }
+    },
+    resetEvent: function() {
+        this.resetField();
+        var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
+
+        for (var i = 0; i < eventRow.length; i++) {
+            eventRow[i].innerHTML = "<tr>" +
+                "\n<td></td>" +
+                "\n<td></td>" +
+                "\n<td></td>" +
+                "\n<td></td>" +
+                "\n<td></td>" +
+                "\n<td></td>" +
+                "\n<td></td>" +
+                "\n</tr>";
+        }
+    },
+    resetField: function() {
+        var weekRow = document.querySelectorAll(".fc-month-view .fc-week");
+        for (var i = 0; i < weekRow.length; i++) {
+            weekRow[i].style.height = "107px";
+        }
+            _$(".fc-month-view .fc-scroller").style.height = "647px";
+        }
 };

@@ -86,32 +86,6 @@ var Utility = {
         return i;
     },
 
-    resetEvent: function() {
-        this.resetField();
-        var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
-
-        for (var i = 0; i < eventRow.length; i++) {
-            eventRow[i].innerHTML = "<tr>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n</tr>";
-        }
-    },
-
-    resetField: function() {
-      var weekRow = document.querySelectorAll(".fc-month-view .fc-week");
-      for (var i = 0; i < weekRow.length; i++) {
-        weekRow[i].style.height = "107px";
-      }
-
-      _$(".fc-month-view .fc-scroller").style.height = "647px";
-    },
-
     setTimeByGMT: function(date) {
       var converted = date;
       var offset = date.getTimezoneOffset()/60;
