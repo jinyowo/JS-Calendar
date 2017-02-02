@@ -77,15 +77,6 @@ var Utility = {
             return null;
         }
     },
-    getElementPosition: function(ele) {
-        var i = 0;
-        while (ele.nextElementSibling !== null) {
-            i++;
-            ele = ele.nextElementSibling;
-        }
-        return i;
-    },
-
     setTimeByGMT: function(date) {
       var converted = date;
       var offset = date.getTimezoneOffset()/60;
