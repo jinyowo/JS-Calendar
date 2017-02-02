@@ -21,7 +21,6 @@ ScheduleDisplay.prototype = {
             key: "",
             position: 0
         };
-        this.initRow = 0;
     },
     setEvents: function() {
         for (var i = 0; i < this.scheduleObjects.length; i++) {
@@ -31,12 +30,8 @@ ScheduleDisplay.prototype = {
                 this.schedule = schedules[j];
                 this.status.position = j;
                 if (this.schedule.length === 0) continue; //빈 객체가 포함되어 있으면 이벤트출력 안함
-                if (this.schedule.repeat !== "none") {
-                    this.repeatEvent(this.schedule);
-                    this.initRow++;
-                } else {
-                    this.setMonthEvent(this.schedule);
-                }
+                if (this.schedule.repeat !== "none") this.repeatEvent(this.schedule);
+                else this.setMonthEvent(this.schedule);
             }
         }
     },
@@ -51,6 +46,7 @@ ScheduleDisplay.prototype = {
         var dateHead = null;
         var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
+            this.status.row = this.getEventRowCount(weeks[i]);
             var rowHead = weeks[i]._$(".fc-content-skeleton thead");
             if (!this.status.isEnd) {
                 for (var j = 0; j < this.status.row; j++) {
@@ -75,14 +71,10 @@ ScheduleDisplay.prototype = {
                   this.status.row++;
                   this.addRow(rowHead);
                   dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-                  this.status.isEnd = true;
                   this.setLimitedEvent(dateBody, event.title);
-                  break;
                 }
-                if (this.status.row > 3) {
-                  this.status.isEnd = true;
+                else if (this.status.row > 3) {
                   this.setLimitedEvent(dateBody, event.title);
-                  break;
                 }
                 for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
                     this.setEventBar(dateBody, event.title);
@@ -109,7 +101,7 @@ ScheduleDisplay.prototype = {
             this.status.isStart = true;
         }
         this.status.isEnd = false;
-        this.status.row = this.initRow;
+        this.status.row = 0;
     },
     setBarStatus: function(status) {
         if (status.isStart) {
@@ -327,5 +319,15 @@ ScheduleDisplay.prototype = {
           Utility.addClass(limited[i], "fc-limited");
         }
         Utility.resetField();
+    },
+    getEventRowCount: function(row) {
+      var count = 0;
+      var trs = row.querySelectorAll(".fc-content-skeleton tbody tr");
+      for (var i = 0; i < trs.length; i++) {
+        if(trs[i]._$(".fc-event-container") !== null){
+          count++;
+        }
+      }
+      return count;
     }
 }
