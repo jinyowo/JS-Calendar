@@ -165,16 +165,22 @@ ScheduleDisplay.prototype = {
         ele._$(".fc-more").addEventListener('click',this.showMore.bind(this));
     },
 
-    setHideCell: function(moreButton) {
-        var originRow = moreButton.parentNode.parentNode.parentNode;
-        if (originRow.parentNode._$(".fc-hide-cell") === null) {
-            var newRow = originRow.cloneNode(true);
-            var ele = newRow._$(".fc-more-cell");
-            Utility.removeClass(ele, "fc-more-cell");
-            Utility.addClass(ele, "fc-hide-cell");
-            ele.innerHTML = "<div><a class=\"fc-hide\">hide</a></div>";
-            ele._$(".fc-hide").addEventListener('click', this.hideMore.bind(this));
-            originRow.parentNode.appendChild(newRow);
+    setHideCell: function(tableBody) {
+        var newRow = tableBody.children[3].cloneNode(true);
+        newRow.innerHTML = newRow.innerHTML.replace(/more/g, "hide");
+        var newCells = newRow.querySelectorAll(".fc-hide");
+
+        for (var i = 0; i < newCells.length; i++) {
+          newCells[i].addEventListener('click', this.hideMore);
+          newCells[i].innerText = "hide";
+        }
+
+        var oldCell = tableBody._$(".fc-hide-cell");
+
+        if(oldCell !== null) {
+          tableBody.replaceChild(newRow, oldCell.parentNode);
+        } else {
+          tableBody.appendChild(newRow);
         }
     },
 
@@ -274,14 +280,17 @@ ScheduleDisplay.prototype = {
     showMore: function(evt) {
         var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
+        var mores = table.querySelectorAll(".fc-more-cell");
         var hidden = table.children;
 
-        this.setHideCell(moreButton);
-        Utility.hideElement(moreButton.parentNode.parentNode);
+        this.setHideCell(table);
+        for (var i = 0; i < mores.length; i++) {
+          Utility.hideElement(mores[i]);
+        }
         table.closest(".fc-row").style.height = ((table.children.length) * 20) + "px";
         _$(".fc-scroller").style.height = 647 + ((table.children.length) * 20) - 107 + "px";
 
-        for(var i = 4; i < hidden.length; i++) {
+        for(i = 0; i < hidden.length; i++) {
             Utility.removeClass(hidden[i], "fc-limited");
         }
     },
@@ -289,8 +298,10 @@ ScheduleDisplay.prototype = {
         var hideButton = evt.target;
         var table = hideButton.parentNode.parentNode.parentNode.parentNode;
         var limited = table.children;
-
-        Utility.showElement(table._$(".fc-more-cell"));
+        var mores = table.querySelectorAll(".fc-more-cell");
+        for (var i = 0; i < mores.length; i++) {
+          Utility.showElement(mores[i]);
+        }
         for (var i = 4; i < limited.length; i++) {
           Utility.addClass(limited[i], "fc-limited");
         }
