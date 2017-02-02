@@ -5,8 +5,8 @@ function ShowFormPopup() {
 }
 ShowFormPopup.prototype = {
     init: function() {
-        this.calendarCell.addEventListener("click", this.getDateInfo.bind(this));
-        document.addEventListener('click', this.hideInputForm.bind(this));
+        Utility.on(this.calendarCell, "click", this.getDateInfo.bind(this));
+        Utility.on(document, "click", this.hideInputForm.bind(this));
     },
     getDateInfo: function() {
         this.dateData = event.target.getAttribute("data-date");
@@ -23,9 +23,6 @@ ShowFormPopup.prototype = {
         var time = _$("#startTime").value;
         var a = time.split(':');
         var ts = ((a[0] * 60) * 60) + (a[1] * 60); // 현재시간을 초로 변환
-
-        console.log(ts);
-
         if (ts >= 82800) { // 원하는 시간을 초로 바꿔서 현재시간을 초로 변환한 값과 비교
             var parsedDate = this.dateData.split("-", 3);
             var day = parseInt(parsedDate[2]) + 1;
@@ -42,19 +39,9 @@ ShowFormPopup.prototype = {
         this.submitInfo.startTimeInput.value = StartTime;
         this.submitInfo.endDayInput.value = EndDay;
         this.submitInfo.endTimeInput.value = EndTime;
-
-        console.log(StartDay);
-        console.log(StartTime);
-        // this.submitInfo.defaultStartDay = StartDay;
-        // this.submitInfo.defaultStartTime = StartTime;
-        // this.submitInfo.defaultEndDay = EndDay;
-        // this.submitInfo.defaultEndTime = EndTime;
-        //this.submitInfo.init();
     },
     getCurrentTime: function() {
         var date = new Date();
-        // date.setHours(23);
-        // date.setMinutes(0);
         var timedate1 = date.toTimeString();
         this.Date1 = timedate1.split(':', 2);
         date.setHours(date.getHours() + 1);
@@ -99,10 +86,10 @@ function SubmitInfo() {
 SubmitInfo.prototype = {
     init: function(option) {
         this.callbacklist = option;
-        this.allDayButton.addEventListener("click", this.setAllDay.bind(this));
-        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this));
+        Utility.on(this.allDayButton, "click", this.setAllDay.bind(this));
+        Utility.on(this.submitButton, "click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
-        document.addEventListener("click", this.clickCalendarCell.bind(this));
+        Utility.on(document, "click", this.clickCalendarCell.bind(this));
     },
     clickCalendarCell: function(event) {
         if (event.target.tagName === "TD" && event.target.className === "") {
@@ -126,7 +113,7 @@ SubmitInfo.prototype = {
     timeAlert: function() {
         var elements = document.querySelectorAll(".timeInput");
         for (var i = 0; i < elements.length; i++) {
-            elements[i].addEventListener("focusout", this.compareDate.bind(this));
+            Utility.on(elements[i], "focusout", this.compareDate.bind(this));
         }
     },
     compareDate: function() {
