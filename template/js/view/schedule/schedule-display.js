@@ -176,7 +176,7 @@ ScheduleDisplay.prototype = {
                 if(this.checkThisMonth(key)) order.push(i);
             }
         }
-        if (count === schedules.length) return [true, []];
+        if (count === schedules.length) return [true, order];
         else return [false, order];
     },
     checkThisMonth: function(key) {
