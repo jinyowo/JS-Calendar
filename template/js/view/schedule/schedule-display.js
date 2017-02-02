@@ -21,6 +21,12 @@ ScheduleDisplay.prototype = {
             key: "",
             position: 0
         };
+        this.default = {
+            monthHeight: 647,
+            tableHeight: 107,
+            milliToDay: 1000 * 60 * 60 * 24
+        };
+        this.moreRow = 3;
     },
     setEvents: function() {
         for (var i = 0; i < this.scheduleObjects.length; i++) {
@@ -66,14 +72,14 @@ ScheduleDisplay.prototype = {
                     this.addRow(rowHead);
                     dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
                 }
-                if (this.status.row === 3) {
+                if (this.status.row === this.moreRow) {
                   this.setMoreCell(dateBody);
                   this.status.row++;
                   this.addRow(rowHead);
                   dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
                   this.setLimitedEvent(dateBody, event.title);
                 }
-                else if (this.status.row > 3) {
+                else if (this.status.row > this.moreRow) {
                   this.setLimitedEvent(dateBody, event.title);
                 }
                 for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
@@ -94,10 +100,10 @@ ScheduleDisplay.prototype = {
         Utility.setTimeDefault(end, 0);
 
         if (start < firstDate) {
-            this.status.remain = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
+            this.status.remain = Math.ceil((end - firstDate) / this.default.milliToDay);
             this.status.isStart = false;
         } else {
-            this.status.remain = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            this.status.remain = Math.ceil((end - start) / this.default.milliToDay);
             this.status.isStart = true;
         }
         this.status.isEnd = false;
@@ -152,12 +158,12 @@ ScheduleDisplay.prototype = {
     },
 
     setHideCell: function(tableBody) {
-        var newRow = tableBody.children[3].cloneNode(true);
+        var newRow = tableBody.children[this.moreRow].cloneNode(true);
         newRow.innerHTML = newRow.innerHTML.replace(/more/g, "hide");
         var newCells = newRow.querySelectorAll(".fc-hide");
 
         for (var i = 0; i < newCells.length; i++) {
-          newCells[i].addEventListener('click', this.hideMore);
+          newCells[i].addEventListener('click', this.hideMore.bind(this));
           newCells[i].innerText = "hide";
         }
 
@@ -301,7 +307,7 @@ ScheduleDisplay.prototype = {
         }
         var cellHeight = ((table.children.length) * 20);
         table.closest(".fc-row").style.height = cellHeight + "px";
-        _$(".fc-scroller").style.height = 647 + cellHeight - 107 + "px";
+        _$(".fc-scroller").style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
 
         for(i = 0; i < hidden.length; i++) {
             Utility.removeClass(hidden[i], "fc-limited");
@@ -315,13 +321,13 @@ ScheduleDisplay.prototype = {
         for (var i = 0; i < mores.length; i++) {
           Utility.showElement(mores[i]);
         }
-        for (var i = 4; i < limited.length; i++) {
+        for (var i = this.moreRow + 1; i < limited.length; i++) {
           Utility.addClass(limited[i], "fc-limited");
         }
         var totalHeight = parseInt(_$(".fc-scroller").style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
-        table.closest(".fc-row").style.height = 107 + "px";
-        _$(".fc-scroller").style.height = totalHeight - (cellHeight - 107) + "px";
+        table.closest(".fc-row").style.height = this.default.tableHeight + "px";
+        _$(".fc-scroller").style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
     getEventRowCount: function(row) {
       var count = 0;
