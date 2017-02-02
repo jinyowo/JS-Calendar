@@ -157,38 +157,19 @@ SubmitInfo.prototype = {
         return new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
     },
     saveScheduleInfo: function(x) {
-        // console.log(x);
-        // if (typeof x === 'number') {
-        //     console.log(x);
-        //     this.getInputValue.bind(this, 0)();
-        // } else if (typeof x !== 'number')
-        this.setDayKey();
+        var keyValue = this.setDayKey();
         var scheduleInfo = this.getScheduleInfo.bind(this)();
-        var alreadyHas = localStorage.getItem(this.keyValue);
+        var alreadyHas = localStorage.getItem(keyValue);
         var scheduleArray = [];
         if (!!alreadyHas) {
             var parsedArray = JSON.parse(alreadyHas);
             parsedArray.push(scheduleInfo);
-            localStorage.setItem(this.keyValue, JSON.stringify(parsedArray));
+            localStorage.setItem(keyValue, JSON.stringify(parsedArray));
         } else {
             scheduleArray.push(scheduleInfo);
-            localStorage.setItem(this.keyValue, JSON.stringify(scheduleArray));
+            localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
         }
-        // }
     },
-    // getInputValue: function(position) {
-    //     var keyset = this.callbacklist["KEYSET"]();
-    //     var scheduleInfo = this.getScheduleInfo.bind(this)();
-    //     console.log(scheduleInfo); // 테스트용
-    //     var alreadyHas = localStorage.getItem(keyset[0]);
-    //     var parsedArray = JSON.parse(alreadyHas);
-    //     parsedArray.splice(keyset[1], 1, scheduleInfo);
-    //     localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
-    //
-    //     //테스트용 출력
-    //     var test = localStorage.getItem(keyset[0]);
-    //     console.log(test);
-    // },
     getScheduleInfo: function() {
         var scheduleInfo = {};
         for (var i = 0; i < this.inputIdList1.length; i++) {
@@ -213,7 +194,6 @@ SubmitInfo.prototype = {
             }
             timeValue = timeValue.substr(0, 10) + 'T' + timeValue.substr(10);
             timeValue += ":00Z";
-            console.log(timeValue);
             timeArray.push(timeValue);
         }
         return timeArray;
@@ -221,7 +201,8 @@ SubmitInfo.prototype = {
     setDayKey: function() {
         var startDay = this.startDayInput.value;
         var endDay = this.endDayInput.value;
-        this.keyValue = startDay + 'S' + endDay + 'E';
+        var keyValue = startDay + 'S' + endDay + 'E';
+        return keyValue;
     },
     setAllDay: function() {
         //this.getCurrentTime();

@@ -99,7 +99,7 @@ function deleteSchedule() {
 }
 deleteSchedule.prototype = {
     init: function(option) {
-        this.callbacklist=option;
+        this.callbacklist = option;
         this.deleteButton.addEventListener("click", this.showConfirm.bind(this));
     },
     showConfirm: function() {
@@ -115,10 +115,13 @@ deleteSchedule.prototype = {
         var parsedArray = JSON.parse(alreadyHas);
         parsedArray.splice(keyset[1], 1);
         localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
-
+        if( parsedArray.length === 0)
+        {
+          localStorage.removeItem(keyset[0]);
+        }
         //테스트용 출력
         var test = localStorage.getItem(keyset[0]);
-        console.log(test);
+        // console.log(test);
         location.reload(true);
     }
 };
@@ -126,12 +129,14 @@ deleteSchedule.prototype = {
 function modifySchedule() {
     this.modifyButton = _$('.modify');
     this.changeButton = _$('#modify');
+    this.startDayInput = _$("#startDay");
+    this.endDayInput = _$("#endDay");
 }
 modifySchedule.prototype = {
     init: function(option) {
         this.callbacklist = option;
         this.modifyButton.addEventListener("click", this.changeForm.bind(this));
-        this.changeButton.addEventListener("click", this.getInputValue.bind(this) );
+        this.changeButton.addEventListener("click", this.getInputValue.bind(this));
     },
     changeForm: function() {
         _$(".scheduleBackground").style.display = "block";
@@ -158,14 +163,33 @@ modifySchedule.prototype = {
         _$("#endTime").value = endData[1];
     },
     getInputValue: function(position) {
+        var keyValue = this.callbacklist["DAYKEY"]();
         var keyset = this.callbacklist["KEYSET"]();
         var scheduleInfo = this.callbacklist["GET_INFO"].bind(modifyInfo)();
         console.log(scheduleInfo); // 테스트용
-        var alreadyHas = localStorage.getItem(keyset[0]);
-        var parsedArray = JSON.parse(alreadyHas);
-        parsedArray.splice(keyset[1], 1, scheduleInfo);
-        localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
-
+        var alreadyHas1 = localStorage.getItem(keyset[0]);
+        var parsedArray1 = JSON.parse(alreadyHas1);
+        if (keyValue === keyset[0]) {
+            parsedArray1.splice(keyset[1], 1, scheduleInfo);
+            localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
+        } else if (keyValue !== keyset[0]) {
+            parsedArray1.splice(keyset[1], 1);
+            localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
+            if( parsedArray1.length === 0)
+            {
+              localStorage.removeItem(keyset[0]);
+            }
+            var alreadyHas2 = localStorage.getItem(keyValue);
+            var scheduleArray = [];
+            if (!!alreadyHas2) {
+                var parsedArray2 = JSON.parse(alreadyHas2);
+                parsedArray2.push(scheduleInfo);
+                localStorage.setItem(keyValue, JSON.stringify(parsedArray2));
+            } else {
+                scheduleArray.push(scheduleInfo);
+                localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
+            }
+        }
         //테스트용 출력
         var test = localStorage.getItem(keyset[0]);
         console.log(test);
@@ -181,10 +205,10 @@ var modifyEvent = new modifySchedule();
 var modifyInfo = new SubmitInfo();
 modifyInfo.init();
 modifyEvent.init({
-    SUBMIT_BUTTON: modifyInfo.submitButton,
     GET_INFO: modifyInfo.getScheduleInfo,
-    SUBMIT_INFO: modifyInfo.saveScheduleInfo,
-    KEYSET: showDetail.getKeySet.bind(showDetail)
+    KEYSET: showDetail.getKeySet.bind(showDetail),
+    DAYKEY: modifyInfo.setDayKey.bind(modifyInfo),
+    KEY_VALUE: modifyInfo.keyValue
 });
 deleteEvent.init({
     KEYSET: showDetail.getKeySet.bind(showDetail)
