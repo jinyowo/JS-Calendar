@@ -1,6 +1,6 @@
 // var assert = require('assert');
 
-describe('Utility.js 테스트 - Jin', function() {
+describe('Utility.js 테스트', function() {
     before(function() {
         // before suite
     });
