@@ -40,13 +40,12 @@ DetailView.prototype = {
         Utility.hideElement(this.popupBackground);
     },
     confirmTarget: function(event) {
-      if(event.target.closest("a"))
-      {
+        if (event.target.closest("a")) {
             if (event.target.closest("a").classList.contains("fc-event")) {
                 return true;
             } else return false;
-          }
-          return false;
+        }
+        return false;
     },
     getCoordinate: function(event) {
         var centerPointX = (window.innerWidth) / 2;
@@ -99,7 +98,8 @@ function deleteSchedule() {
     this.deleteButton = _$('.delete');
 }
 deleteSchedule.prototype = {
-    init: function() {
+    init: function(option) {
+        this.callbacklist=option;
         this.deleteButton.addEventListener("click", this.showConfirm.bind(this));
     },
     showConfirm: function() {
@@ -110,30 +110,35 @@ deleteSchedule.prototype = {
         }
     },
     deleteInfo: function() {
-        var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
+        var keyset = this.callbacklist["KEYSET"]();
+        var alreadyHas = localStorage.getItem(keyset[0]);
         var parsedArray = JSON.parse(alreadyHas);
-        parsedArray.splice(position, 1);
-        localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
+        parsedArray.splice(keyset[1], 1);
+        localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
 
         //테스트용 출력
-        var test = localStorage.getItem("2017-01-04S2017-01-04E");
+        var test = localStorage.getItem(keyset[0]);
         console.log(test);
+        location.reload(true);
     }
 };
 
 function modifySchedule() {
     this.modifyButton = _$('.modify');
+    this.changeButton = _$('#modify');
 }
 modifySchedule.prototype = {
     init: function(option) {
         this.callbacklist = option;
         this.modifyButton.addEventListener("click", this.changeForm.bind(this));
+        this.changeButton.addEventListener("click", this.getInputValue.bind(this) );
     },
     changeForm: function() {
         _$(".scheduleBackground").style.display = "block";
         _$(".popupBackground").style.display = "none";
+        _$("#submit").style.display = "none";
+        _$("#modify").style.display = "inline-block";
         this.insertForm();
-
     },
 
     insertForm: function() {
@@ -152,33 +157,35 @@ modifySchedule.prototype = {
         _$("#endDay").value = endData[0];
         _$("#endTime").value = endData[1];
     },
-    //     getInputValue: function() {
-    //         var scheduleInfo = this.callbacklist["GET_INFO"].call(modifyInfo);
-    //         console.log(scheduleInfo); // 테스트용
-    //         var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
-    //         var parsedArray = JSON.parse(alreadyHas);
-    //         parsedArray.splice(position, 1, scheduleInfo);
-    //         localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
-    //
-    //         //테스트용 출력
-    //         var test = localStorage.getItem("2017-01-04S2017-01-04E");
-    //         console.log(test);
-    //     }
+    getInputValue: function(position) {
+        var keyset = this.callbacklist["KEYSET"]();
+        var scheduleInfo = this.callbacklist["GET_INFO"].bind(modifyInfo)();
+        console.log(scheduleInfo); // 테스트용
+        var alreadyHas = localStorage.getItem(keyset[0]);
+        var parsedArray = JSON.parse(alreadyHas);
+        parsedArray.splice(keyset[1], 1, scheduleInfo);
+        localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
+
+        //테스트용 출력
+        var test = localStorage.getItem(keyset[0]);
+        console.log(test);
+    }
 };
 var showForm = new ShowFormPopup();
 showForm.init();
 var showDetail = new DetailView();
 showDetail.init();
 var deleteEvent = new deleteSchedule();
-deleteEvent.init();
+
 var modifyEvent = new modifySchedule();
 var modifyInfo = new SubmitInfo();
-modifyInfo.init({
-    KEYSET: showDetail.getKeySet.bind(showDetail)
-});
+modifyInfo.init();
 modifyEvent.init({
     SUBMIT_BUTTON: modifyInfo.submitButton,
     GET_INFO: modifyInfo.getScheduleInfo,
     SUBMIT_INFO: modifyInfo.saveScheduleInfo,
+    KEYSET: showDetail.getKeySet.bind(showDetail)
+});
+deleteEvent.init({
     KEYSET: showDetail.getKeySet.bind(showDetail)
 });
