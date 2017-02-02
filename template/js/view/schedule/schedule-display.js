@@ -18,7 +18,9 @@ ScheduleDisplay.prototype = {
             isStart: true,
             isEnd: true,
             remain: 0,
-            row: 0
+            row: 0,
+            key: "",
+            position: 0
         };
         this.initRow = 0;
     },
@@ -26,12 +28,14 @@ ScheduleDisplay.prototype = {
     setEvents: function() {
         for (var i = 0; i < this.scheduleObjects.length; i++) {
             var schedules = JSON.parse(this.scheduleObjects[i]);
+            this.status.key = this.keys[i];
             for (var j = 0; j < schedules.length; j++) {
                 this.schedule = schedules[j];
+                this.status.position = j;
                 if (this.schedule.repeat !== "none") {
                     this.repeatEvent(this.schedule);
                     this.initRow++;
-                } else this.setMonthEvent(this.schedule, 0);
+                } else this.setMonthEvent(this.schedule);
             }
         }
         //TODO: 후에 여러개 등록 시 반복문 사용하여 모든 스케쥴 표시
