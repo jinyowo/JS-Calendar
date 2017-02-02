@@ -23,4 +23,19 @@ describe('Utility.js 테스트', function() {
             else throw Error('error');
         });
     });
+
+    describe('element display 테스트', function() {
+      it('#hideElement 실행 시 display 속성이 none이 되어야 한다.', function(done) {
+        ele = _$('#box');
+        Utility.hideElement(ele);
+        if (ele.style.display === "none") done();
+        else throw Error('display is visible');
+      });
+      it('#showElement 실행 시 display 속성이 block이 되어야 한다.', function(done) {
+        ele = _$('#box');
+        Utility.showElement(ele);
+        if (ele.style.display === "block") done();
+        else throw Error('display is not block');
+      });
+    });
 });
