@@ -162,7 +162,20 @@ ScheduleDisplay.prototype = {
         Utility.addClass(ele, "fc-more-cell");
         ele.innerHTML = "<div><a class=\"fc-more\">more...</a></div>";
 
-        ele._$(".fc-more").addEventListener('click',this.showMore);
+        ele._$(".fc-more").addEventListener('click',this.showMore.bind(this));
+    },
+
+    setHideCell: function(moreButton) {
+        var originRow = moreButton.parentNode.parentNode.parentNode;
+        if (originRow.parentNode._$(".fc-hide-cell") === null) {
+            var newRow = originRow.cloneNode(true);
+            var ele = newRow._$(".fc-more-cell");
+            Utility.removeClass(ele, "fc-more-cell");
+            Utility.addClass(ele, "fc-hide-cell");
+            ele.innerHTML = "<div><a class=\"fc-hide\">hide</a></div>";
+            ele._$(".fc-hide").addEventListener('click', this.hideMore.bind(this));
+            originRow.parentNode.appendChild(newRow);
+        }
     },
 
     getThisMonthEvent: function() {
@@ -259,14 +272,28 @@ ScheduleDisplay.prototype = {
     },
 
     showMore: function(evt) {
-        var moreButton = evt.target
+        var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
-        var hidden = table.querySelectorAll(".fc-limited");
-        Utility.hideElement(moreButton.parentNode);
-        table.closest(".fc-row").style.height = ((table.children.length + 1) * 20) + "px";
-        _$(".fc-scroller").style.height = 647 + ((table.children.length + 1) * 20) - 107 + "px";
-        for(var i = 0; i < hidden.length; i++) {
+        var hidden = table.children;
+
+        this.setHideCell(moreButton);
+        Utility.hideElement(moreButton.parentNode.parentNode);
+        table.closest(".fc-row").style.height = ((table.children.length) * 20) + "px";
+        _$(".fc-scroller").style.height = 647 + ((table.children.length) * 20) - 107 + "px";
+
+        for(var i = 4; i < hidden.length; i++) {
             Utility.removeClass(hidden[i], "fc-limited");
         }
+    },
+    hideMore: function(evt) {
+        var hideButton = evt.target;
+        var table = hideButton.parentNode.parentNode.parentNode.parentNode;
+        var limited = table.children;
+
+        Utility.showElement(table._$(".fc-more-cell"));
+        for (var i = 4; i < limited.length; i++) {
+          Utility.addClass(limited[i], "fc-limited");
+        }
+        Utility.resetField();
     }
 }
