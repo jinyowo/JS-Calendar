@@ -10,11 +10,11 @@ Button.prototype = {
         this.registEvent();
     },
     registEvent: function() {
-        this.ele.addEventListener("mouseover", this.onMouseOver.bind(this));
-        this.ele.addEventListener("mouseout", this.onMouseOut.bind(this));
-        this.ele.addEventListener("mousedown", this.onMouseDown.bind(this));
-        this.ele.addEventListener("mouseup", this.onMouseUp.bind(this));
-        this.ele.addEventListener("click", this.onClickEvent.bind(this));
+        Utility.on(this.ele, "mouseover", this.onMouseOver.bind(this));
+        Utility.on(this.ele, "mouseout", this.onMouseOut.bind(this));
+        Utility.on(this.ele, "mousedown", this.onMouseDown.bind(this));
+        Utility.on(this.ele, "mouseup", this.onMouseUp.bind(this));
+        Utility.on(this.ele, "click", this.onClickEvent.bind(this));
     },
     onMouseOver: function() {
         Utility.addClass(this.ele, Style.hoverEffect);
