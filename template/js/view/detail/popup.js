@@ -1,20 +1,3 @@
-//테스트용 object
-var schedule = {
-    title: "NTS intern",
-    start: "2017-01-02T08:00:00Z",
-    end: "2017-02-10T19:00:00Z",
-    repeat: "W",
-    allDay: true,
-    place: "startup campus",
-    desc: "FE 인턴 education"
-};
-
-var testArray = JSON.parse(localStorage.getItem("2017-01-04S2017-01-04E"));
-var position = 0;
-var testPosition = undefined ;
-
-// 테스트용 coding
-
 function DetailView() {
     this.repeat = {
         Y: "매년",
@@ -27,27 +10,42 @@ function DetailView() {
     this.popupContent = _$('.popupContent');
     this.span = _$('.popupClose');
     this.parsedContent = _$('.parsedContent');
+    this.monthView = _$('.fc-month-view');
 }
 DetailView.prototype = {
     init: function() {
         this.span.addEventListener("click", this.closePopup.bind(this));
         this.popupBackground.addEventListener("click", this.closePopup.bind(this));
-        document.addEventListener("click", this.executeEvent.bind(this));
+        this.monthView.addEventListener("click", this.executeEvent.bind(this));
     },
     executeEvent: function(event) {
         if (this.confirmTarget(event)) {
             Utility.showElement(this.popupBackground);
             this.getCoordinate(event);
+            this.getSchedule(event.target);
             this.insertPopupContent();
+
         }
+    },
+    getSchedule: function(target) {
+        var realTarget = target.closest("a");
+        var key = realTarget.getAttribute("data-key");
+        var pos = parseInt(realTarget.getAttribute("data-pos"));
+        var array = JSON.parse(localStorage.getItem(key));
+        this.content = array[pos];
+        this.keyset = [key, pos];
+
     },
     closePopup: function() {
         Utility.hideElement(this.popupBackground);
     },
     confirmTarget: function(event) {
-        if (event.target.className === "fc-content" || event.target.className === "fc-title") {
-            return true;
-        } else return false;
+        if (event.target.closest("a")) {
+            if (event.target.closest("a").classList.contains("fc-event")) {
+                return true;
+            } else return false;
+        }
+        return false;
     },
     getCoordinate: function(event) {
         var centerPointX = (window.innerWidth) / 2;
@@ -72,8 +70,8 @@ DetailView.prototype = {
         }
     },
     getParsedTime: function() {
-        var fixedStart = testArray[position]['start'].replace("T", " ");
-        var fixedEnd = testArray[position]['end'].replace("T", " ");
+        var fixedStart = this.content['start'].replace("T", " ");
+        var fixedEnd = this.content['end'].replace("T", " ");
         var parsedStart = fixedStart.replace(":00Z", "");
         var parsedEnd = fixedEnd.replace(":00Z", "");
         return [parsedStart, parsedEnd];
@@ -81,15 +79,18 @@ DetailView.prototype = {
     insertPopupContent: function() {
         var timeData = this.getParsedTime();
         var stringData = _$("#popup-template").innerHTML;
-        Handlebars.registerHelper('time', function(){
-          return timeData[0]+'~'+timeData[1];
+        Handlebars.registerHelper('time', function() {
+            return timeData[0] + '~' + timeData[1];
         });
-        Handlebars.registerHelper('repeat', function(){
-          return this.repeat[testArray[position]['repeat']];
+        Handlebars.registerHelper('repeat', function() {
+            return this.repeat[this.content['repeat']];
         }.bind(this));
         var compiled = Handlebars.compile(stringData);
-        var str = compiled(testArray[position]);
+        var str = compiled(this.content);
         _$('.parsedContent').innerHTML = str;
+    },
+    getKeySet: function() {
+        return this.keyset;
     }
 };
 
@@ -97,78 +98,118 @@ function deleteSchedule() {
     this.deleteButton = _$('.delete');
 }
 deleteSchedule.prototype = {
-    init: function() {
+    init: function(option) {
+        this.callbacklist = option;
         this.deleteButton.addEventListener("click", this.showConfirm.bind(this));
     },
     showConfirm: function() {
-        var message= "일정을 삭제하시겠습니까?";
+        var message = "일정을 삭제하시겠습니까?";
         var deleteConfirm = confirm(message);
         if (deleteConfirm) { // Yes click
             this.deleteInfo();
         }
     },
     deleteInfo: function() {
-        var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
+        var keyset = this.callbacklist["KEYSET"]();
+        var alreadyHas = localStorage.getItem(keyset[0]);
         var parsedArray = JSON.parse(alreadyHas);
-        parsedArray.splice(position, 1);
-        localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
-
+        parsedArray.splice(keyset[1], 1);
+        localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
+        if( parsedArray.length === 0)
+        {
+          localStorage.removeItem(keyset[0]);
+        }
         //테스트용 출력
-        var test = localStorage.getItem("2017-01-04S2017-01-04E");
-        console.log(test);
+        var test = localStorage.getItem(keyset[0]);
+        // console.log(test);
+        location.reload(true);
     }
 };
 
 function modifySchedule() {
     this.modifyButton = _$('.modify');
-  }
+    this.changeButton = _$('#modify');
+    this.startDayInput = _$("#startDay");
+    this.endDayInput = _$("#endDay");
+}
 modifySchedule.prototype = {
     init: function(option) {
         this.callbacklist = option;
         this.modifyButton.addEventListener("click", this.changeForm.bind(this));
+        this.changeButton.addEventListener("click", this.getInputValue.bind(this));
     },
     changeForm: function() {
         _$(".scheduleBackground").style.display = "block";
         _$(".popupBackground").style.display = "none";
+        _$("#submit").style.display = "none";
+        _$("#modify").style.display = "inline-block";
         this.insertForm();
-
     },
-    insertForm: function() {
 
-        var startData = testArray[position]["start"].replace(':00Z', "").split('T', 2);
-        var endData = testArray[position]["end"].replace(':00Z', "").split('T', 2);
-        _$("#title").value = testArray[position]["title"];
-        _$("#place").value = testArray[position]["place"];
-        _$("#desc").value = testArray[position]["desc"];
-        if (testArray[position]["allDay"]) _$('#allDay').checked = true;
-        _$('input[value=' + testArray[position]["repeat"] + ']').checked = true;
+    insertForm: function() {
+        var keyset = this.callbacklist["KEYSET"]();
+        var array1 = JSON.parse(localStorage.getItem(keyset[0]));
+        var position = keyset[1];
+        var startData = array1[position]["start"].replace(':00Z', "").split('T', 2);
+        var endData = array1[position]["end"].replace(':00Z', "").split('T', 2);
+        _$("#title").value = array1[position]["title"];
+        _$("#place").value = array1[position]["place"];
+        _$("#desc").value = array1[position]["desc"];
+        if (array1[position]["allDay"]) _$('#allDay').checked = true;
+        _$('input[value=' + array1[position]["repeat"] + ']').checked = true;
         _$("#startDay").value = startData[0];
         _$("#startTime").value = startData[1];
         _$("#endDay").value = endData[0];
         _$("#endTime").value = endData[1];
     },
-//     getInputValue: function() {
-//         var scheduleInfo = this.callbacklist["GET_INFO"].call(modifyInfo);
-//         console.log(scheduleInfo); // 테스트용
-//         var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
-//         var parsedArray = JSON.parse(alreadyHas);
-//         parsedArray.splice(position, 1, scheduleInfo);
-//         localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
-//
-//         //테스트용 출력
-//         var test = localStorage.getItem("2017-01-04S2017-01-04E");
-//         console.log(test);
-//     }
+    getInputValue: function(position) {
+        var keyValue = this.callbacklist["DAYKEY"]();
+        var keyset = this.callbacklist["KEYSET"]();
+        var scheduleInfo = this.callbacklist["GET_INFO"].bind(modifyInfo)();
+        console.log(scheduleInfo); // 테스트용
+        var alreadyHas1 = localStorage.getItem(keyset[0]);
+        var parsedArray1 = JSON.parse(alreadyHas1);
+        if (keyValue === keyset[0]) {
+            parsedArray1.splice(keyset[1], 1, scheduleInfo);
+            localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
+        } else if (keyValue !== keyset[0]) {
+            parsedArray1.splice(keyset[1], 1);
+            localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
+            if( parsedArray1.length === 0)
+            {
+              localStorage.removeItem(keyset[0]);
+            }
+            var alreadyHas2 = localStorage.getItem(keyValue);
+            var scheduleArray = [];
+            if (!!alreadyHas2) {
+                var parsedArray2 = JSON.parse(alreadyHas2);
+                parsedArray2.push(scheduleInfo);
+                localStorage.setItem(keyValue, JSON.stringify(parsedArray2));
+            } else {
+                scheduleArray.push(scheduleInfo);
+                localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
+            }
+        }
+        //테스트용 출력
+        var test = localStorage.getItem(keyset[0]);
+        console.log(test);
+    }
 };
+var showForm = new ShowFormPopup();
+showForm.init();
 var showDetail = new DetailView();
 showDetail.init();
 var deleteEvent = new deleteSchedule();
-deleteEvent.init();
+
 var modifyEvent = new modifySchedule();
 var modifyInfo = new SubmitInfo();
 modifyInfo.init();
 modifyEvent.init({
-    SUBMIT_BUTTON: modifyInfo.submitButton,
     GET_INFO: modifyInfo.getScheduleInfo,
-    SUBMIT_INFO: modifyInfo.saveScheduleInfo
+    KEYSET: showDetail.getKeySet.bind(showDetail),
+    DAYKEY: modifyInfo.setDayKey.bind(modifyInfo),
+    KEY_VALUE: modifyInfo.keyValue
+});
+deleteEvent.init({
+    KEYSET: showDetail.getKeySet.bind(showDetail)
 });

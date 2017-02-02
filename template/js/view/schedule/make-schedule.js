@@ -15,7 +15,6 @@ ShowFormPopup.prototype = {
         }
         if (!!this.dateData) {
             this.showInputForm();
-            // this.getCurrentTime()
             this.makeEvent();
             this.compareTime.bind(this)();
         }
@@ -63,6 +62,8 @@ ShowFormPopup.prototype = {
         this.Date2 = timedate2.split(':', 2);
     },
     showInputForm: function() {
+        _$("#submit").style.display = "inline-block";
+        _$("#modify").style.display = "none";
         Utility.showElement(this.container);
     },
     hideInputForm: function(event) {
@@ -93,12 +94,34 @@ function SubmitInfo() {
     this.startTimeInput = _$("#startTime");
     this.endDayInput = _$("#endDay");
     this.endTimeInput = _$("#endTime");
+    this.cell = document.querySelectorAll("td.fc-day.fc-widget-content:not(.fc-past)");
 }
 SubmitInfo.prototype = {
-    init: function() {
+    init: function(option) {
+        this.callbacklist = option;
         this.allDayButton.addEventListener("click", this.setAllDay.bind(this));
-        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this)); //,testPosition));
+        this.submitButton.addEventListener("click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
+        document.addEventListener("click", this.clickCalendarCell.bind(this));
+    },
+    clickCalendarCell: function(event) {
+        if (event.target.tagName === "TD" && event.target.className === "") {
+            for (var i = 0; i < this.cell.length; i++) {
+                var mouseX = event.clientX;
+                var mouseY = event.clientY;
+                var rect = this.cell[i].getBoundingClientRect();
+                var width = this.cell[i].offsetWidth;
+                var height = this.cell[i].offsetHeight;
+                if ((mouseX > rect.left &&
+                        mouseX < rect.left + width &&
+                        mouseY > rect.top &&
+                        mouseY < rect.top + height
+                    )) {
+                    this.cell[i].click(); // force click event
+                    return true;
+                }
+            }
+        }
     },
     timeAlert: function() {
         var elements = document.querySelectorAll(".timeInput");
@@ -134,36 +157,18 @@ SubmitInfo.prototype = {
         return new Date(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
     },
     saveScheduleInfo: function(x) {
-        console.log(x);
-        if (typeof x === 'number') {
-            console.log(x);
-            this.getInputValue.bind(this, 0)();
-        } else if (typeof x !== 'number') {
-            this.setDayKey();
-            var scheduleInfo = this.getScheduleInfo.bind(this)();
-            var alreadyHas = localStorage.getItem(this.keyValue);
-            var scheduleArray = [];
-            if (!!alreadyHas) {
-                var parsedArray = JSON.parse(alreadyHas);
-                parsedArray.push(scheduleInfo);
-                localStorage.setItem(this.keyValue, JSON.stringify(parsedArray));
-            } else {
-                scheduleArray.push(scheduleInfo);
-                localStorage.setItem(this.keyValue, JSON.stringify(scheduleArray));
-            }
-        }
-    },
-    getInputValue: function(position) {
+        var keyValue = this.setDayKey();
         var scheduleInfo = this.getScheduleInfo.bind(this)();
-        console.log(scheduleInfo); // 테스트용
-        var alreadyHas = localStorage.getItem("2017-01-04S2017-01-04E");
-        var parsedArray = JSON.parse(alreadyHas);
-        parsedArray.splice(position, 1, scheduleInfo);
-        localStorage.setItem("2017-01-04S2017-01-04E", JSON.stringify(parsedArray));
-
-        //테스트용 출력
-        var test = localStorage.getItem("2017-01-04S2017-01-04E");
-        console.log(test);
+        var alreadyHas = localStorage.getItem(keyValue);
+        var scheduleArray = [];
+        if (!!alreadyHas) {
+            var parsedArray = JSON.parse(alreadyHas);
+            parsedArray.push(scheduleInfo);
+            localStorage.setItem(keyValue, JSON.stringify(parsedArray));
+        } else {
+            scheduleArray.push(scheduleInfo);
+            localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
+        }
     },
     getScheduleInfo: function() {
         var scheduleInfo = {};
@@ -189,7 +194,6 @@ SubmitInfo.prototype = {
             }
             timeValue = timeValue.substr(0, 10) + 'T' + timeValue.substr(10);
             timeValue += ":00Z";
-            console.log(timeValue);
             timeArray.push(timeValue);
         }
         return timeArray;
@@ -197,7 +201,8 @@ SubmitInfo.prototype = {
     setDayKey: function() {
         var startDay = this.startDayInput.value;
         var endDay = this.endDayInput.value;
-        this.keyValue = startDay + 'S' + endDay + 'E';
+        var keyValue = startDay + 'S' + endDay + 'E';
+        return keyValue;
     },
     setAllDay: function() {
         //this.getCurrentTime();
@@ -217,8 +222,8 @@ SubmitInfo.prototype = {
             endTimeInput.style.backgroundColor = "White";
             startTimeInput.readOnly = false;
             endTimeInput.readOnly = false;
-            startTimeInput.value = this.defaultStart; //this.Date1[0] + ':' + this.Date1[1];
-            endTimeInput.value = this.defaultEnd; //this.Date2[0] + ':' + this.Date2[1];
+            startTimeInput.value = this.defaultStart;
+            endTimeInput.value = this.defaultEnd;
         }
     },
     clearInput: function() {
@@ -233,5 +238,7 @@ SubmitInfo.prototype = {
         this.defalutEnd = "";
     }
 };
+
+
 var showForm = new ShowFormPopup();
 showForm.init();
