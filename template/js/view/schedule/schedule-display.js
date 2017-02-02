@@ -142,7 +142,6 @@ ScheduleDisplay.prototype = {
 
     setLimitedEvent: function(ele, title) {
         Utility.addClass(ele.parentNode, "fc-limited");
-        this.setEventBar(ele, title);
     },
 
     setMoreCell: function(ele) {
@@ -322,7 +321,7 @@ ScheduleDisplay.prototype = {
         var totalHeight = parseInt(_$(".fc-scroller").style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
         table.closest(".fc-row").style.height = 107 + "px";
-        _$(".fc-scroller").style.height = totalHeight - (cellHeight-107) + "px";
+        _$(".fc-scroller").style.height = totalHeight - (cellHeight - 107) + "px";
     },
     getEventRowCount: function(row) {
       var count = 0;
