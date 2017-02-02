@@ -755,14 +755,16 @@ tr:first-child > td > .fc-day-grid-event {
 
 /* "more" link that represents hidden events */
 
-a.fc-more {
+a.fc-more,
+a.fc-hide {
 	margin: 1px 3px;
 	font-size: .85em;
 	cursor: pointer;
 	text-decoration: none;
 }
 
-a.fc-more:hover {
+a.fc-more:hover
+a.fc-hide:hover {
 	text-decoration: underline;
 }
 
