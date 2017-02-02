@@ -206,11 +206,16 @@ Calendar.prototype = {
         }
     },
     setTypeButton: function(type, typeButtons) {
-        Utility.inactiveButtonSet(typeButtons, Style.activeEffect);
+        this.inactiveButtonSet(typeButtons, Style.activeEffect);
         var typeOrder = ["month", "week", "day"];
         Utility.addClass(typeButtons[typeOrder.indexOf(type)].ele, Style.activeEffect);
 
         return typeButtons;
+    },
+    inactiveButtonSet: function(buttons, className) {
+        for(var i in buttons) {
+            Utility.removeClass(buttons[i].ele, className);
+        }
     },
     isToday: function() {
         var mydate = this.myDate;
