@@ -14,9 +14,9 @@ function DetailView() {
 }
 DetailView.prototype = {
     init: function() {
-        this.span.addEventListener("click", this.closePopup.bind(this));
-        this.popupBackground.addEventListener("click", this.closePopup.bind(this));
-        this.monthView.addEventListener("click", this.executeEvent.bind(this));
+        Utility.on(this.span, "click", this.closePopup.bind(this));
+        Utility.on(this.popupBackground, "click", this.closePopup.bind(this));
+        Utility.on(this.monthView, "click", this.executeEvent.bind(this));
     },
     executeEvent: function(event) {
         if (this.confirmTarget(event)) {
@@ -24,7 +24,6 @@ DetailView.prototype = {
             this.getCoordinate(event);
             this.getSchedule(event.target);
             this.insertPopupContent();
-
         }
     },
     getSchedule: function(target) {
@@ -34,7 +33,6 @@ DetailView.prototype = {
         var array = JSON.parse(localStorage.getItem(key));
         this.content = array[pos];
         this.keyset = [key, pos];
-
     },
     closePopup: function() {
         Utility.hideElement(this.popupBackground);
@@ -100,7 +98,7 @@ function deleteSchedule() {
 deleteSchedule.prototype = {
     init: function(option) {
         this.callbacklist = option;
-        this.deleteButton.addEventListener("click", this.showConfirm.bind(this));
+        Utility.on(this.deleteButton, "click", this.showConfirm.bind(this));
     },
     showConfirm: function() {
         var message = "일정을 삭제하시겠습니까?";
@@ -115,17 +113,12 @@ deleteSchedule.prototype = {
         var parsedArray = JSON.parse(alreadyHas);
         parsedArray.splice(keyset[1], 1);
         localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
-        if( parsedArray.length === 0)
-        {
-          localStorage.removeItem(keyset[0]);
+        if (parsedArray.length === 0) {
+            localStorage.removeItem(keyset[0]);
         }
-        //테스트용 출력
-        var test = localStorage.getItem(keyset[0]);
-        // console.log(test);
         location.reload(true);
     }
 };
-
 function modifySchedule() {
     this.modifyButton = _$('.modify');
     this.changeButton = _$('#modify');
@@ -135,8 +128,8 @@ function modifySchedule() {
 modifySchedule.prototype = {
     init: function(option) {
         this.callbacklist = option;
-        this.modifyButton.addEventListener("click", this.changeForm.bind(this));
-        this.changeButton.addEventListener("click", this.getInputValue.bind(this));
+        Utility.on(this.modifyButton, "click", this.changeForm.bind(this));
+        Utility.on(this.changeButton, "click", this.getInputValue.bind(this));
     },
     changeForm: function() {
         _$(".scheduleBackground").style.display = "block";
@@ -145,7 +138,6 @@ modifySchedule.prototype = {
         _$("#modify").style.display = "inline-block";
         this.insertForm();
     },
-
     insertForm: function() {
         var keyset = this.callbacklist["KEYSET"]();
         var array1 = JSON.parse(localStorage.getItem(keyset[0]));
@@ -166,7 +158,6 @@ modifySchedule.prototype = {
         var keyValue = this.callbacklist["DAYKEY"]();
         var keyset = this.callbacklist["KEYSET"]();
         var scheduleInfo = this.callbacklist["GET_INFO"].bind(modifyInfo)();
-        console.log(scheduleInfo); // 테스트용
         var alreadyHas1 = localStorage.getItem(keyset[0]);
         var parsedArray1 = JSON.parse(alreadyHas1);
         if (keyValue === keyset[0]) {
@@ -175,9 +166,8 @@ modifySchedule.prototype = {
         } else if (keyValue !== keyset[0]) {
             parsedArray1.splice(keyset[1], 1);
             localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
-            if( parsedArray1.length === 0)
-            {
-              localStorage.removeItem(keyset[0]);
+            if (parsedArray1.length === 0) {
+                localStorage.removeItem(keyset[0]);
             }
             var alreadyHas2 = localStorage.getItem(keyValue);
             var scheduleArray = [];
@@ -190,9 +180,6 @@ modifySchedule.prototype = {
                 localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
             }
         }
-        //테스트용 출력
-        var test = localStorage.getItem(keyset[0]);
-        console.log(test);
     }
 };
 var showForm = new ShowFormPopup();
