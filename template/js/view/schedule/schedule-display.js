@@ -30,7 +30,7 @@ ScheduleDisplay.prototype = {
             for (var j = 0; j < schedules.length; j++) {
                 this.schedule = schedules[j];
                 this.status.position = j;
-                if (this.schedule.length === 0) continue;
+                if (this.schedule.length === 0) continue; //빈 객체가 포함되어 있으면 이벤트출력 안함
                 if (this.schedule.repeat !== "none") {
                     this.repeatEvent(this.schedule);
                     this.initRow++;
@@ -117,7 +117,7 @@ ScheduleDisplay.prototype = {
 
         eventLink.setAttribute("data-key", this.status.key);
         eventLink.setAttribute("data-pos", this.status.position);
-        console.log(this.status.key, this.status.position);
+
         if (ele.isEqualNode(ele.parentNode.firstElementChild) || this.status.isStart) {
             eventLink._$("div").innerHTML = "<span class = \"fc-title\">" + title + "</span>";
         }
@@ -136,28 +136,23 @@ ScheduleDisplay.prototype = {
     getThisMonthEvent: function() {
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
-            var due = key.split("S");
-            var eStart = due[0];
-            var eEnd = due[1].replace("E", "");
             var items = localStorage.getItem(key);
-            // 지난달과 이번달에 해당하는 repeatEvent를 받아온다
-            var schedules = JSON.parse(localStorage.getItem(key));
+            var schedules = JSON.parse(items);
+            var order = []; // 이번달에 표시할 이벤트
+            var isRepeat = this.isRepeatEvent(key);
 
-            var order = [];
-            var isRepeat = this.isRepeatEvent(key, eStart, eEnd);
             if (isRepeat[0] || isRepeat[1].length > 0) order = isRepeat[1];
-
             if (order.length > 0) {
-                var temp = [];
+                var _schedules = [];
                 for (var j = 0; j < schedules.length; j++) {
                     var schedule = schedules[j];
                     if (order.indexOf(j) !== -1) {
-                        temp.push(JSON.stringify(schedule));
+                        _schedules.push(JSON.stringify(schedule));
                     } else {
-                        temp.push("{}");
+                        _schedules.push("{}");
                     }
                 }
-                this.scheduleObjects.push("[" + temp + "]");
+                this.scheduleObjects.push("[" + _schedules + "]");
                 this.keys.push(key);
                 continue;
             }
@@ -167,16 +162,15 @@ ScheduleDisplay.prototype = {
             }
         }
     },
-    isRepeatEvent: function(key, eStart, eEnd) {
+    isRepeatEvent: function(key) {
         var order = []; // 이번달에 표시할 이벤트
         var count = 0;
         var schedules = JSON.parse(localStorage.getItem(key));
+
         for (var i = 0; i < schedules.length; i++) {
             var schedule = schedules[i];
             if (schedule.repeat !== "none") {
                 order.push(i);
-                // this.scheduleObjects.push("[" + JSON.stringify(schedule) + "]");
-                // this.keys.push(key);
                 count++;
             } else {
                 if(this.checkThisMonth(key)) order.push(i);
