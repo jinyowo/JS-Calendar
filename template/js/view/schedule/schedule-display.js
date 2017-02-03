@@ -227,12 +227,12 @@ ScheduleDisplay.prototype = {
         var eStart = due[0];
         var eEnd = due[1].replace("E", "");
 
-        if (eEnd < this.calendar.lastDay) {
-            if (eEnd > this.calendar.firstDay) {
+        if (eEnd <= this.calendar.lastDay) {
+            if (eEnd >= this.calendar.firstDay) {
                 result = true;
             }
-        } else if (eStart > this.calendar.firstDay) {
-            if (eStart < this.calendar.lastDay) {
+        } else if (eStart >= this.calendar.firstDay) {
+            if (eStart <= this.calendar.lastDay) {
                 result = true;
             }
         } else {
