@@ -1,9 +1,9 @@
-function ShowFormPopup() {
+function FormView() {
     this.calendarCell = _$('.fc-widget-content');
     this.container = _$('.scheduleBackground');
     this.submitInfo = new SubmitInfo();
 }
-ShowFormPopup.prototype = {
+FormView.prototype = {
     init: function() {
         Utility.on(this.calendarCell, "click", this.getDateInfo.bind(this));
         Utility.on(document, "click", this.hideInputForm.bind(this));
@@ -192,7 +192,6 @@ SubmitInfo.prototype = {
         return keyValue;
     },
     setAllDay: function() {
-        //this.getCurrentTime();
         var startTimeInput = this.startTimeInput;
         var endTimeInput = this.endTimeInput;
         if (this.allDayButton.checked) {
@@ -225,7 +224,3 @@ SubmitInfo.prototype = {
         this.defalutEnd = "";
     }
 };
-
-
-var showForm = new ShowFormPopup();
-showForm.init();

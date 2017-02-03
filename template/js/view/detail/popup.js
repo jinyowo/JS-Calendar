@@ -11,15 +11,92 @@ function DetailView() {
     this.span = _$('.popupClose');
     this.parsedContent = _$('.parsedContent');
     this.monthView = _$('.fc-month-view');
+    this.deleteButton = _$('.delete');
+    this.modifyConfirmButton = _$('.modify');
+    this.modifyButton = _$('#modify');
+    this.startDayInput = _$("#startDay");
+    this.endDayInput = _$("#endDay");
 }
 DetailView.prototype = {
-    init: function() {
+    init: function(option) {
+        this.callbacklist = option;
         Utility.on(this.span, "click", this.closePopup.bind(this));
         Utility.on(this.popupBackground, "click", this.closePopup.bind(this));
         Utility.on(this.monthView, "click", this.executeEvent.bind(this));
+        Utility.on(this.deleteButton, "click", this.showConfirm.bind(this));
+        Utility.on(this.modifyConfirmButton, "click", this.changeForm.bind(this));
+        Utility.on(this.modifyButton, "click", this.getModifiedInfo.bind(this));
+    },
+    changeForm: function() {
+        _$(".scheduleBackground").style.display = "block";
+        this.popupBackground.style.display = "none";
+        _$("#submit").style.display = "none";
+        this.modifyButton.style.display = "inline-block";
+        this.insertForm();
+    },
+    insertForm: function() {
+        var savedArray = JSON.parse(localStorage.getItem(this.keyset[0]));
+        var position = this.keyset[1];
+        var startData = savedArray[position]['start'].replace(':00Z', "").split('T', 2);
+        var endData = savedArray[position]["end"].replace(':00Z', "").split('T', 2);
+        _$("#title").value = savedArray[position]["title"];
+        _$("#place").value = savedArray[position]["place"];
+        _$("#desc").value = savedArray[position]["desc"];
+        if (savedArray[position]["allDay"]) _$('#allDay').checked = true;
+        _$('input[value=' + savedArray[position]["repeat"] + ']').checked = true;
+        this.startDayInput.value = startData[0];
+        this.endDayInput.value = endData[0];
+        _$("#startTime").value = startData[1];
+        _$("#endTime").value = endData[1];
+    },
+    getModifiedInfo: function() {
+        var keyValue = this.callbacklist["DAYKEY"]();
+        var scheduleInfo = this.callbacklist["GET_INFO"].bind(modifyInfo)();
+        var alreadyHas1 = localStorage.getItem(this.keyset[0]);
+        var parsedArray1 = JSON.parse(alreadyHas1);
+        if (keyValue === this.keyset[0]) {
+            parsedArray1.splice(this.keyset[1], 1, scheduleInfo);
+            localStorage.setItem(this.keyset[0], JSON.stringify(parsedArray1));
+        } else if (keyValue !== this.keyset[0]) {
+            parsedArray1.splice(this.keyset[1], 1);
+            localStorage.setItem(this.keyset[0], JSON.stringify(parsedArray1));
+            if (parsedArray1.length === 0) {
+                localStorage.removeItem(this.keyset[0]);
+            }
+            this.saveModifyInfo(keyValue, scheduleInfo);
+        }
+    },
+    saveModifyInfo: function(keyValue, scheduleInfo) {
+        var alreadyHas2 = localStorage.getItem(keyValue);
+        var scheduleArray = [];
+        if (!!alreadyHas2) {
+            var parsedArray2 = JSON.parse(alreadyHas2);
+            parsedArray2.push(scheduleInfo);
+            localStorage.setItem(keyValue, JSON.stringify(parsedArray2));
+        } else {
+            scheduleArray.push(scheduleInfo);
+            localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
+        }
+    },
+    showConfirm: function() {
+        var message = "일정을 삭제하시겠습니까?";
+        var deleteConfirm = confirm(message);
+        if (deleteConfirm) { // Yes click
+            this.deleteInfo();
+        }
+    },
+    deleteInfo: function() {
+        var alreadyHas = localStorage.getItem(this.keyset[0]);
+        var parsedArray = JSON.parse(alreadyHas);
+        parsedArray.splice(this.keyset[1], 1);
+        localStorage.setItem(this.keyset[0], JSON.stringify(parsedArray));
+        if (parsedArray.length === 0) {
+            localStorage.removeItem(this.keyset[0]);
+        }
+        location.reload(true);
     },
     executeEvent: function(event) {
-        if (this.confirmTarget(event)) {
+        if (this.confirmTarget(event.target)) {
             Utility.showElement(this.popupBackground);
             this.getCoordinate(event);
             this.getSchedule(event.target);
@@ -37,9 +114,9 @@ DetailView.prototype = {
     closePopup: function() {
         Utility.hideElement(this.popupBackground);
     },
-    confirmTarget: function(event) {
-        if (event.target.closest("a")) {
-            if (event.target.closest("a").classList.contains("fc-event")) {
+    confirmTarget: function(target) {
+        if (target.closest("a")) {
+            if (target.closest("a").classList.contains("fc-event")) {
                 return true;
             } else return false;
         }
@@ -85,118 +162,17 @@ DetailView.prototype = {
         }.bind(this));
         var compiled = Handlebars.compile(stringData);
         var str = compiled(this.content);
-        _$('.parsedContent').innerHTML = str;
-    },
-    getKeySet: function() {
-        return this.keyset;
+        this.parsedContent.innerHTML = str;
     }
 };
 
-function deleteSchedule() {
-    this.deleteButton = _$('.delete');
-}
-deleteSchedule.prototype = {
-    init: function(option) {
-        this.callbacklist = option;
-        Utility.on(this.deleteButton, "click", this.showConfirm.bind(this));
-    },
-    showConfirm: function() {
-        var message = "일정을 삭제하시겠습니까?";
-        var deleteConfirm = confirm(message);
-        if (deleteConfirm) { // Yes click
-            this.deleteInfo();
-        }
-    },
-    deleteInfo: function() {
-        var keyset = this.callbacklist["KEYSET"]();
-        var alreadyHas = localStorage.getItem(keyset[0]);
-        var parsedArray = JSON.parse(alreadyHas);
-        parsedArray.splice(keyset[1], 1);
-        localStorage.setItem(keyset[0], JSON.stringify(parsedArray));
-        if (parsedArray.length === 0) {
-            localStorage.removeItem(keyset[0]);
-        }
-        location.reload(true);
-    }
-};
-function modifySchedule() {
-    this.modifyButton = _$('.modify');
-    this.changeButton = _$('#modify');
-    this.startDayInput = _$("#startDay");
-    this.endDayInput = _$("#endDay");
-}
-modifySchedule.prototype = {
-    init: function(option) {
-        this.callbacklist = option;
-        Utility.on(this.modifyButton, "click", this.changeForm.bind(this));
-        Utility.on(this.changeButton, "click", this.getInputValue.bind(this));
-    },
-    changeForm: function() {
-        _$(".scheduleBackground").style.display = "block";
-        _$(".popupBackground").style.display = "none";
-        _$("#submit").style.display = "none";
-        _$("#modify").style.display = "inline-block";
-        this.insertForm();
-    },
-    insertForm: function() {
-        var keyset = this.callbacklist["KEYSET"]();
-        var array1 = JSON.parse(localStorage.getItem(keyset[0]));
-        var position = keyset[1];
-        var startData = array1[position]["start"].replace(':00Z', "").split('T', 2);
-        var endData = array1[position]["end"].replace(':00Z', "").split('T', 2);
-        _$("#title").value = array1[position]["title"];
-        _$("#place").value = array1[position]["place"];
-        _$("#desc").value = array1[position]["desc"];
-        if (array1[position]["allDay"]) _$('#allDay').checked = true;
-        _$('input[value=' + array1[position]["repeat"] + ']').checked = true;
-        _$("#startDay").value = startData[0];
-        _$("#startTime").value = startData[1];
-        _$("#endDay").value = endData[0];
-        _$("#endTime").value = endData[1];
-    },
-    getInputValue: function(position) {
-        var keyValue = this.callbacklist["DAYKEY"]();
-        var keyset = this.callbacklist["KEYSET"]();
-        var scheduleInfo = this.callbacklist["GET_INFO"].bind(modifyInfo)();
-        var alreadyHas1 = localStorage.getItem(keyset[0]);
-        var parsedArray1 = JSON.parse(alreadyHas1);
-        if (keyValue === keyset[0]) {
-            parsedArray1.splice(keyset[1], 1, scheduleInfo);
-            localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
-        } else if (keyValue !== keyset[0]) {
-            parsedArray1.splice(keyset[1], 1);
-            localStorage.setItem(keyset[0], JSON.stringify(parsedArray1));
-            if (parsedArray1.length === 0) {
-                localStorage.removeItem(keyset[0]);
-            }
-            var alreadyHas2 = localStorage.getItem(keyValue);
-            var scheduleArray = [];
-            if (!!alreadyHas2) {
-                var parsedArray2 = JSON.parse(alreadyHas2);
-                parsedArray2.push(scheduleInfo);
-                localStorage.setItem(keyValue, JSON.stringify(parsedArray2));
-            } else {
-                scheduleArray.push(scheduleInfo);
-                localStorage.setItem(keyValue, JSON.stringify(scheduleArray));
-            }
-        }
-    }
-};
-var showForm = new ShowFormPopup();
-showForm.init();
+var showForm = new FormView();
 var showDetail = new DetailView();
-showDetail.init();
-var deleteEvent = new deleteSchedule();
-
-var modifyEvent = new modifySchedule();
 var modifyInfo = new SubmitInfo();
+showForm.init();
 modifyInfo.init();
-modifyEvent.init({
+showDetail.init({
     GET_INFO: modifyInfo.getScheduleInfo,
-    KEYSET: showDetail.getKeySet.bind(showDetail),
     DAYKEY: modifyInfo.setDayKey.bind(modifyInfo),
     KEY_VALUE: modifyInfo.keyValue
-});
-deleteEvent.init({
-    KEYSET: showDetail.getKeySet.bind(showDetail)
 });
