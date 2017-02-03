@@ -41,7 +41,7 @@ ScheduleDisplay.prototype = {
             }
         }
     },
-    setMonthEvent: function(event) {
+    setMonthEvent: function() {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var end = Utility.setTimeByGMT(new Date(this.schedule.end));
         var startDate = Utility.formDate(start.getFullYear(), start.getMonth() + 1, start.getDate());
@@ -52,11 +52,11 @@ ScheduleDisplay.prototype = {
         var dateHead = null;
         var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
-            this.status.row = this.getEventRowCount(weeks[i]);
             var rowHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead");
+            this.status.row = this.getEventRowCount(weeks[i]);
             if (!this.status.isEnd) {
                 for (var j = 0; j < this.status.row; j++) {
-                    this.addRow(rowHead);
+                    this.addRow(rowHead.nextElementSibling);
                 }
             }
             if (this.status.isStart) {
@@ -64,28 +64,32 @@ ScheduleDisplay.prototype = {
             } else {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
             }
-            dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-
-            if (dateHead !== null && dateBody !== null) {
-                if (this.status.row === this.moreRow) {
-                  this.setMoreCell(dateBody);
-                  this.status.row++;
-                  this.addRow(rowHead);
-                  dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-                  this.setLimitedEvent(dateBody, event.title);
-                }
-                else if (this.status.row > this.moreRow) {
-                  this.setLimitedEvent(dateBody, event.title);
-                }
-                for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
-                    this.setEventBar(dateBody, event.title);
-                    dateBody = dateBody.nextElementSibling;
-                }
+            if(dateHead !== null) {
+                dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+            }
+            if (dateBody !== null) {
+              this.setWeekRowEvent(dateHead, dateBody)
             }
             if (this.status.isEnd) {
                 break;
             }
         }
+    },
+    setWeekRowEvent: function(dateHead, dateBody) {
+      if (this.status.row === this.moreRow) {
+        this.setMoreCell(dateBody);
+        this.status.row++;
+        this.addRow(dateBody.parentNode.parentNode);
+        dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+      }
+
+      if (this.status.row >= this.moreRow) {
+        this.setLimitedEvent(dateBody, event.title);
+      }
+      for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
+          this.setEventBar(dateBody, this.schedule.title);
+          dateBody = dateBody.nextElementSibling;
+      }
     },
     initStatus: function() {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
@@ -279,17 +283,16 @@ ScheduleDisplay.prototype = {
             nextEnd.setFullYear(nextEnd.getFullYear() + 1);
         }
     },
-    addRow: function(headEle) {
-        if (headEle.nextElementSibling.children.length <= this.status.row) {
-            var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
+    addRow: function(bodyEle) {
+        if (bodyEle.children.length <= this.status.row) {
+            var newRow = bodyEle.firstElementChild.cloneNode(true);
             for (var i = 0; i < 7; i++) {
                 newRow.children[i].innerHTML = "";
                 newRow.children[i].className = "";
             }
-            headEle.nextElementSibling.appendChild(newRow);
+            bodyEle.appendChild(newRow);
         }
     },
-
     showMore: function(evt) {
         var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;

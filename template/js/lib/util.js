@@ -58,11 +58,11 @@ var Utility = {
     hideElement: function(ele) {
         ele.style.display = "none";
     },
-    getTbodyFromThead: function(headEle, tdEle, row) {
+    getTbodyFromThead: function(headTd, row) {
+        var headEle = headTd.parentNode.parentNode;
         var tds = headEle.querySelectorAll("td");
-
         for (var i = 0; i < tds.length; i++) {
-            if (tds[i].isEqualNode(tdEle)) {
+            if (tds[i].isEqualNode(headTd)) {
                 break;
             }
         }
