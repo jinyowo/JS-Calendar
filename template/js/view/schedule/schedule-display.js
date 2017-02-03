@@ -1,5 +1,5 @@
 function ScheduleDisplay() {
-    this.scheduleObjects;
+    this.scheduleArray;
     this.schedule;
     this.remainedSchedules;
     this.status;
@@ -8,7 +8,7 @@ ScheduleDisplay.prototype = {
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-        this.scheduleObjects = [];
+        this.scheduleArray = [];
         this.keys = [];
         this.calendarType = type;
         this.calendar = calendar;
@@ -29,8 +29,8 @@ ScheduleDisplay.prototype = {
         this.moreRow = 3;
     },
     setEvents: function() {
-        for (var i = 0; i < this.scheduleObjects.length; i++) {
-            var schedules = JSON.parse(this.scheduleObjects[i]);
+        for (var i = 0; i < this.scheduleArray.length; i++) {
+            var schedules = JSON.parse(this.scheduleArray[i]);
             this.status.key = this.keys[i];
             for (var j = 0; j < schedules.length; j++) {
                 this.schedule = schedules[j];
@@ -53,25 +53,20 @@ ScheduleDisplay.prototype = {
         var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
             this.status.row = this.getEventRowCount(weeks[i]);
-            var rowHead = weeks[i]._$(".fc-content-skeleton thead");
+            var rowHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead");
             if (!this.status.isEnd) {
                 for (var j = 0; j < this.status.row; j++) {
                     this.addRow(rowHead);
                 }
             }
             if (this.status.isStart) {
-                dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+                dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
             } else {
-                dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
+                dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
             }
             dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
 
             if (dateHead !== null && dateBody !== null) {
-                while (dateBody.classList.contains("fc-event-container") || dateBody.classList.contains("fc-more-cell")) {
-                    this.status.row++;
-                    this.addRow(rowHead);
-                    dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-                }
                 if (this.status.row === this.moreRow) {
                   this.setMoreCell(dateBody);
                   this.status.row++;
@@ -121,7 +116,7 @@ ScheduleDisplay.prototype = {
         }
     },
     setEventBar: function(ele, title) {
-        Utility.addClass(ele, "fc-event-container");
+        Utility.addClass(ele, Selector.schedule);
         ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
             "<div class = \"fc-content\">" +
             "</div></a>";
@@ -147,27 +142,27 @@ ScheduleDisplay.prototype = {
     },
 
     setLimitedEvent: function(ele, title) {
-        Utility.addClass(ele.parentNode, "fc-limited");
+        Utility.addClass(ele.parentNode, Selector.limitEvent);
     },
 
     setMoreCell: function(ele) {
-        Utility.addClass(ele, "fc-more-cell");
-        ele.innerHTML = "<div><a class=\"fc-more\">more...</a></div>";
+        Utility.addClass(ele, Selector.moreCell);
+        ele.innerHTML = "<div><a class=\"" + Selector.moreButton + "\">more...</a></div>";
 
-        ele._$(".fc-more").addEventListener('click',this.showMore.bind(this));
+        ele._$("." + Selector.moreButton).addEventListener('click',this.showMore.bind(this));
     },
 
     setHideCell: function(tableBody) {
         var newRow = tableBody.children[this.moreRow].cloneNode(true);
         newRow.innerHTML = newRow.innerHTML.replace(/more/g, "hide");
-        var newCells = newRow.querySelectorAll(".fc-hide");
+        var newCells = newRow.querySelectorAll("." + Selector.hideButton);
 
         for (var i = 0; i < newCells.length; i++) {
           newCells[i].addEventListener('click', this.hideMore.bind(this));
           newCells[i].innerText = "hide";
         }
 
-        var oldCell = tableBody._$(".fc-hide-cell");
+        var oldCell = tableBody._$("." + Selector.hideCell);
 
         if(oldCell !== null) {
           tableBody.replaceChild(newRow, oldCell.parentNode);
@@ -195,12 +190,12 @@ ScheduleDisplay.prototype = {
                         _schedules.push("{}");
                     }
                 }
-                this.scheduleObjects.push("[" + _schedules + "]");
+                this.scheduleArray.push("[" + _schedules + "]");
                 this.keys.push(key);
                 continue;
             }
             if(this.checkThisMonth(key)) {
-                this.scheduleObjects.push(items);
+                this.scheduleArray.push(items);
                 this.keys.push(key);
             }
         }
@@ -298,7 +293,7 @@ ScheduleDisplay.prototype = {
     showMore: function(evt) {
         var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
-        var mores = table.querySelectorAll(".fc-more-cell");
+        var mores = table.querySelectorAll("." + Selector.moreCell);
         var hidden = table.children;
 
         this.setHideCell(table);
@@ -307,33 +302,33 @@ ScheduleDisplay.prototype = {
         }
         var cellHeight = ((table.children.length) * 20);
         table.closest(".fc-row").style.height = cellHeight + "px";
-        _$(".fc-scroller").style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
+        _$("." + Selector.dayGridContainer).style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
 
         for(i = 0; i < hidden.length; i++) {
-            Utility.removeClass(hidden[i], "fc-limited");
+            Utility.removeClass(hidden[i], Selector.limitEvent);
         }
     },
     hideMore: function(evt) {
         var hideButton = evt.target;
         var table = hideButton.parentNode.parentNode.parentNode.parentNode;
         var limited = table.children;
-        var mores = table.querySelectorAll(".fc-more-cell");
+        var mores = table.querySelectorAll("." + Selector.moreCell);
         for (var i = 0; i < mores.length; i++) {
           Utility.showElement(mores[i]);
         }
         for (var i = this.moreRow + 1; i < limited.length; i++) {
-          Utility.addClass(limited[i], "fc-limited");
+          Utility.addClass(limited[i], Selector.limitEvent);
         }
-        var totalHeight = parseInt(_$(".fc-scroller").style.height);
+        var totalHeight = parseInt(_$("." + Selector.dayGridContainer).style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
         table.closest(".fc-row").style.height = this.default.tableHeight + "px";
-        _$(".fc-scroller").style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
+        _$("." + Selector.dayGridContainer).style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
     getEventRowCount: function(row) {
       var count = 0;
-      var trs = row.querySelectorAll(".fc-content-skeleton tbody tr");
+      var trs = row.querySelectorAll("." + Selector.scheduleSkeleton + " tbody tr");
       for (var i = 0; i < trs.length; i++) {
-        if(trs[i]._$(".fc-event-container") !== null){
+        if(trs[i]._$("." + Selector.schedule) !== null || trs[i]._$("." + Selector.moreCell) !== null){
           count++;
         }
       }
