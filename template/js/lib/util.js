@@ -58,11 +58,11 @@ var Utility = {
     hideElement: function(ele) {
         ele.style.display = "none";
     },
-    getTbodyFromThead: function(headEle, tdEle, row) {
+    getTbodyFromThead: function(headTd, row) {
+        var headEle = headTd.parentNode.parentNode;
         var tds = headEle.querySelectorAll("td");
-
         for (var i = 0; i < tds.length; i++) {
-            if (tds[i].isEqualNode(tdEle)) {
+            if (tds[i].isEqualNode(headTd)) {
                 break;
             }
         }
@@ -99,13 +99,14 @@ var Utility = {
 /** CSS class중 Selector로 주로 사용하는 class모음 */
 var Selector = {
     monthView : "fc-month-view",
-    // : "fc-content-skeleton",
+    dayGridContainer : "fc-day-grid-container",
     topDiv: "fc-toolbar",
     cellTop: "fc-day-top",
     cellBg: "fc-day",
 
     today : "fc-today",
     otherMonth : "fc-other-month",
+    scheduleSkeleton : "fc-content-skeleton",
     schedule : "fc-event-container",
 
     todayButton : "fc-today-button",
@@ -114,6 +115,13 @@ var Selector = {
     dayTypeButton : "fc-agendaDay-button",
     prevButton : "fc-prev-button",
     nextButton : "fc-next-button",
+
+    moreCell : "fc-more-cell",
+    moreButton : "fc-more",
+    hideCell : "fc-hide-cell",
+    hideButton : "fc-hide",
+
+    limitEvent : "fc-limited"
 };
 /** CSS class중 Style을 조정하는 class모음 */
 var Style = {

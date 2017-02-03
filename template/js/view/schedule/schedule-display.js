@@ -1,5 +1,5 @@
 function ScheduleDisplay() {
-    this.scheduleObjects;
+    this.scheduleArray;
     this.schedule;
     this.remainedSchedules;
     this.status;
@@ -8,7 +8,7 @@ ScheduleDisplay.prototype = {
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-        this.scheduleObjects = [];
+        this.scheduleArray = [];
         this.keys = [];
         this.calendarType = type;
         this.calendar = calendar;
@@ -21,10 +21,17 @@ ScheduleDisplay.prototype = {
             key: "",
             position: 0
         };
+        this.default = {
+            monthHeight: 647,
+            tableHeight: 107,
+            milliToDay: 1000 * 60 * 60 * 24
+        };
+        this.moreRow = 3;
     },
+
     setEvents: function() {
-        for (var i = 0; i < this.scheduleObjects.length; i++) {
-            var schedules = JSON.parse(this.scheduleObjects[i]);
+        for (var i = 0; i < this.scheduleArray.length; i++) {
+            var schedules = JSON.parse(this.scheduleArray[i]);
             this.status.key = this.keys[i];
             for (var j = 0; j < schedules.length; j++) {
                 this.schedule = schedules[j];
@@ -35,58 +42,56 @@ ScheduleDisplay.prototype = {
             }
         }
     },
-    setMonthEvent: function(event) {
+    setMonthEvent: function() {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var end = Utility.setTimeByGMT(new Date(this.schedule.end));
         var startDate = Utility.formDate(start.getFullYear(), start.getMonth() + 1, start.getDate());
         var endDate = Utility.formDate(end.getFullYear(), end.getMonth() + 1, end.getDate());
 
-        this.initStatus();
+        this.initStatus(this.status);
         var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
         var dateHead = null;
         var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
+            var rowBody = weeks[i]._$("." + Selector.scheduleSkeleton + " tbody");
             this.status.row = this.getEventRowCount(weeks[i]);
-            var rowHead = weeks[i]._$(".fc-content-skeleton thead");
             if (!this.status.isEnd) {
                 for (var j = 0; j < this.status.row; j++) {
-                    this.addRow(rowHead);
+                    this.addRow(rowBody);
                 }
             }
             if (this.status.isStart) {
-                dateHead = weeks[i]._$(".fc-content-skeleton [data-date=\"" + startDate + "\"]");
+                dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
             } else {
-                dateHead = weeks[i]._$(".fc-content-skeleton thead tr").firstElementChild;
+                dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
             }
-            dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-
-            if (dateHead !== null && dateBody !== null) {
-                while (dateBody.classList.contains("fc-event-container") || dateBody.classList.contains("fc-more-cell")) {
-                    this.status.row++;
-                    this.addRow(rowHead);
-                    dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-                }
-                if (this.status.row === 3) {
-                  this.setMoreCell(dateBody);
-                  this.status.row++;
-                  this.addRow(rowHead);
-                  dateBody = Utility.getTbodyFromThead(rowHead, dateHead, this.status.row);
-                  this.setLimitedEvent(dateBody, event.title);
-                }
-                else if (this.status.row > 3) {
-                  this.setLimitedEvent(dateBody, event.title);
-                }
-                for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
-                    this.setEventBar(dateBody, event.title);
-                    dateBody = dateBody.nextElementSibling;
-                }
+            if(dateHead !== null) {
+                dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+                this.setWeekRowEvent(dateHead, dateBody);
             }
             if (this.status.isEnd) {
                 break;
             }
         }
     },
-    initStatus: function() {
+    setWeekRowEvent: function(dateHead, dateBody) {
+      if (this.status.row === this.moreRow) {
+        this.setMoreCell(dateBody);
+        this.status.row++;
+        this.addRow(dateBody.parentNode.parentNode);
+        dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+      }
+
+      if (this.status.row > this.moreRow) {
+          this.setLimitedEvent(dateBody, event.title);
+      }
+
+      for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
+          this.setEventBar(dateBody, this.schedule.title);
+          dateBody = dateBody.nextElementSibling;
+      }
+    },
+    initStatus: function(status) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var end = Utility.setTimeByGMT(new Date(this.schedule.end));
         var firstDate = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
@@ -94,14 +99,14 @@ ScheduleDisplay.prototype = {
         Utility.setTimeDefault(end, 0);
 
         if (start < firstDate) {
-            this.status.remain = Math.ceil((end - firstDate) / (1000 * 60 * 60 * 24));
-            this.status.isStart = false;
+            status.remain = Math.ceil((end - firstDate) / this.default.milliToDay);
+            status.isStart = false;
         } else {
-            this.status.remain = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-            this.status.isStart = true;
+            status.remain = Math.ceil((end - start) / this.default.milliToDay);
+            status.isStart = true;
         }
-        this.status.isEnd = false;
-        this.status.row = 0;
+        status.isEnd = false;
+        status.row = 0;
     },
     setBarStatus: function(status) {
         if (status.isStart) {
@@ -115,7 +120,7 @@ ScheduleDisplay.prototype = {
         }
     },
     setEventBar: function(ele, title) {
-        Utility.addClass(ele, "fc-event-container");
+        Utility.addClass(ele, Selector.schedule);
         ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
             "<div class = \"fc-content\">" +
             "</div></a>";
@@ -141,27 +146,27 @@ ScheduleDisplay.prototype = {
     },
 
     setLimitedEvent: function(ele, title) {
-        Utility.addClass(ele.parentNode, "fc-limited");
+        Utility.addClass(ele.parentNode, Selector.limitEvent);
     },
 
     setMoreCell: function(ele) {
-        Utility.addClass(ele, "fc-more-cell");
-        ele.innerHTML = "<div><a class=\"fc-more\">more...</a></div>";
+        Utility.addClass(ele, Selector.moreCell);
+        ele.innerHTML = "<div><a class=\"" + Selector.moreButton + "\">more...</a></div>";
 
-        ele._$(".fc-more").addEventListener('click',this.showMore.bind(this));
+        Utility.on(ele._$("." + Selector.moreButton), 'click',this.showMore.bind(this));
     },
 
     setHideCell: function(tableBody) {
-        var newRow = tableBody.children[3].cloneNode(true);
+        var newRow = tableBody.children[this.moreRow].cloneNode(true);
         newRow.innerHTML = newRow.innerHTML.replace(/more/g, "hide");
-        var newCells = newRow.querySelectorAll(".fc-hide");
+        var newCells = newRow.querySelectorAll("." + Selector.hideButton);
 
         for (var i = 0; i < newCells.length; i++) {
-          newCells[i].addEventListener('click', this.hideMore);
+          Utility.on(newCells[i], 'click', this.hideMore.bind(this));
           newCells[i].innerText = "hide";
         }
 
-        var oldCell = tableBody._$(".fc-hide-cell");
+        var oldCell = tableBody._$("." + Selector.hideCell);
 
         if(oldCell !== null) {
           tableBody.replaceChild(newRow, oldCell.parentNode);
@@ -189,12 +194,12 @@ ScheduleDisplay.prototype = {
                         _schedules.push("{}");
                     }
                 }
-                this.scheduleObjects.push("[" + _schedules + "]");
+                this.scheduleArray.push("[" + _schedules + "]");
                 this.keys.push(key);
                 continue;
             }
             if(this.checkThisMonth(key)) {
-                this.scheduleObjects.push(items);
+                this.scheduleArray.push(items);
                 this.keys.push(key);
             }
         }
@@ -278,21 +283,20 @@ ScheduleDisplay.prototype = {
             nextEnd.setFullYear(nextEnd.getFullYear() + 1);
         }
     },
-    addRow: function(headEle) {
-        if (headEle.nextElementSibling.children.length <= this.status.row) {
-            var newRow = headEle.nextElementSibling.firstElementChild.cloneNode(true);
+    addRow: function(bodyEle) {
+        if (bodyEle.children.length <= this.status.row) {
+            var newRow = bodyEle.firstElementChild.cloneNode(true);
             for (var i = 0; i < 7; i++) {
                 newRow.children[i].innerHTML = "";
                 newRow.children[i].className = "";
             }
-            headEle.nextElementSibling.appendChild(newRow);
+            bodyEle.appendChild(newRow);
         }
     },
-
     showMore: function(evt) {
         var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
-        var mores = table.querySelectorAll(".fc-more-cell");
+        var mores = table.querySelectorAll("." + Selector.moreCell);
         var hidden = table.children;
 
         this.setHideCell(table);
@@ -301,33 +305,33 @@ ScheduleDisplay.prototype = {
         }
         var cellHeight = ((table.children.length) * 20);
         table.closest(".fc-row").style.height = cellHeight + "px";
-        _$(".fc-scroller").style.height = 647 + cellHeight - 107 + "px";
+        _$("." + Selector.dayGridContainer).style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
 
         for(i = 0; i < hidden.length; i++) {
-            Utility.removeClass(hidden[i], "fc-limited");
+            Utility.removeClass(hidden[i], Selector.limitEvent);
         }
     },
     hideMore: function(evt) {
         var hideButton = evt.target;
         var table = hideButton.parentNode.parentNode.parentNode.parentNode;
         var limited = table.children;
-        var mores = table.querySelectorAll(".fc-more-cell");
+        var mores = table.querySelectorAll("." + Selector.moreCell);
         for (var i = 0; i < mores.length; i++) {
           Utility.showElement(mores[i]);
         }
-        for (var i = 4; i < limited.length; i++) {
-          Utility.addClass(limited[i], "fc-limited");
+        for (var i = this.moreRow + 1; i < limited.length; i++) {
+          Utility.addClass(limited[i], Selector.limitEvent);
         }
-        var totalHeight = parseInt(_$(".fc-scroller").style.height);
+        var totalHeight = parseInt(_$("." + Selector.dayGridContainer).style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
-        table.closest(".fc-row").style.height = 107 + "px";
-        _$(".fc-scroller").style.height = totalHeight - (cellHeight - 107) + "px";
+        table.closest(".fc-row").style.height = this.default.tableHeight + "px";
+        _$("." + Selector.dayGridContainer).style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
     getEventRowCount: function(row) {
       var count = 0;
-      var trs = row.querySelectorAll(".fc-content-skeleton tbody tr");
+      var trs = row.querySelectorAll("." + Selector.scheduleSkeleton + " tbody tr");
       for (var i = 0; i < trs.length; i++) {
-        if(trs[i]._$(".fc-event-container") !== null){
+        if(trs[i]._$("." + Selector.schedule) !== null || trs[i]._$("." + Selector.moreCell) !== null){
           count++;
         }
       }
