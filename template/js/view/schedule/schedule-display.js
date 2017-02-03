@@ -28,6 +28,7 @@ ScheduleDisplay.prototype = {
         };
         this.moreRow = 3;
     },
+
     setEvents: function() {
         for (var i = 0; i < this.scheduleArray.length; i++) {
             var schedules = JSON.parse(this.scheduleArray[i]);
@@ -47,16 +48,16 @@ ScheduleDisplay.prototype = {
         var startDate = Utility.formDate(start.getFullYear(), start.getMonth() + 1, start.getDate());
         var endDate = Utility.formDate(end.getFullYear(), end.getMonth() + 1, end.getDate());
 
-        this.initStatus();
+        this.initStatus(this.status);
         var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
         var dateHead = null;
         var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
-            var rowHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead");
+            var rowBody = weeks[i]._$("." + Selector.scheduleSkeleton + " tbody");
             this.status.row = this.getEventRowCount(weeks[i]);
             if (!this.status.isEnd) {
                 for (var j = 0; j < this.status.row; j++) {
-                    this.addRow(rowHead.nextElementSibling);
+                    this.addRow(rowBody);
                 }
             }
             if (this.status.isStart) {
@@ -66,9 +67,7 @@ ScheduleDisplay.prototype = {
             }
             if(dateHead !== null) {
                 dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
-            }
-            if (dateBody !== null) {
-              this.setWeekRowEvent(dateHead, dateBody)
+                this.setWeekRowEvent(dateHead, dateBody);
             }
             if (this.status.isEnd) {
                 break;
@@ -83,15 +82,16 @@ ScheduleDisplay.prototype = {
         dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
       }
 
-      if (this.status.row >= this.moreRow) {
-        this.setLimitedEvent(dateBody, event.title);
+      if (this.status.row > this.moreRow) {
+          this.setLimitedEvent(dateBody, event.title);
       }
+
       for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
           this.setEventBar(dateBody, this.schedule.title);
           dateBody = dateBody.nextElementSibling;
       }
     },
-    initStatus: function() {
+    initStatus: function(status) {
         var start = Utility.setTimeByGMT(new Date(this.schedule.start));
         var end = Utility.setTimeByGMT(new Date(this.schedule.end));
         var firstDate = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
@@ -99,14 +99,14 @@ ScheduleDisplay.prototype = {
         Utility.setTimeDefault(end, 0);
 
         if (start < firstDate) {
-            this.status.remain = Math.ceil((end - firstDate) / this.default.milliToDay);
-            this.status.isStart = false;
+            status.remain = Math.ceil((end - firstDate) / this.default.milliToDay);
+            status.isStart = false;
         } else {
-            this.status.remain = Math.ceil((end - start) / this.default.milliToDay);
-            this.status.isStart = true;
+            status.remain = Math.ceil((end - start) / this.default.milliToDay);
+            status.isStart = true;
         }
-        this.status.isEnd = false;
-        this.status.row = 0;
+        status.isEnd = false;
+        status.row = 0;
     },
     setBarStatus: function(status) {
         if (status.isStart) {
