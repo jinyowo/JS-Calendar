@@ -153,7 +153,7 @@ ScheduleDisplay.prototype = {
         Utility.addClass(ele, Selector.moreCell);
         ele.innerHTML = "<div><a class=\"" + Selector.moreButton + "\">more...</a></div>";
 
-        ele._$("." + Selector.moreButton).addEventListener('click',this.showMore.bind(this));
+        Utility.on(ele._$("." + Selector.moreButton), 'click',this.showMore.bind(this));
     },
 
     setHideCell: function(tableBody) {
@@ -162,7 +162,7 @@ ScheduleDisplay.prototype = {
         var newCells = newRow.querySelectorAll("." + Selector.hideButton);
 
         for (var i = 0; i < newCells.length; i++) {
-          newCells[i].addEventListener('click', this.hideMore.bind(this));
+          Utility.on(newCells[i], 'click', this.hideMore.bind(this));
           newCells[i].innerText = "hide";
         }
 
