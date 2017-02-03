@@ -105,10 +105,9 @@ describe('Utility.js 테스트', function() {
             _$('#table-container').innerHTML = html;
         });
         it('head의 td와 row를 넘겨주면 body의 해당하는 위치의 td를 돌려준다.', function(done) {
-            var thead = _$("#test-table thead");
-            var finder = thead._$("#finder");
+            var finder = _$("#finder");
             var row = 1;
-            var result = Utility.getTbodyFromThead(thead, finder, row);
+            var result = Utility.getTbodyFromThead(finder, row);
             if (result.getAttribute("id") === "correct") done();
             else throw Error('wrong body item');
         });
