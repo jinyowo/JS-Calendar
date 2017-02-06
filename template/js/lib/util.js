@@ -122,7 +122,15 @@ var Selector = {
     hideCell : "fc-hide-cell",
     hideButton : "fc-hide",
 
-    limitEvent : "fc-limited"
+    limitEvent : "fc-limited",
+
+    Mtoday : "mini-today",
+    Mtitle : "mini-title",
+    Mcells : "mini-cells",
+    MotherMonth : "mini-other-month",
+    MprevButton : "mini-prev-button",
+    MnextButton : "mini-next-button",
+
 };
 /** CSS class중 Style을 조정하는 class모음 */
 var Style = {

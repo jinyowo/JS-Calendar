@@ -72,14 +72,8 @@
     width: 26px;
 }
 
-.mini-calendar .mini-prev-month,
-.mini-calendar .mini-next-month {
+.mini-calendar .mini-other-month {
     color: #cbd1d2;
-}
-
-.mini-calendar .mini-prev-month:hover,
-.mini-calendar .mini-next-month:hover {
-    border: 1px solid #cbd1d2;
 }
 
 .mini-calendar td.mini-today {

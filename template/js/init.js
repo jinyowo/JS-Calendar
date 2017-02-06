@@ -1,7 +1,11 @@
 document.addEventListener("DOMContentLoaded", init);
 function init() {
     var calendar = new Calendar();
-    // calendar에서 사용할 다른 객체의 메소드를 넣는다
     calendar.init("month", Utility.Today, { });
-    calendar.setCalendar();
+
+    var mini = new MiniCalendar();
+    mini.init(Utility.Today, {
+        GET_NUMS: calendar.setMonthCalendarBody.bind(calendar),
+    });
+
 }
