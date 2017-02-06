@@ -30,6 +30,12 @@
 			border: 0;
 			outline: 0;
 		}
+
+		.scheduleButton{
+			background-color: #3a87ad;
+			color: white;
+			border-radius: 5px;
+		}
 	</style>
 	<script id="popup-template" type="text/x-handlebars-template">
 		<strong id="popupTitle">{{ title }}</strong>
@@ -45,6 +51,9 @@
 </head>
 
 <body>
+	<div>
+		<button id="scheduleButton" class="scheduleButton" >일정만들기</button>
+	</div>
 	<!-- 팝업 div -->
 	<div class="popupBackground">
 		<div class="popupContent">
