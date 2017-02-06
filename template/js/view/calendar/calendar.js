@@ -165,6 +165,7 @@ Calendar.prototype = {
     // button event
     arrowButtonClickEvent: function(evt) {
         this.moveCalendar(evt.target);
+        this.resetEvent();
         this.setCalendar(this);
     },
     typeButtonClickEvent: function(evt) {
@@ -184,8 +185,7 @@ Calendar.prototype = {
         var nextArrowClass = Selector.nextButton;
         var button = target.closest("button");
         var mydate = this.myDate;
-        this.resetEvent();
-
+        
         if (button.classList.contains(prevArrowClass)) {
             mydate.month--;
         } else if (button.classList.contains(nextArrowClass)) {
