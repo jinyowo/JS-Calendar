@@ -70,14 +70,7 @@ Calendar.prototype = {
                 this.setMonthTitle();
                 this.setMonthCalendarBody();
                 break;
-            case "week":
-                this.setWeekTitle();
-                this.setWeekCalendarBody();
-                break;
-            case "day":
-                this.setDayTitle();
-                this.setDayCalendarBody();
-                break;
+            default: break;
         }
 
     },
@@ -116,9 +109,6 @@ Calendar.prototype = {
             if (this.cells[currentDate].className.includes("fc-other-month")) {
                 Utility.removeClass(this.cells[currentDate], "fc-other-month");
             }
-            if (this.cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[currentDate]);
-            else if (this.cellsBackground[currentDate].className.includes("fc-state-highlight")) this.removeToday(this.cellsBackground[currentDate]);
-
             currentDate++;
             numArr.push(i);
         }
@@ -132,6 +122,9 @@ Calendar.prototype = {
                 currentDate++;
                 numArr.push(nextMonthDate++);
             }
+            if (this.cellsBackground[i].getAttribute("data-date") === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[i]);
+            else if (this.cellsBackground[i].className.includes("fc-state-highlight")) this.removeToday(this.cellsBackground[i]);
+
             this.nums[i].innerText = numArr[i];
         }
         this.firstDay = this.cells[0].getAttribute("data-date");
@@ -139,16 +132,6 @@ Calendar.prototype = {
         var schedule = new ScheduleDisplay();
         schedule.init(this, 0, "month");
         schedule.setEvents();
-    },
-    setWeekTitle: function() {
-
-    },
-    setWeekCalendarBody: function() {
-    },
-    setDayTitle: function() {
-    },
-    setDayCalendarBody: function() {
-
     },
     getLastDate: function(month) {
         if (month < 0) { month = 11;}
