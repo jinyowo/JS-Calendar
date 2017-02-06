@@ -67,7 +67,6 @@ ScheduleDisplay.prototype = {
     },
     setWeekRowEvent: function(dateHead, weekRow) {
       var rowBody = weekRow._$("." + Selector.scheduleSkeleton + " tbody");
-      var dateBody = null;
 
       this.status.row = this.getEventRowCount(weekRow, dateHead);
       if (!this.status.isEnd) {
@@ -75,12 +74,12 @@ ScheduleDisplay.prototype = {
               this.addRow(rowBody);
           }
       }
-      dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+      var dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
 
       if (this.status.row === this.moreRow) {
         this.setMoreCell(dateBody);
         this.status.row++;
-        this.addRow(dateBody.parentNode.parentNode);
+        this.addRow(rowBody);
         dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
       }
 
@@ -340,7 +339,7 @@ ScheduleDisplay.prototype = {
       for (var i = 0; i <= remain && dateHead !== null; i++) {
         for (var j = 0; j < trs.length; j++) {
           var toCheck = Utility.getTbodyFromThead(dateHead, count).classList;
-          if(toCheck.contains(Selector.schedule) || toCheck.contains(Selector.moreCell)) {
+          if(toCheck.contains(Selector.schedule) || count === this.moreRow) {
             count++;
           }
         }
