@@ -7,7 +7,7 @@ function Calendar() {
     this.type = "";
     this.monthTitle = _$("."+Selector.title);
     this.cells = document.querySelectorAll("."+Selector.cellTop);
-    this.cellsBackground = document.querySelectorAll("."+Selector.cellBg);
+    this.cellsBg = document.querySelectorAll("."+Selector.cellBg);
     this.nums = document.querySelectorAll("."+Selector.cellTop+" a");
     this.firstDay = "";
     this.lastDay = "";
@@ -109,7 +109,8 @@ Calendar.prototype = {
 
         // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
         for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
-            this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], prevYear, this.myDate.month, i);
+            // this.setDataDate(this.cells[currentDate], this.cellsBg[currentDate], prevYear, this.myDate.month, i);
+            this.setDataDate(currentDate, prevYear, this.myDate.month, i);
             if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
                 Utility.addClass(this.cells[currentDate], Selector.otherMonth);
             }
@@ -118,7 +119,7 @@ Calendar.prototype = {
         }
         // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
         for (var i = 1; i <= lastDate; i++) {
-            this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month + 1, i);
+            this.setDataDate(currentDate, this.myDate.year, this.myDate.month + 1, i);
             if (this.cells[currentDate].className.includes(Selector.otherMonth)) {
                 Utility.removeClass(this.cells[currentDate], Selector.otherMonth);
             }
@@ -128,32 +129,29 @@ Calendar.prototype = {
         // 지난달, 이번달, 다음달에 해당하는 날짜를 달력에 보여준다.
         for (var i = 0; i < this.nums.length; i++) {
             if (numArr[i] === undefined) {
-                this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month + 2, nextMonthDate);
+                this.setDataDate(currentDate, this.myDate.year, this.myDate.month + 2, nextMonthDate);
                 if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
                     Utility.addClass(this.cells[currentDate], Selector.otherMonth);
                 }
                 currentDate++;
                 numArr.push(nextMonthDate++);
             }
-            if (this.cellsBackground[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[i]);
-            else if (this.cellsBackground[i].className.includes(Selector.today)) this.removeToday(this.cellsBackground[i]);
+            if (this.cellsBg[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBg[i]);
+            else if (this.cellsBg[i].className.includes(Selector.today)) this.removeToday(this.cellsBg[i]);
 
             this.nums[i].innerText = numArr[i];
         }
         this.firstDay = this.cells[0].getAttribute(CustomData.date);
         this.lastDay =  this.cells[currentDate-1].getAttribute(CustomData.date);
-        var schedule = new ScheduleDisplay();
-        schedule.init(this, 0, "month");
-        schedule.setEvents();
     },
     getLastDate: function(month) {
         if (month < 0) { month = 11;}
         var lastDate = new Date(this.myDate.year, month + 1, 0).getDate();
         return lastDate;
     },
-    setDataDate: function(cell, cellBg, year, month, date) {
-        cell.setAttribute(CustomData.date, Utility.formDate(year, month, date));
-        cellBg.setAttribute(CustomData.date, Utility.formDate(year, month, date));
+    setDataDate: function(currentDate, year, month, date) {
+        this.cells[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
+        thie.cellBg[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
     },
     showCalendar: function() {
         this.hideAllCalendar();
