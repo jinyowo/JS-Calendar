@@ -128,11 +128,16 @@ ScheduleDisplay.prototype = {
             "</div></a>";
         var eventLink = ele._$("a");
 
+        var source = _$("#event-title-template").innerHTML;
+        var template = Handlebars.compile(source);
+        var titleData = {"title": title}
+        var html = template(titleObj);
+
         eventLink.setAttribute("data-key", this.status.key);
         eventLink.setAttribute("data-pos", this.status.position);
 
         if (ele.isEqualNode(ele.parentNode.firstElementChild) || this.status.isStart) {
-            eventLink._$("div").innerHTML = "<span class = \"fc-title\">" + title + "</span>";
+            eventLink._$("div").innerHTML = html;
         }
         if (this.status.isStart) {
             Utility.addClass(eventLink, "fc-start");
