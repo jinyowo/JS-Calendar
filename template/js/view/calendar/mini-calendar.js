@@ -9,10 +9,8 @@ function MiniCalendar() {
 };
 MiniCalendar.prototype = {
     init: function(base, option) {
-        this.setMyDate(base);
         this.callbackList = option;
-
-        this.drawCalendar();
+        this.drawCalendar(base);
     },
     setMyDate: function(base) {
         for (var i in this.myDate) {
@@ -25,7 +23,9 @@ MiniCalendar.prototype = {
     removeToday: function(ele) {
         Utility.removeClass(ele, Selector.Mtoday);
     },
-    drawCalendar: function() {
+    drawCalendar: function(base) {
+        this.setMyDate(base);
+
         var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
@@ -47,7 +47,7 @@ MiniCalendar.prototype = {
                 this.cells[i].setAttribute(CustomData.date, Utility.formDate(this.myDate.year, month, numArr[i]));
             }
             this.cells[i].innerText = numArr[i];
-            
+
             if (this.cells[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cells[i]);
             else if (this.cells[i].className.includes(Selector.Mtoday)) this.removeToday(this.cells[i]);
         }

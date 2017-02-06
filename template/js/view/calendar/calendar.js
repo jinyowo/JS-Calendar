@@ -177,6 +177,7 @@ Calendar.prototype = {
         if (this.isToday(this)) return false;
 
         this.setMyDate(Utility.Today);
+        this.callbackList["SET_MINI"](this.myDate);
         this.resetEvent();
         this.setCalendar(this);
     },
@@ -195,6 +196,7 @@ Calendar.prototype = {
             this.myDate.month = 0;
             this.myDate.year++;
         }
+        this.callbackList["SET_MINI"](this.myDate);
     },
     setTypeButton: function(type, typeButtons) {
         this.inactiveButtonSet(typeButtons, Style.activeEffect);
