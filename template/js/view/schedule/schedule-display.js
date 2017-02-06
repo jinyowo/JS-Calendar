@@ -131,7 +131,7 @@ ScheduleDisplay.prototype = {
         var source = _$("#event-title-template").innerHTML;
         var template = Handlebars.compile(source);
         var titleData = {"title": title}
-        var html = template(titleObj);
+        var html = template(titleData);
 
         eventLink.setAttribute("data-key", this.status.key);
         eventLink.setAttribute("data-pos", this.status.position);
@@ -229,21 +229,14 @@ ScheduleDisplay.prototype = {
         else return [false, order];
     },
     checkThisMonth: function(key) {
-        var result = false;
+        var result = true;
         var due = key.split("S");
         var eStart = due[0];
         var eEnd = due[1].replace("E", "");
 
-        if (eEnd <= this.calendar.lastDay) {
-            if (eEnd >= this.calendar.firstDay) {
-                result = true;
-            }
-        } else if (eStart >= this.calendar.firstDay) {
-            if (eStart <= this.calendar.lastDay) {
-                result = true;
-            }
-        } else {
-            result = true;
+        if ((eStart > this.calendar.lastDay && eEnd > this.calendar.lastDay)
+        || eStart < this.calendar.firstDay && eEnd < this.calendar.firstDay) {
+            result = false;
         }
         return result;
     },
