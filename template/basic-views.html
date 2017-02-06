@@ -39,6 +39,13 @@
             width: auto;
             height: 723px;
         }
+		#sidebar div.scheduleButton {
+			border: 1px solid #e3e3e3;
+			position: absolute;
+			width: 204px;
+			height: 31px;
+			top: 10px;
+		}
         /* ---------- CALENDAR ---------- */
 
         .calendar {
@@ -168,6 +175,13 @@
         .mini-sat {
             /*color: blue;*/
         }
+		.scheduleButton{
+			text-align: center;
+			padding-top: 2.5px;
+			background-color: #3a87ad;
+			color: white;
+			border-radius: 5px;
+		}
 	</style>
 	<script id="popup-template" type="text/x-handlebars-template">
 		<strong id="popupTitle">{{ title }}</strong>
@@ -254,8 +268,8 @@
 	</div>
 	<!-- sidebar -->
 	<div id="sidebar" class="container">
-		<div class="make-button">
-
+		<div class="scheduleButton">
+			<button id="scheduleButton" class="scheduleButton" >일정만들기</button>
 		</div>
         <div class="calendar">
             <header>
