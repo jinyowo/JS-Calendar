@@ -51,7 +51,6 @@ ScheduleDisplay.prototype = {
         this.initStatus(this.status);
         var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
         var dateHead = null;
-        var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
             if (this.status.isStart) {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
@@ -59,22 +58,25 @@ ScheduleDisplay.prototype = {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
             }
             if(dateHead !== null) {
-                var rowBody = weeks[i]._$("." + Selector.scheduleSkeleton + " tbody");
-                this.status.row = this.getEventRowCount(weeks[i], dateHead);
-                if (!this.status.isEnd) {
-                    for (var j = 0; j < this.status.row; j++) {
-                        this.addRow(rowBody);
-                    }
-                }
-                dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
-                this.setWeekRowEvent(dateHead, dateBody);
+              this.setWeekRowEvent(dateHead, weeks[i])
             }
             if (this.status.isEnd) {
                 break;
             }
         }
     },
-    setWeekRowEvent: function(dateHead, dateBody) {
+    setWeekRowEvent: function(dateHead, weekRow) {
+      var rowBody = weekRow._$("." + Selector.scheduleSkeleton + " tbody");
+      var dateBody = null;
+
+      this.status.row = this.getEventRowCount(weekRow, dateHead);
+      if (!this.status.isEnd) {
+          for (var j = 0; j < this.status.row; j++) {
+              this.addRow(rowBody);
+          }
+      }
+      dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+
       if (this.status.row === this.moreRow) {
         this.setMoreCell(dateBody);
         this.status.row++;
@@ -86,7 +88,7 @@ ScheduleDisplay.prototype = {
           this.setLimitedEvent(dateBody, event.title);
       }
 
-      for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
+      for (var day = 0; day < 7 && dateBody !== null && !this.status.isEnd; day++) {
           this.setEventBar(dateBody, this.schedule.title);
           dateBody = dateBody.nextElementSibling;
       }
@@ -344,7 +346,7 @@ ScheduleDisplay.prototype = {
             count++;
           }
         }
-        
+
         if (count > result) {
           result = count;
         }
