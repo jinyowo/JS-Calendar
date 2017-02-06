@@ -168,7 +168,7 @@ DetailView.prototype = {
 
 var showForm = new FormView();
 var showDetail = new DetailView();
-var modifyInfo = new SubmitInfo();
+var modifyInfo = new Submission();
 showForm.init();
 modifyInfo.init();
 showDetail.init({
