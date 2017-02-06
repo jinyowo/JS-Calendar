@@ -160,6 +160,7 @@ Submission.prototype = {
     saveScheduleInfo: function(x) {
         var keyValue = this.setDayKey();
         var scheduleInfo = this.getScheduleInfo.bind(this)();
+        if(scheduleInfo === undefined) return 0;    // 반복일정 기간이 잘못된 경우
         var alreadyHas = localStorage.getItem(keyValue);
         var scheduleArray = [];
         if (!!alreadyHas) {
@@ -184,6 +185,11 @@ Submission.prototype = {
         else scheduleInfo["allDay"] = false;
         var repeatValue = _$('input[name="optradio"]:checked').value;
         scheduleInfo['repeat'] = repeatValue;
+
+        // check repeatEvent date
+        var correntEvent = this.checkRepeatEvent(repeatValue, this.dateFromISO(scheduleInfo["start"]), this.dateFromISO(scheduleInfo["end"]));
+        if(!correntEvent) scheduleInfo = undefined;
+
         return scheduleInfo;
     },
     getTime: function() {
@@ -236,5 +242,26 @@ Submission.prototype = {
         this.endTimeInput.style.backgroundColor = "White";
         this.defaultStart = "";
         this.defalutEnd = "";
+    },
+    /** 반복일정의 경우 기간 검사 */
+    checkRepeatEvent: function(repeat, start, end) {
+        var currDay = 24 * 60 * 60 * 1000;
+        var currWeek = currDay * 7;
+        var currMonth = currDay * 30;
+        var currYear = currMonth * 12;
+        var result = true;
+        var diff = end - start;
+
+        if(repeat === "D") {
+            result = diff > currDay ? false : true;
+        } else if(repeat === "W") {
+            result = diff > currWeek ? false : true;
+        } else if(repeat === "M") {
+            result = diff > currMonth ? false : true;
+        } else {
+            result = diff > currYear ? false : true;
+        }
+        if(!result) alert("날짜 값이 잘못되었습니다.");
+        return result;
     }
 };
