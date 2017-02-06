@@ -39,6 +39,7 @@ Calendar.prototype = {
             this.typeButtons[i].init(this, this.typeButtonClickEvent.bind(this), {});
         }
         this.todayButton.init(this, this.todayButtonClickEvent.bind(this), {});
+        this.setCalendar();
     },
     setType: function(type) {
         this.type = type;
@@ -47,6 +48,9 @@ Calendar.prototype = {
         for (var i in this.myDate) {
             this.myDate[i] = base[i];
         }
+    },
+    setNums: function(numArr) {
+        this.numArr = numArr;
     },
     setToday: function(ele) {
         Utility.addClass(ele, Selector.today);
@@ -58,7 +62,7 @@ Calendar.prototype = {
     },
     /** set Calendar */
     setCalendar: function() {
-        this.drawCalendar();        
+        this.drawCalendar();
         // 해당 달력에 포함되어 있는 일정 띄우기
         this.schedules.init(this, 0, "month");
         this.schedules.setEvents();
@@ -96,6 +100,7 @@ Calendar.prototype = {
         }
         this.firstDay = this.cells[0].getAttribute(CustomData.date);
         this.lastDay = this.cells[currentDate - 1].getAttribute(CustomData.date);
+        return numArr;
     },
     prevMonth: function(numArr, currentDate) {
         var firstDate = new Date(this.myDate.year, this.myDate.month, 1);
