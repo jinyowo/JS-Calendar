@@ -22,6 +22,8 @@
 		}
 
 		#calendar {
+			position: absolute;
+			left: 250px;
 			max-width: 900px;
 			margin: 0 auto;
 		}
@@ -30,6 +32,142 @@
 			border: 0;
 			outline: 0;
 		}
+		#sidebar {
+            position: absolute;
+			border: 1px solid #e3e3e3;
+            /*background-color: #d7d7d7;*/
+            width: auto;
+            height: 723px;
+        }
+        /* ---------- CALENDAR ---------- */
+
+        .calendar {
+			border: 1px solid #e3e3e3;
+			margin: 0px;
+            position: relative;
+            top: 51px;
+			height: 240px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .calendar header {
+            margin: 10px;
+            position: relative;
+            top: 10px;
+        }
+
+        .calendar h2 {
+            /*text-transform: uppercase;*/
+            font-size: 1em;
+            line-height: 1.25em;
+            margin: .25em 0;
+        }
+        .calendar h3 {
+            font-size: 1.5em;
+            line-height: 1em;
+            margin: .33em 0;
+        }
+        .calendar table {
+            margin: 10px;
+            position: relative;
+            top: 10px;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+        .calendar thead {
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .calendar tbody {
+            color: #7c8a95;
+        }
+
+        .calendar tbody td:hover {
+            border: 1px solid #cbd1d2;
+        }
+
+        .calendar td {
+            font-size: 1em;
+            border: 1px solid transparent;
+            /*border-radius: 50%;*/
+            display: inline-block;
+            height: 26px;
+            line-height: 1em;
+            text-align: center;
+            width: 26px;
+        }
+
+        .calendar .mini-prev-month,
+        .calendar .mini-next-month {
+            color: #cbd1d2;
+        }
+
+        .calendar .mini-prev-month:hover,
+        .calendar .mini-next-month:hover {
+            border: 1px solid #cbd1d2;
+        }
+
+        .calendar td.mini-today {
+            border: 1px solid #c6c6c6;
+            background: #fcf8e3;
+            /*color: #f9f9f9;*/
+        }
+
+        .mini-event {
+            cursor: pointer;
+            position: relative;
+        }
+
+        .mini-event:after {
+            background: #3a87ad;
+            border-radius: 50%;
+            bottom: .3em;
+            display: block;
+            content: '';
+            height: .3em;
+            left: 50%;
+            margin: -.2em 0 0 -.2em;
+            position: absolute;
+            width: .3em;
+        }
+
+        .mini-prev-button,
+        .mini-next-button {
+            text-align: center;
+            /*border: 2px solid #cbd1d2;*/
+            border-radius: 50%;
+            /*color: #000;*/
+            height: 1.5em;
+            font-size: 1em;
+            font-weight: 800;
+            line-height: 2em;
+            margin: -1em;
+            position: absolute;
+            top: 50%;
+            width: 1.5em;
+        }
+
+        .mini-prev-button:hover,
+        .mini-next-button:hover {
+            background: #cbd1d2;
+            color: #f9f9f9;
+        }
+
+        .mini-prev-button {
+            left: 1em;
+        }
+
+        .mini-next-button {
+            right: 1em;
+        }
+        .mini-sun {
+            /*color: red;*/
+        }
+        .mini-sat {
+            /*color: blue;*/
+        }
 	</style>
 	<script id="popup-template" type="text/x-handlebars-template">
 		<strong id="popupTitle">{{ title }}</strong>
@@ -106,15 +244,99 @@
 					<label>설명:</label>
 					<textarea id="desc" class="form-control" rows="5" placeholder="일정에 필요한 설명을 남기세요"></textarea>
 				</div>
-				<div class="schedule" >
-					<button  id="submit" type="submit" class="btn btn-default">저장</button>
-					<button  id="modify" type="submit" class="btn btn-default">수정</button>
-					<button  class="btn btn-default">취소</button>
+				<div class="schedule">
+					<button id="submit" type="submit" class="btn btn-default">저장</button>
+					<button id="modify" type="submit" class="btn btn-default">수정</button>
+					<button class="btn btn-default">취소</button>
 				</div>
 			</form>
 		</div>
 	</div>
-	<!-- schedule form -->
+	<!-- sidebar -->
+	<div id="sidebar" class="container">
+		<div class="make-button">
+
+		</div>
+        <div class="calendar">
+            <header>
+                <h2 class="title">September</h2>
+                <a class="mini-prev-button fontawesome-angle-left" href="#"><</a>
+                <a class="mini-next-button fontawesome-angle-right" href="#">></a>
+            </header>
+            <table>
+                <thead>
+                    <tr>
+                        <td class="mini-sun">S</td>
+                        <td>M</td>
+                        <td>T</td>
+                        <td>W</td>
+                        <td>T</td>
+                        <td>F</td>
+                        <td class="mini-sat">S</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="mini-prev-month">26</td>
+                        <td class="mini-prev-month">27</td>
+                        <td class="mini-prev-month">28</td>
+                        <td class="mini-prev-month">29</td>
+                        <td class="mini-prev-month">30</td>
+                        <td class="mini-prev-month">31</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td class="mini-sun">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                        <td>5</td>
+                        <td>6</td>
+                        <td>7</td>
+                        <td class="mini-sat">8</td>
+                    </tr>
+                    <tr>
+                        <td class="mini-sun">9</td>
+                        <td class="mini-event">10</td>
+                        <td>11</td>
+                        <td>12</td>
+                        <td>13</td>
+                        <td>14</td>
+                        <td class="mini-sat">15</td>
+                    </tr>
+                    <tr>
+                        <td class="mini-sun">16</td>
+                        <td>17</td>
+                        <td>18</td>
+                        <td>19</td>
+                        <td>20</td>
+                        <td class="mini-event">21</td>
+                        <td class="mini-sat">22</td>
+                    </tr>
+
+                    <tr>
+                        <td class="mini-sun mini-today mini-event">23</td>
+                        <td>24</td>
+                        <td>25</td>
+                        <td>26</td>
+                        <td>27</td>
+                        <td>28</td>
+                        <td class="mini-sat">29</td>
+                    </tr>
+                    <tr>
+                        <td class="mini-sun">30</td>
+                        <td class="mini-next-month">1</td>
+                        <td class="mini-next-month">2</td>
+                        <td class="mini-next-month">3</td>
+                        <td class="mini-next-month">4</td>
+                        <td class="mini-next-month">5</td>
+                        <td class="mini-sat mini-next-month">6</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- end calendar -->
+    </div>
+	<!-- main calendar -->
 	<div id="calendar" class="fc fc-unthemed fc-ltr">
 		<div class="fc-toolbar fc-header-toolbar">
 			<div class="fc-left">
