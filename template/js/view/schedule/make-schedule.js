@@ -175,7 +175,7 @@ SubmitInfo.prototype = {
         // check repeatEvent date
         var correntEvent = this.checkRepeatEvent(repeatValue, this.dateFromISO(scheduleInfo["start"]), this.dateFromISO(scheduleInfo["end"]));
         if(!correntEvent) scheduleInfo = undefined;
-        
+
         return scheduleInfo;
     },
     getTime: function() {
@@ -218,7 +218,7 @@ SubmitInfo.prototype = {
             endTimeInput.value = this.defaultEnd;
         }
     },
-    clearInput: function() {f
+    clearInput: function() {
         for (var i = 0; i < this.inputIdList1.length; i++) {
             _$("#" + this.inputIdList1[i]).value = "";
         }
@@ -229,6 +229,7 @@ SubmitInfo.prototype = {
         this.defaultStart = "";
         this.defalutEnd = "";
     },
+    /** 반복일정의 경우 기간 검사 */
     checkRepeatEvent: function(repeat, start, end) {
         var currDay = 24 * 60 * 60 * 1000;
         var currWeek = currDay * 7;
