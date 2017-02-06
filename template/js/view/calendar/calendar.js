@@ -22,10 +22,13 @@ function Calendar() {
         new Button("."+Selector.dayTypeButton, Utility.buttonType.type),
     ];
     this.todayButton = new Button("."+Selector.todayButton, Utility.buttonType.today);
+    // schedules
+    this.schedules = new ScheduleDisplay();
 };
 
 Calendar.prototype = {
-    init: function(base, option) {
+    init: function(type, base, option) {
+        this.setType(type);
         this.setMyDate(base);
         this.callbackList = option;
         // Button init
@@ -55,13 +58,15 @@ Calendar.prototype = {
     },
     setCalendar: function() {
         this.drawCalendar();
+        // 해당 달력에 포함되어 있는 일정 띄우기
+        this.schedules.init(this, 0, "month");
+        this.schedules.setEvents();
         // type에 따라 달력 display속성을 block
         this.showCalendar();
         // type에 따라 우상단의 type button 활성화
         this.setTypeButton(this.type, this.typeButtons);
         // 달력에 따라 today button 활성화/비활성화
         this.isToday();
-        // 해당 달력에 포함되어 있는 일정 띄우기
     },
     // 월에 맞도록 달력에 숫자를 뿌리는 함수
     drawCalendar: function() {
