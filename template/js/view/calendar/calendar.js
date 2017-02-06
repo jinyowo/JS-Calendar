@@ -5,24 +5,24 @@ function Calendar() {
         date: -1,
     };
     this.type = "";
-    this.monthTitle = _$("."+Selector.title);
-    this.cells = document.querySelectorAll("."+Selector.cellTop);
-    this.cellsBg = document.querySelectorAll("."+Selector.cellBg);
-    this.nums = document.querySelectorAll("."+Selector.cellTop+" a");
+    this.monthTitle = _$("." + Selector.title);
+    this.cells = document.querySelectorAll("." + Selector.cellTop);
+    this.cellsBg = document.querySelectorAll("." + Selector.cellBg);
+    this.nums = document.querySelectorAll("." + Selector.cellTop + " a");
     this.firstDay = "";
     this.lastDay = "";
-    // Button set
+    /** Button set */
     this.arrowButtons = [
-        new Button("."+Selector.prevButton, Utility.buttonType.arrow),
-        new Button("."+Selector.nextButton, Utility.buttonType.arrow),
+        new Button("." + Selector.prevButton, Utility.buttonType.arrow),
+        new Button("." + Selector.nextButton, Utility.buttonType.arrow),
     ];
     this.typeButtons = [
-        new Button("."+Selector.monthTypeButton, Utility.buttonType.type),
-        new Button("."+Selector.weekTypeButton, Utility.buttonType.type),
-        new Button("."+Selector.dayTypeButton, Utility.buttonType.type),
+        new Button("." + Selector.monthTypeButton, Utility.buttonType.type),
+        new Button("." + Selector.weekTypeButton, Utility.buttonType.type),
+        new Button("." + Selector.dayTypeButton, Utility.buttonType.type),
     ];
-    this.todayButton = new Button("."+Selector.todayButton, Utility.buttonType.today);
-    // schedules
+    this.todayButton = new Button("." + Selector.todayButton, Utility.buttonType.today);
+    /** schedules */
     this.schedules = new ScheduleDisplay();
 };
 
@@ -44,7 +44,7 @@ Calendar.prototype = {
         this.type = type;
     },
     setMyDate: function(base) {
-        for(var i in this.myDate) {
+        for (var i in this.myDate) {
             this.myDate[i] = base[i];
         }
     },
@@ -56,35 +56,25 @@ Calendar.prototype = {
         Utility.removeClass(ele, Selector.today);
         Utility.removeClass(ele, Style.todayEffect);
     },
+    /** set Calendar */
     setCalendar: function() {
-        this.drawCalendar();
+        this.drawCalendar();        
         // 해당 달력에 포함되어 있는 일정 띄우기
         this.schedules.init(this, 0, "month");
         this.schedules.setEvents();
-        // type에 따라 달력 display속성을 block
-        this.showCalendar();
-        // type에 따라 우상단의 type button 활성화
-        this.setTypeButton(this.type, this.typeButtons);
-        // 달력에 따라 today button 활성화/비활성화
-        this.isToday();
+
+        this.showCalendar();    // type에 따라 달력 display속성을 block
+        this.setTypeButton(this.type, this.typeButtons); // type에 따라 우상단의 type button 활성화
+        this.isToday(); // 달력에 따라 today button 활성화/비활성화
     },
-    // 월에 맞도록 달력에 숫자를 뿌리는 함수
     drawCalendar: function() {
         switch (this.type) {
             case "month":
                 this.setMonthTitle();
                 this.setMonthCalendarBody();
                 break;
-            default: break;
-            /** 미구현 */
-            // case "week":
-            //     this.setWeekTitle();
-            //     this.setWeekCalendarBody();
-            //     break;
-            // case "day":
-            //     this.setDayTitle();
-            //     this.setDayCalendarBody();
-            //     break;
+            default:
+                break;
         }
     },
     setMonthTitle: function() {
@@ -92,66 +82,71 @@ Calendar.prototype = {
         this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + this.myDate.year + "</h2>";
     },
     setMonthCalendarBody: function() {
-        // 이번달 1일, 마지막날, 1일의 요일 구하기
-        var firstDate = new Date(this.myDate.year, this.myDate.month, 1);
-        var lastDate = this.getLastDate(this.myDate.month);
-        var firstWeekday = firstDate.getDay();
-
         var numArr = [];
-
-        var prevYear = this.myDate.year;
-        if(this.myDate.month===0) { prevYear--;}
-        var prevMonthLastDate = this.getLastDate(this.myDate.month - 1);
-
-        var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
         var currentDate = 0;
-        var nextMonthDate = 1;
-
-        // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
-        for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
-            // this.setDataDate(this.cells[currentDate], this.cellsBg[currentDate], prevYear, this.myDate.month, i);
-            this.setDataDate(currentDate, prevYear, this.myDate.month, i);
-            if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
-                Utility.addClass(this.cells[currentDate], Selector.otherMonth);
-            }
-            currentDate++;
-            numArr.push(i);
-        }
-        // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
-        for (var i = 1; i <= lastDate; i++) {
-            this.setDataDate(currentDate, this.myDate.year, this.myDate.month + 1, i);
-            if (this.cells[currentDate].className.includes(Selector.otherMonth)) {
-                Utility.removeClass(this.cells[currentDate], Selector.otherMonth);
-            }
-            currentDate++;
-            numArr.push(i);
-        }
-        // 지난달, 이번달, 다음달에 해당하는 날짜를 달력에 보여준다.
-        for (var i = 0; i < this.nums.length; i++) {
-            if (numArr[i] === undefined) {
-                this.setDataDate(currentDate, this.myDate.year, this.myDate.month + 2, nextMonthDate);
-                if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
-                    Utility.addClass(this.cells[currentDate], Selector.otherMonth);
-                }
-                currentDate++;
-                numArr.push(nextMonthDate++);
-            }
+        currentDate = this.prevMonth(numArr, currentDate); // 지난달 날짜계산
+        currentDate = this.thisMonth(numArr, currentDate); // 이번달 날짜계산
+        currentDate = this.nextMonth(numArr, currentDate); // 다음달 날짜계산
+        // 날짜출력, today 셋팅
+        for (var i = 0; i < this.cells.length; i++) {
             if (this.cellsBg[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBg[i]);
             else if (this.cellsBg[i].className.includes(Selector.today)) this.removeToday(this.cellsBg[i]);
 
             this.nums[i].innerText = numArr[i];
         }
         this.firstDay = this.cells[0].getAttribute(CustomData.date);
-        this.lastDay =  this.cells[currentDate-1].getAttribute(CustomData.date);
+        this.lastDay = this.cells[currentDate - 1].getAttribute(CustomData.date);
+    },
+    prevMonth: function(numArr, currentDate) {
+        var firstDate = new Date(this.myDate.year, this.myDate.month, 1);
+        var firstWeekday = firstDate.getDay();
+        var prevYear = this.myDate.year;
+        if (this.myDate.month === 0) {
+            prevYear--;
+        }
+        var prevMonthLastDate = this.getLastDate(this.myDate.month - 1);
+        var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
+
+        for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
+            if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
+                Utility.addClass(this.cells[currentDate], Selector.otherMonth);
+            }
+            this.setCells(prevYear, this.myDate.month, i, currentDate++, numArr);
+        }
+        return currentDate;
+    },
+    thisMonth: function(numArr, currentDate) {
+        var lastDate = this.getLastDate(this.myDate.month);
+        for (var i = 1; i <= lastDate; i++) {
+            if (this.cells[currentDate].className.includes(Selector.otherMonth)) {
+                Utility.removeClass(this.cells[currentDate], Selector.otherMonth);
+            }
+            this.setCells(this.myDate.year, this.myDate.month + 1, i, currentDate++, numArr);
+        }
+        return currentDate;
+    },
+    nextMonth: function(numArr, currentDate) {
+        var nextMonthDate = 1;
+        for (var i = currentDate; i < this.cells.length; i++) {
+            if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
+                Utility.addClass(this.cells[currentDate], Selector.otherMonth);
+            }
+            this.setCells(this.myDate.year, this.myDate.month + 2, nextMonthDate++, currentDate++, numArr);
+        }
+        return currentDate;
+    },
+    setCells: function(year, month, date, currentDate, numArr) {
+        this.setDataDate(currentDate, year, month, date);
+        numArr.push(date);
     },
     getLastDate: function(month) {
-        if (month < 0) { month = 11;}
+        if (month < 0) month = 11;
         var lastDate = new Date(this.myDate.year, month + 1, 0).getDate();
         return lastDate;
     },
     setDataDate: function(currentDate, year, month, date) {
         this.cells[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
-        thie.cellBg[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
+        this.cellsBg[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
     },
     showCalendar: function() {
         this.hideAllCalendar();
@@ -162,7 +157,7 @@ Calendar.prototype = {
         Utility.hideElement(Utility.calendarType.week);
         Utility.hideElement(Utility.calendarType.day);
     },
-    // button event
+    /** Button method */
     arrowButtonClickEvent: function(evt) {
         this.moveCalendar(evt.target);
         this.resetEvent();
@@ -174,29 +169,26 @@ Calendar.prototype = {
         this.setCalendar(this);
     },
     todayButtonClickEvent: function() {
-        if (!this.isToday(this)) {
-            this.setMyDate(Utility.Today);
-            this.resetEvent();
-            this.setCalendar(this);
-        }
+        if (this.isToday(this)) return false;
+
+        this.setMyDate(Utility.Today);
+        this.resetEvent();
+        this.setCalendar(this);
     },
     moveCalendar: function(target) {
         var prevArrowClass = Selector.prevButton;
         var nextArrowClass = Selector.nextButton;
         var button = target.closest("button");
-        var mydate = this.myDate;
-        
-        if (button.classList.contains(prevArrowClass)) {
-            mydate.month--;
-        } else if (button.classList.contains(nextArrowClass)) {
-            mydate.month++;
-        }
-        if (mydate.month < 0) {
-            mydate.month = 11;
-            mydate.year--;
-        } else if (mydate.month > 11) {
-            mydate.month = 0;
-            mydate.year++;
+
+        if (button.classList.contains(prevArrowClass)) this.myDate.month--;
+        else if (button.classList.contains(nextArrowClass)) this.myDate.month++;
+
+        if (this.myDate.month < 0) {
+            this.myDate.month = 11;
+            this.myDate.year--;
+        } else if (this.myDate.month > 11) {
+            this.myDate.month = 0;
+            this.myDate.year++;
         }
     },
     setTypeButton: function(type, typeButtons) {
@@ -207,13 +199,15 @@ Calendar.prototype = {
         return typeButtons;
     },
     inactiveButtonSet: function(buttons, className) {
-        for(var i in buttons) {
+        for (var i in buttons) {
             Utility.removeClass(buttons[i].ele, className);
         }
     },
     isToday: function() {
         var mydate = this.myDate;
-        if (mydate.year !== Utility.Today.year || mydate.month !== Utility.Today.month || mydate.date !== Utility.Today.date) {
+        if (mydate.year !== Utility.Today.year ||
+            mydate.month !== Utility.Today.month ||
+            mydate.date !== Utility.Today.date) {
             this.todayButton.active();
             return false;
         } else {
@@ -221,9 +215,10 @@ Calendar.prototype = {
             return true;
         }
     },
+    /** schedule method */
     resetEvent: function() {
         this.resetField();
-        var eventRow = document.querySelectorAll("."+Selector.scheduleSkeleton+" tbody");
+        var eventRow = document.querySelectorAll("." + Selector.scheduleSkeleton + " tbody");
 
         for (var i = 0; i < eventRow.length; i++) {
             eventRow[i].innerHTML = "<tr>" +
@@ -242,6 +237,6 @@ Calendar.prototype = {
         for (var i = 0; i < weekRow.length; i++) {
             weekRow[i].style.height = "107px";
         }
-            _$(".fc-month-view .fc-scroller").style.height = "647px";
-        }
+        _$(".fc-month-view .fc-scroller").style.height = "647px";
+    }
 };
