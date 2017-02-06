@@ -5,23 +5,23 @@ function Calendar() {
         date: -1,
     };
     this.type = "";
-    this.monthTitle = _$(".fc-center");
-    this.cells = document.querySelectorAll(".fc-month-view .fc-day-top");
-    this.cellsBackground = document.querySelectorAll(".fc-month-view .fc-day");
-    this.nums = document.querySelectorAll(".fc-content-skeleton a.fc-day-number");
+    this.monthTitle = _$("."+Selector.title);
+    this.cells = document.querySelectorAll("."+Selector.cellTop);
+    this.cellsBackground = document.querySelectorAll("."+Selector.cellBg);
+    this.nums = document.querySelectorAll("."+Selector.cellTop+" a");
     this.firstDay = "";
     this.lastDay = "";
     // Button set
     this.arrowButtons = [
-        new Button(".fc-prev-button", Utility.buttonType.arrow),
-        new Button(".fc-next-button", Utility.buttonType.arrow),
+        new Button("."+Selector.prevButton, Utility.buttonType.arrow),
+        new Button("."+Selector.nextButton, Utility.buttonType.arrow),
     ];
     this.typeButtons = [
-        new Button(".fc-month-button", Utility.buttonType.type),
-        new Button(".fc-agendaWeek-button", Utility.buttonType.type),
-        new Button(".fc-agendaDay-button", Utility.buttonType.type),
+        new Button("."+Selector.monthTypeButton, Utility.buttonType.type),
+        new Button("."+Selector.weekTypeButton, Utility.buttonType.type),
+        new Button("."+Selector.dayTypeButton, Utility.buttonType.type),
     ];
-    this.todayButton = new Button(".fc-left .fc-today-button", Utility.buttonType.today);
+    this.todayButton = new Button("."+Selector.todayButton, Utility.buttonType.today);
 };
 
 Calendar.prototype = {
@@ -46,11 +46,11 @@ Calendar.prototype = {
         }
     },
     setToday: function(ele) {
-        Utility.addClass(ele, "fc-today");
+        Utility.addClass(ele, Selector.today);
         Utility.addClass(ele, Style.todayEffect);
     },
     removeToday: function(ele) {
-        Utility.removeClass(ele, "fc-today");
+        Utility.removeClass(ele, Selector.today);
         Utility.removeClass(ele, Style.todayEffect);
     },
     setCalendar: function() {
@@ -70,16 +70,17 @@ Calendar.prototype = {
                 this.setMonthTitle();
                 this.setMonthCalendarBody();
                 break;
-            case "week":
-                this.setWeekTitle();
-                this.setWeekCalendarBody();
-                break;
-            case "day":
-                this.setDayTitle();
-                this.setDayCalendarBody();
-                break;
+            default: break;
+            /** 미구현 */
+            // case "week":
+            //     this.setWeekTitle();
+            //     this.setWeekCalendarBody();
+            //     break;
+            // case "day":
+            //     this.setDayTitle();
+            //     this.setDayCalendarBody();
+            //     break;
         }
-
     },
     setMonthTitle: function() {
         var thisMonthFullname = Utility.months[this.myDate.month];
@@ -104,8 +105,8 @@ Calendar.prototype = {
         // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
         for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
             this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], prevYear, this.myDate.month, i);
-            if (!this.cells[currentDate].className.includes("fc-other-month")) {
-                Utility.addClass(this.cells[currentDate], "fc-other-month");
+            if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
+                Utility.addClass(this.cells[currentDate], Selector.otherMonth);
             }
             currentDate++;
             numArr.push(i);
@@ -113,11 +114,11 @@ Calendar.prototype = {
         // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
         for (var i = 1; i <= lastDate; i++) {
             this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month + 1, i);
-            if (this.cells[currentDate].className.includes("fc-other-month")) {
-                Utility.removeClass(this.cells[currentDate], "fc-other-month");
+            if (this.cells[currentDate].className.includes(Selector.otherMonth)) {
+                Utility.removeClass(this.cells[currentDate], Selector.otherMonth);
             }
-            if (this.cellsBackground[currentDate].getAttribute("data-date") === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[currentDate]);
-            else if (this.cellsBackground[currentDate].className.includes("fc-state-highlight")) this.removeToday(this.cellsBackground[currentDate]);
+            if (this.cellsBackground[currentDate].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[currentDate]);
+            else if (this.cellsBackground[currentDate].className.includes(Selector.today)) this.removeToday(this.cellsBackground[currentDate]);
 
             currentDate++;
             numArr.push(i);
@@ -126,16 +127,16 @@ Calendar.prototype = {
         for (var i = 0; i < this.nums.length; i++) {
             if (numArr[i] === undefined) {
                 this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month + 2, nextMonthDate);
-                if (!this.cells[currentDate].className.includes("fc-other-month")) {
-                    Utility.addClass(this.cells[currentDate], "fc-other-month");
+                if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
+                    Utility.addClass(this.cells[currentDate], Selector.otherMonth);
                 }
                 currentDate++;
                 numArr.push(nextMonthDate++);
             }
             this.nums[i].innerText = numArr[i];
         }
-        this.firstDay = this.cells[0].getAttribute("data-date");
-        this.lastDay =  this.cells[currentDate-1].getAttribute("data-date");
+        this.firstDay = this.cells[0].getAttribute(CustomData.date);
+        this.lastDay =  this.cells[currentDate-1].getAttribute(CustomData.date);
         var schedule = new ScheduleDisplay();
         schedule.init(this, 0, "month");
         schedule.setEvents();
@@ -156,8 +157,8 @@ Calendar.prototype = {
         return lastDate;
     },
     setDataDate: function(cell, cellBg, year, month, date) {
-        cell.setAttribute("data-date", Utility.formDate(year, month, date));
-        cellBg.setAttribute("data-date", Utility.formDate(year, month, date));
+        cell.setAttribute(CustomData.date, Utility.formDate(year, month, date));
+        cellBg.setAttribute(CustomData.date, Utility.formDate(year, month, date));
     },
     showCalendar: function() {
         this.hideAllCalendar();
@@ -186,8 +187,8 @@ Calendar.prototype = {
         }
     },
     moveCalendar: function(target) {
-        var prevArrowClass = "fc-prev-button";
-        var nextArrowClass = "fc-next-button";
+        var prevArrowClass = Selector.prevButton;
+        var nextArrowClass = Selector.nextButton;
         var button = target.closest("button");
         var mydate = this.myDate;
         this.resetEvent();
@@ -229,7 +230,7 @@ Calendar.prototype = {
     },
     resetEvent: function() {
         this.resetField();
-        var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
+        var eventRow = document.querySelectorAll("."+Selector.scheduleSkeleton+" tbody");
 
         for (var i = 0; i < eventRow.length; i++) {
             eventRow[i].innerHTML = "<tr>" +
