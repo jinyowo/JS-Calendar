@@ -53,19 +53,19 @@ ScheduleDisplay.prototype = {
         var dateHead = null;
         var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
-            var rowBody = weeks[i]._$("." + Selector.scheduleSkeleton + " tbody");
-            this.status.row = this.getEventRowCount(weeks[i]);
-            if (!this.status.isEnd) {
-                for (var j = 0; j < this.status.row; j++) {
-                    this.addRow(rowBody);
-                }
-            }
             if (this.status.isStart) {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
             } else {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
             }
             if(dateHead !== null) {
+                var rowBody = weeks[i]._$("." + Selector.scheduleSkeleton + " tbody");
+                this.status.row = this.getEventRowCount(weeks[i], dateHead);
+                if (!this.status.isEnd) {
+                    for (var j = 0; j < this.status.row; j++) {
+                        this.addRow(rowBody);
+                    }
+                }
                 dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
                 this.setWeekRowEvent(dateHead, dateBody);
             }
@@ -327,14 +327,30 @@ ScheduleDisplay.prototype = {
         table.closest(".fc-row").style.height = this.default.tableHeight + "px";
         _$("." + Selector.dayGridContainer).style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
-    getEventRowCount: function(row) {
+    getEventRowCount: function(row, dateHead) {
+      var remain = this.status.remain;
       var count = 0;
+      var result = 0;
       var trs = row.querySelectorAll("." + Selector.scheduleSkeleton + " tbody tr");
-      for (var i = 0; i < trs.length; i++) {
-        if(trs[i]._$("." + Selector.schedule) !== null || trs[i]._$("." + Selector.moreCell) !== null){
-          count++;
-        }
+
+      if (remain > 7) {
+        remain = 7;
       }
-      return count;
+
+      for (var i = 0; i <= remain && dateHead !== null; i++) {
+        for (var j = 0; j < trs.length; j++) {
+          var toCheck = Utility.getTbodyFromThead(dateHead, count).classList;
+          if(toCheck.contains(Selector.schedule) || toCheck.contains(Selector.moreCell)) {
+            count++;
+          }
+        }
+        
+        if (count > result) {
+          result = count;
+        }
+        dateHead = dateHead.nextElementSibling;
+        count = 0;
+      }
+      return result;
     }
 }
