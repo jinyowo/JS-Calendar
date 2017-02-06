@@ -117,9 +117,6 @@ Calendar.prototype = {
             if (this.cells[currentDate].className.includes(Selector.otherMonth)) {
                 Utility.removeClass(this.cells[currentDate], Selector.otherMonth);
             }
-            if (this.cellsBackground[currentDate].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[currentDate]);
-            else if (this.cellsBackground[currentDate].className.includes(Selector.today)) this.removeToday(this.cellsBackground[currentDate]);
-
             currentDate++;
             numArr.push(i);
         }
@@ -133,6 +130,9 @@ Calendar.prototype = {
                 currentDate++;
                 numArr.push(nextMonthDate++);
             }
+            if (this.cellsBackground[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[i]);
+            else if (this.cellsBackground[i].className.includes(Selector.today)) this.removeToday(this.cellsBackground[i]);
+
             this.nums[i].innerText = numArr[i];
         }
         this.firstDay = this.cells[0].getAttribute(CustomData.date);
@@ -140,16 +140,6 @@ Calendar.prototype = {
         var schedule = new ScheduleDisplay();
         schedule.init(this, 0, "month");
         schedule.setEvents();
-    },
-    setWeekTitle: function() {
-
-    },
-    setWeekCalendarBody: function() {
-    },
-    setDayTitle: function() {
-    },
-    setDayCalendarBody: function() {
-
     },
     getLastDate: function(month) {
         if (month < 0) { month = 11;}
