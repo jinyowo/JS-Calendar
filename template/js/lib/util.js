@@ -101,8 +101,9 @@ var Selector = {
     monthView : "fc-month-view",
     dayGridContainer : "fc-day-grid-container",
     topDiv: "fc-toolbar",
-    cellTop: "fc-day-top",
-    cellBg: "fc-day",
+    title: "fc-center",
+    cellTop: "fc-month-view .fc-day-top",
+    cellBg: "fc-month-view .fc-day",
 
     today : "fc-today",
     otherMonth : "fc-other-month",
@@ -130,4 +131,8 @@ var Style = {
     disabledEffect : "fc-state-disabled",
     activeEffect : "fc-state-active",
     todayEffect : "fc-state-highlight",
+};
+/** 자료 저장을 위해 만든 custom attribute모음 */
+var CustomData = {
+    date: "data-date",
 };
