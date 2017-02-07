@@ -208,7 +208,6 @@ ScheduleDisplay.prototype = {
                 this.keys.push(key);
             }
         }
-        console.log(this.scheduleArray);
         return this.scheduleArray;
     },
     isRepeatEvent: function(key) {
