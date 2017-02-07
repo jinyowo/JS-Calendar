@@ -29,7 +29,7 @@ FormView.prototype = {
     },
     dayInput: function() {
         var date = new Date();
-        var ISODate = date.toISOString().split("T",1);
+        var ISODate = date.toISOString().split("T", 1);
         this.submitInfo.startDayInput.value = ISODate;
         this.submitInfo.endDayInput.value = ISODate;
     },
@@ -70,7 +70,7 @@ FormView.prototype = {
     hideInputForm: function(event) {
         if (this.isTarget(event.target)) {
             Utility.hideElement(this.container);
-            this.submitInfo.clearInput();
+            this.submitInfo.clearInput.call(modifyInfo);
         }
     },
     isTarget: function(target) {
@@ -106,7 +106,10 @@ Submission.prototype = {
         Utility.on(document, "click", this.clickCalendarCell.bind(this));
     },
     clickCalendarCell: function(event) {
-        if (event.target.tagName === "TD" && event.target.className === "") {
+        var target= event.target;
+        if (target.tagName !== "TD" || target.className !== ""){
+            return false;
+        } else if (target.tagName === "TD" && target.className === "") {
             for (var i = 0; i < this.cell.length; i++) {
                 var mouseX = event.clientX;
                 var mouseY = event.clientY;
@@ -215,11 +218,11 @@ Submission.prototype = {
             endTimeInput.value = "23:59";
             startTimeInput.readOnly = true;
             endTimeInput.readOnly = true;
-            startTimeInput.style.backgroundColor = "LightGray";
-            endTimeInput.style.backgroundColor = "LightGray";
+            startTimeInput.style.backgroundColor = this.callbacklist["CHECK_COLOR"];
+            endTimeInput.style.backgroundColor = this.callbacklist["CHECK_COLOR"];
         } else if (!this.allDayButton.checked) {
-            startTimeInput.style.backgroundColor = "White";
-            endTimeInput.style.backgroundColor = "White";
+            startTimeInput.style.backgroundColor = this.callbacklist["NON_CHECK_COLOR"];
+            endTimeInput.style.backgroundColor = this.callbacklist["NON_CHECK_COLOR"];
             startTimeInput.readOnly = false;
             endTimeInput.readOnly = false;
             startTimeInput.value = this.defaultStart;
@@ -232,8 +235,8 @@ Submission.prototype = {
         }
         _$(".basicValue").checked = true;
         this.allDayButton.checked = false;
-        this.startTimeInput.style.backgroundColor = "White";
-        this.endTimeInput.style.backgroundColor = "White";
+        this.startTimeInput.style.backgroundColor = this.callbacklist["NON_CHECK_COLOR"];
+        this.endTimeInput.style.backgroundColor = this.callbacklist["NON_CHECK_COLOR"];
         this.defaultStart = "";
         this.defalutEnd = "";
     }
