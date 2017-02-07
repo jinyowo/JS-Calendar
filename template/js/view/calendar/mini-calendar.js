@@ -43,7 +43,8 @@ MiniCalendar.prototype = {
     },
     drawCalendar: function(base) {
         this.setMyDate(base);
-
+        this.resetSelected();
+        this.resetEvent();
         var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
