@@ -79,10 +79,13 @@
 
 .mini-calendar td.mini-today {
     border: 1px solid #c6c6c6;
-    background: #fcf8e3;
+    background-color: #fcf8e3;
     /*color: #f9f9f9;*/
 }
-
+.mini-calendar td.mini-selected {
+    border: 1px solid #c6c6c6;
+    background-color: #ff7b5e;
+}
 .mini-event {
     cursor: pointer;
     position: relative;
