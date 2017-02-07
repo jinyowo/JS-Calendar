@@ -34,6 +34,8 @@ MiniCalendar.prototype = {
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
+        var events = this.callbackList["GET_EVENT"](this.myDate);
+        var vaildEvents = this.getEvent(events);
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;
@@ -56,6 +58,18 @@ MiniCalendar.prototype = {
             else if (this.cells[i].className.includes(Selector.Mtoday)) this.removeToday(this.cells[i]);
         }
     },
+    getEvent: function(events) {
+        var result = [];
+        for(var i=0; i<events.length; i++) {
+            if(events[i].repeat === "none") {   // 반복일정이 아니면 일정의 시작과 끝을 모두 검사
+
+            }
+            else {  // 반복일정은 일정의 시작만 검사
+
+            }
+        }
+        return result;
+    },
     /** Button method */
     arrowClickEvent: function(evt) {
         this.moveCalendar(evt.target);
@@ -77,13 +91,12 @@ MiniCalendar.prototype = {
             this.myDate.year++;
         }
     },
-    /** schedule method */
+    /** schedule clear */
     resetEvent: function() {
-        this.resetField();
-        var eventRow = document.querySelectorAll("." + Selector.scheduleSkeleton + " tbody");
-
-        for (var i = 0; i < eventRow.length; i++) {
-            eventRow[i].innerHTML = "<tr>" +
+        var body = document.querySelector("." + Selector.Mcells);
+        var template = "";
+        for (var i = 0; i < 6; i++) {   // 달력 한달을 6주로 표시함
+            template += "<tr>" +
                 "\n<td></td>" +
                 "\n<td></td>" +
                 "\n<td></td>" +
@@ -93,5 +106,6 @@ MiniCalendar.prototype = {
                 "\n<td></td>" +
                 "\n</tr>";
         }
+        body.innerHTML = template;
     },
 };

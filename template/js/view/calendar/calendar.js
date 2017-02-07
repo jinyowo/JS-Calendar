@@ -22,14 +22,13 @@ function Calendar() {
         new Button("." + Selector.dayTypeButton, Utility.buttonType.type),
     ];
     this.todayButton = new Button("." + Selector.todayButton, Utility.buttonType.today);
-    /** schedules */
-    this.schedules = new ScheduleDisplay();
 };
 
 Calendar.prototype = {
-    init: function(type, base, option) {
+    init: function(type, base, schedules, option) {
         this.setType(type);
         this.setMyDate(base);
+        this.schedules = schedules;
         this.callbackList = option;
         // Button init
         for (var i = 0; i < this.arrowButtons.length; i++) {
@@ -93,8 +92,6 @@ Calendar.prototype = {
 
             this.nums[i].innerText = result[0][i];
         }
-        this.firstDay = this.cells[0].getAttribute(CustomData.date);
-        this.lastDay = this.cells[result[1] - 1].getAttribute(CustomData.date);
     },
     calculateCalendar: function(date) {
         var numArr = [];
@@ -103,10 +100,12 @@ Calendar.prototype = {
         currentDate = this.thisMonth(numArr, currentDate, date); // 이번달 날짜계산
         currentDate = this.nextMonth(numArr, currentDate, date); // 다음달 날짜계산
 
-        return [numArr, currentDate];
+        this.firstDay = this.cells[0].getAttribute(CustomData.date);
+        this.lastDay = this.cells[currentDate - 1].getAttribute(CustomData.date);
+        return [numArr, this.firstDay, this.lastDay];
     },
     prevMonth: function(numArr, currentDate, base) {
-        var firstDate = new Date(base.year,  base.month, 1);
+        var firstDate = new Date(base.year, base.month, 1);
         var firstWeekday = firstDate.getDay();
         var prevYear =  base.year;
         if ( base.month === 0) {

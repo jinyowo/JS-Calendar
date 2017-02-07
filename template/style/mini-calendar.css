@@ -63,6 +63,7 @@
 }
 
 .mini-calendar td {
+    padding-top: 2px;
     font-size: 0.95em;
     border: 1px solid transparent;
     display: inline-block;
@@ -122,10 +123,4 @@
 
 .mini-next-button {
     right: 1em;
-}
-.mini-sun {
-    /*color: red;*/
-}
-.mini-sat {
-    /*color: blue;*/
 }
