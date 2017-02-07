@@ -5,28 +5,30 @@ function Calendar() {
         date: -1,
     };
     this.type = "";
-    this.monthTitle = _$(".fc-center");
-    this.cells = document.querySelectorAll(".fc-month-view .fc-day-top");
-    this.cellsBackground = document.querySelectorAll(".fc-month-view .fc-day");
-    this.nums = document.querySelectorAll(".fc-content-skeleton a.fc-day-number");
+    this.monthTitle = _$("." + Selector.title);
+    this.cells = document.querySelectorAll("." + Selector.cellTop);
+    this.cellsBg = document.querySelectorAll("." + Selector.cellBg);
+    this.nums = document.querySelectorAll("." + Selector.cellTop + " a");
     this.firstDay = "";
     this.lastDay = "";
-    // Button set
+    /** Button set */
     this.arrowButtons = [
-        new Button(".fc-prev-button", Utility.buttonType.arrow),
-        new Button(".fc-next-button", Utility.buttonType.arrow),
+        new Button("." + Selector.prevButton, Utility.buttonType.arrow),
+        new Button("." + Selector.nextButton, Utility.buttonType.arrow),
     ];
     this.typeButtons = [
-        new Button(".fc-month-button", Utility.buttonType.type),
-        new Button(".fc-agendaWeek-button", Utility.buttonType.type),
-        new Button(".fc-agendaDay-button", Utility.buttonType.type),
+        new Button("." + Selector.monthTypeButton, Utility.buttonType.type),
+        new Button("." + Selector.weekTypeButton, Utility.buttonType.type),
+        new Button("." + Selector.dayTypeButton, Utility.buttonType.type),
     ];
-    this.todayButton = new Button(".fc-left .fc-today-button", Utility.buttonType.today);
+    this.todayButton = new Button("." + Selector.todayButton, Utility.buttonType.today);
 };
 
 Calendar.prototype = {
-    init: function(base, option) {
+    init: function(type, base, schedules, option) {
+        this.setType(type);
         this.setMyDate(base);
+        this.schedules = schedules;
         this.callbackList = option;
         // Button init
         for (var i = 0; i < this.arrowButtons.length; i++) {
@@ -36,111 +38,114 @@ Calendar.prototype = {
             this.typeButtons[i].init(this, this.typeButtonClickEvent.bind(this), {});
         }
         this.todayButton.init(this, this.todayButtonClickEvent.bind(this), {});
+        this.setCalendar(this.myDate);
     },
     setType: function(type) {
         this.type = type;
     },
     setMyDate: function(base) {
-        for(var i in this.myDate) {
+        for (var i in this.myDate) {
             this.myDate[i] = base[i];
         }
     },
+    setNums: function(numArr) {
+        this.numArr = numArr;
+    },
     setToday: function(ele) {
-        Utility.addClass(ele, "fc-today");
+        Utility.addClass(ele, Selector.today);
         Utility.addClass(ele, Style.todayEffect);
     },
     removeToday: function(ele) {
-        Utility.removeClass(ele, "fc-today");
+        Utility.removeClass(ele, Selector.today);
         Utility.removeClass(ele, Style.todayEffect);
     },
-    setCalendar: function() {
-        this.drawCalendar();
-        // type에 따라 달력 display속성을 block
-        this.showCalendar();
-        // type에 따라 우상단의 type button 활성화
-        this.setTypeButton(this.type, this.typeButtons);
-        // 달력에 따라 today button 활성화/비활성화
-        this.isToday();
+    /** set Calendar */
+    setCalendar: function(date) {
+        this.drawCalendar(date);
         // 해당 달력에 포함되어 있는 일정 띄우기
+        this.resetEvent();
+        this.schedules.init(this, 0, "month");
+        this.schedules.setEvents();
+
+        this.showCalendar();    // type에 따라 달력 display속성을 block
+        this.setTypeButton(this.type, this.typeButtons); // type에 따라 우상단의 type button 활성화
+        this.isToday(); // 달력에 따라 today button 활성화/비활성화
     },
-    // 월에 맞도록 달력에 숫자를 뿌리는 함수
-    drawCalendar: function() {
-        switch (this.type) {
-            case "month":
-                this.setMonthTitle();
-                this.setMonthCalendarBody();
-                break;
-            default: break;
+    drawCalendar: function(date) {
+        this.setMonthTitle(date);
+        this.setMonthCalendarBody(date);
+    },
+    setMonthTitle: function(date) {
+        var thisMonthFullname = Utility.months[date.month];
+        this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + date.year + "</h2>";
+    },
+    setMonthCalendarBody: function(date) {
+        var result = this.calculateCalendar(date);
+        var notThisMonth = true;
+        // 날짜출력, today 셋팅
+        for (var i = 0; i < this.cells.length; i++) {
+            if(result[0][i] === 1) notThisMonth = !notThisMonth;
+            if(notThisMonth) Utility.addClass(this.cells[i], Selector.otherMonth);
+            else Utility.removeClass(this.cells[i], Selector.otherMonth);
+
+            if (this.cellsBg[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBg[i]);
+            else if (this.cellsBg[i].className.includes(Selector.today)) this.removeToday(this.cellsBg[i]);
+
+            this.nums[i].innerText = result[0][i];
         }
-
     },
-    setMonthTitle: function() {
-        var thisMonthFullname = Utility.months[this.myDate.month];
-        this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + this.myDate.year + "</h2>";
-    },
-    setMonthCalendarBody: function() {
-        // 이번달 1일, 마지막날, 1일의 요일 구하기
-        var firstDate = new Date(this.myDate.year, this.myDate.month, 1);
-        var lastDate = this.getLastDate(this.myDate.month);
-        var firstWeekday = firstDate.getDay();
-
+    calculateCalendar: function(date) {
         var numArr = [];
-
-        var prevYear = this.myDate.year;
-        if(this.myDate.month===0) { prevYear--;}
-        var prevMonthLastDate = this.getLastDate(this.myDate.month - 1);
-
-        var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
         var currentDate = 0;
-        var nextMonthDate = 1;
+        currentDate = this.prevMonth(numArr, currentDate, date); // 지난달 날짜계산
+        currentDate = this.thisMonth(numArr, currentDate, date); // 이번달 날짜계산
+        currentDate = this.nextMonth(numArr, currentDate, date); // 다음달 날짜계산
 
-        // 지난달에 해당하는 날짜를 먼저 배열에 넣어준다.
+        this.firstDay = this.cells[0].getAttribute(CustomData.date);
+        this.lastDay = this.cells[currentDate - 1].getAttribute(CustomData.date);
+        return [numArr, this.firstDay, this.lastDay];
+    },
+    prevMonth: function(numArr, currentDate, base) {
+        var firstDate = new Date(base.year, base.month, 1);
+        var firstWeekday = firstDate.getDay();
+        var prevYear =  base.year;
+        if ( base.month === 0) {
+            prevYear--;
+        }
+        var prevMonthLastDate = this.getLastDate( base.month - 1);
+        var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
+
         for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
-            this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], prevYear, this.myDate.month, i);
-            if (!this.cells[currentDate].className.includes("fc-other-month")) {
-                Utility.addClass(this.cells[currentDate], "fc-other-month");
-            }
-            currentDate++;
-            numArr.push(i);
+            this.setCells(prevYear,  base.month, i, currentDate++, numArr);
         }
-        // 이번달에 해당하는 날짜를 추가로 배열에 넣어준다.
+        return currentDate;
+    },
+    thisMonth: function(numArr, currentDate, base) {
+        var lastDate = this.getLastDate( base.month);
         for (var i = 1; i <= lastDate; i++) {
-            this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month + 1, i);
-            if (this.cells[currentDate].className.includes("fc-other-month")) {
-                Utility.removeClass(this.cells[currentDate], "fc-other-month");
-            }
-            currentDate++;
-            numArr.push(i);
+            this.setCells( base.year,  base.month + 1, i, currentDate++, numArr);
         }
-        // 지난달, 이번달, 다음달에 해당하는 날짜를 달력에 보여준다.
-        for (var i = 0; i < this.nums.length; i++) {
-            if (numArr[i] === undefined) {
-                this.setDataDate(this.cells[currentDate], this.cellsBackground[currentDate], this.myDate.year, this.myDate.month + 2, nextMonthDate);
-                if (!this.cells[currentDate].className.includes("fc-other-month")) {
-                    Utility.addClass(this.cells[currentDate], "fc-other-month");
-                }
-                currentDate++;
-                numArr.push(nextMonthDate++);
-            }
-            if (this.cellsBackground[i].getAttribute("data-date") === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBackground[i]);
-            else if (this.cellsBackground[i].className.includes("fc-state-highlight")) this.removeToday(this.cellsBackground[i]);
-
-            this.nums[i].innerText = numArr[i];
+        return currentDate;
+    },
+    nextMonth: function(numArr, currentDate, base) {
+        var nextMonthDate = 1;
+        for (var i = currentDate; i < this.cells.length; i++) {
+            this.setCells( base.year,  base.month + 2, nextMonthDate++, currentDate++, numArr);
         }
-        this.firstDay = this.cells[0].getAttribute("data-date");
-        this.lastDay =  this.cells[currentDate-1].getAttribute("data-date");
-        var schedule = new ScheduleDisplay();
-        schedule.init(this, 0, "month");
-        schedule.setEvents();
+        return currentDate;
+    },
+    setCells: function(year, month, date, currentDate, numArr) {
+        this.setDataDate(currentDate, year, month, date);
+        numArr.push(date);
     },
     getLastDate: function(month) {
-        if (month < 0) { month = 11;}
+        if (month < 0) month = 11;
         var lastDate = new Date(this.myDate.year, month + 1, 0).getDate();
         return lastDate;
     },
-    setDataDate: function(cell, cellBg, year, month, date) {
-        cell.setAttribute("data-date", Utility.formDate(year, month, date));
-        cellBg.setAttribute("data-date", Utility.formDate(year, month, date));
+    setDataDate: function(currentDate, year, month, date) {
+        this.cells[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
+        this.cellsBg[currentDate].setAttribute(CustomData.date, Utility.formDate(year, month, date));
     },
     showCalendar: function() {
         this.hideAllCalendar();
@@ -151,41 +156,40 @@ Calendar.prototype = {
         Utility.hideElement(Utility.calendarType.week);
         Utility.hideElement(Utility.calendarType.day);
     },
-    // button event
+    /** Button method */
     arrowButtonClickEvent: function(evt) {
         this.moveCalendar(evt.target);
-        this.setCalendar(this);
+        this.callbackList["SET_MINI"](this.myDate);
+        this.resetEvent();
+        this.setCalendar(this.myDate);
     },
     typeButtonClickEvent: function(evt) {
         this.type = evt.target.innerText;
         this.resetEvent();
-        this.setCalendar(this);
+        this.setCalendar(this.myDate);
     },
     todayButtonClickEvent: function() {
-        if (!this.isToday(this)) {
-            this.setMyDate(Utility.Today);
-            this.resetEvent();
-            this.setCalendar(this);
-        }
+        if (this.isToday(this)) return false;
+
+        this.setMyDate(Utility.Today);
+        this.callbackList["SET_MINI"](this.myDate);
+        this.resetEvent();
+        this.setCalendar(this.myDate);
     },
     moveCalendar: function(target) {
-        var prevArrowClass = "fc-prev-button";
-        var nextArrowClass = "fc-next-button";
+        var prevArrowClass = Selector.prevButton;
+        var nextArrowClass = Selector.nextButton;
         var button = target.closest("button");
-        var mydate = this.myDate;
-        this.resetEvent();
 
-        if (button.classList.contains(prevArrowClass)) {
-            mydate.month--;
-        } else if (button.classList.contains(nextArrowClass)) {
-            mydate.month++;
-        }
-        if (mydate.month < 0) {
-            mydate.month = 11;
-            mydate.year--;
-        } else if (mydate.month > 11) {
-            mydate.month = 0;
-            mydate.year++;
+        if (button.classList.contains(prevArrowClass)) this.myDate.month--;
+        else if (button.classList.contains(nextArrowClass)) this.myDate.month++;
+
+        if (this.myDate.month < 0) {
+            this.myDate.month = 11;
+            this.myDate.year--;
+        } else if (this.myDate.month > 11) {
+            this.myDate.month = 0;
+            this.myDate.year++;
         }
     },
     setTypeButton: function(type, typeButtons) {
@@ -196,13 +200,15 @@ Calendar.prototype = {
         return typeButtons;
     },
     inactiveButtonSet: function(buttons, className) {
-        for(var i in buttons) {
+        for (var i in buttons) {
             Utility.removeClass(buttons[i].ele, className);
         }
     },
     isToday: function() {
         var mydate = this.myDate;
-        if (mydate.year !== Utility.Today.year || mydate.month !== Utility.Today.month || mydate.date !== Utility.Today.date) {
+        if (mydate.year !== Utility.Today.year ||
+            mydate.month !== Utility.Today.month ||
+            mydate.date !== Utility.Today.date) {
             this.todayButton.active();
             return false;
         } else {
@@ -210,9 +216,10 @@ Calendar.prototype = {
             return true;
         }
     },
+    /** schedule method */
     resetEvent: function() {
         this.resetField();
-        var eventRow = document.querySelectorAll(".fc-content-skeleton tbody");
+        var eventRow = document.querySelectorAll("." + Selector.scheduleSkeleton + " tbody");
 
         for (var i = 0; i < eventRow.length; i++) {
             eventRow[i].innerHTML = "<tr>" +
@@ -231,6 +238,6 @@ Calendar.prototype = {
         for (var i = 0; i < weekRow.length; i++) {
             weekRow[i].style.height = "107px";
         }
-            _$(".fc-month-view .fc-scroller").style.height = "647px";
-        }
+        _$(".fc-month-view .fc-scroller").style.height = "647px";
+    }
 };

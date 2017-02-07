@@ -101,8 +101,9 @@ var Selector = {
     monthView : "fc-month-view",
     dayGridContainer : "fc-day-grid-container",
     topDiv: "fc-toolbar",
-    cellTop: "fc-day-top",
-    cellBg: "fc-day",
+    title: "fc-center",
+    cellTop: "fc-month-view .fc-day-top",
+    cellBg: "fc-month-view .fc-day",
 
     today : "fc-today",
     otherMonth : "fc-other-month",
@@ -121,7 +122,17 @@ var Selector = {
     hideCell : "fc-hide-cell",
     hideButton : "fc-hide",
 
-    limitEvent : "fc-limited"
+    limitEvent : "fc-limited",
+
+    Mtoday : "mini-today",
+    Mtitle : "mini-title",
+    Mcells : "mini-cells",
+    Mselected : "mini-selected",
+    Mevent : "mini-event",
+    MotherMonth : "mini-other-month",
+    MprevButton : "mini-prev-button",
+    MnextButton : "mini-next-button",
+
 };
 /** CSS class중 Style을 조정하는 class모음 */
 var Style = {
@@ -130,4 +141,8 @@ var Style = {
     disabledEffect : "fc-state-disabled",
     activeEffect : "fc-state-active",
     todayEffect : "fc-state-highlight",
+};
+/** 자료 저장을 위해 만든 custom attribute모음 */
+var CustomData = {
+    date: "data-date",
 };

@@ -8,11 +8,10 @@ ScheduleDisplay.prototype = {
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-        this.scheduleArray = [];
         this.keys = [];
         this.calendarType = type;
         this.calendar = calendar;
-        this.getThisMonthEvent();
+        this.getThisMonthEvent(this.calendar.myDate);
         this.status = {
             isStart: true,
             isEnd: true,
@@ -51,7 +50,6 @@ ScheduleDisplay.prototype = {
         this.initStatus(this.status);
         var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
         var dateHead = null;
-        var dateBody = null;
         for (var i = 0; i < weeks.length; i++) {
             if (this.status.isStart) {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
@@ -59,26 +57,28 @@ ScheduleDisplay.prototype = {
                 dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
             }
             if(dateHead !== null) {
-                var rowBody = weeks[i]._$("." + Selector.scheduleSkeleton + " tbody");
-                this.status.row = this.getEventRowCount(weeks[i], dateHead);
-                if (!this.status.isEnd) {
-                    for (var j = 0; j < this.status.row; j++) {
-                        this.addRow(rowBody);
-                    }
-                }
-                dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
-                this.setWeekRowEvent(dateHead, dateBody);
+              this.setWeekRowEvent(dateHead, weeks[i])
             }
             if (this.status.isEnd) {
                 break;
             }
         }
     },
-    setWeekRowEvent: function(dateHead, dateBody) {
+    setWeekRowEvent: function(dateHead, weekRow) {
+      var rowBody = weekRow._$("." + Selector.scheduleSkeleton + " tbody");
+
+      this.status.row = this.getEventRowCount(weekRow, dateHead);
+      if (!this.status.isEnd) {
+          for (var j = 0; j < this.status.row; j++) {
+              this.addRow(rowBody);
+          }
+      }
+      var dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
+
       if (this.status.row === this.moreRow) {
         this.setMoreCell(dateBody);
         this.status.row++;
-        this.addRow(dateBody.parentNode.parentNode);
+        this.addRow(rowBody);
         dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
       }
 
@@ -86,7 +86,7 @@ ScheduleDisplay.prototype = {
           this.setLimitedEvent(dateBody, event.title);
       }
 
-      for (var day = 0; day < 7 && dateBody !== null && this.status.isEnd !== true; day++) {
+      for (var day = 0; day < 7 && dateBody !== null && !this.status.isEnd; day++) {
           this.setEventBar(dateBody, this.schedule.title);
           dateBody = dateBody.nextElementSibling;
       }
@@ -126,11 +126,16 @@ ScheduleDisplay.prototype = {
             "</div></a>";
         var eventLink = ele._$("a");
 
+        var source = _$("#event-title-template").innerHTML;
+        var template = Handlebars.compile(source);
+        var titleData = {"title": title}
+        var html = template(titleData);
+
         eventLink.setAttribute("data-key", this.status.key);
         eventLink.setAttribute("data-pos", this.status.position);
 
         if (ele.isEqualNode(ele.parentNode.firstElementChild) || this.status.isStart) {
-            eventLink._$("div").innerHTML = "<span class = \"fc-title\">" + title + "</span>";
+            eventLink._$("div").innerHTML = html;
         }
         if (this.status.isStart) {
             Utility.addClass(eventLink, "fc-start");
@@ -174,8 +179,8 @@ ScheduleDisplay.prototype = {
           tableBody.appendChild(newRow);
         }
     },
-
-    getThisMonthEvent: function() {
+    getThisMonthEvent: function(date) {
+        this.scheduleArray = [];
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
             var items = localStorage.getItem(key);
@@ -203,6 +208,7 @@ ScheduleDisplay.prototype = {
                 this.keys.push(key);
             }
         }
+        return this.scheduleArray;
     },
     isRepeatEvent: function(key) {
         var order = []; // 이번달에 표시할 이벤트
@@ -211,7 +217,8 @@ ScheduleDisplay.prototype = {
 
         for (var i = 0; i < schedules.length; i++) {
             var schedule = schedules[i];
-            if (schedule.repeat !== "none") {
+            var scheduleStart = schedule.start.slice(0, 10);
+            if (schedule.repeat !== "none" && this.calendar.lastDay >= scheduleStart) {
                 order.push(i);
                 count++;
             } else {
@@ -222,21 +229,14 @@ ScheduleDisplay.prototype = {
         else return [false, order];
     },
     checkThisMonth: function(key) {
-        var result = false;
+        var result = true;
         var due = key.split("S");
         var eStart = due[0];
         var eEnd = due[1].replace("E", "");
 
-        if (eEnd <= this.calendar.lastDay) {
-            if (eEnd >= this.calendar.firstDay) {
-                result = true;
-            }
-        } else if (eStart >= this.calendar.firstDay) {
-            if (eStart <= this.calendar.lastDay) {
-                result = true;
-            }
-        } else {
-            result = true;
+        if ((eStart > this.calendar.lastDay && eEnd > this.calendar.lastDay)
+        || eStart < this.calendar.firstDay && eEnd < this.calendar.firstDay) {
+            result = false;
         }
         return result;
     },
@@ -340,11 +340,11 @@ ScheduleDisplay.prototype = {
       for (var i = 0; i <= remain && dateHead !== null; i++) {
         for (var j = 0; j < trs.length; j++) {
           var toCheck = Utility.getTbodyFromThead(dateHead, count).classList;
-          if(toCheck.contains(Selector.schedule) || toCheck.contains(Selector.moreCell)) {
+          if(toCheck.contains(Selector.schedule) || count === this.moreRow) {
             count++;
           }
         }
-        
+
         if (count > result) {
           result = count;
         }

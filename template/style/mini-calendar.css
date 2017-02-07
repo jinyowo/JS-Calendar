@@ -1,0 +1,130 @@
+/* ---------- SCHEDULE BUTTON ---------- */
+#sidebar div.scheduleButton {
+    border: 1px solid #e3e3e3;
+    position: absolute;
+    width: 204px;
+    height: 31px;
+    top: 10px;
+}
+.scheduleButton{
+    text-align: center;
+    padding-top: 2.5px;
+    background-color: #2cba22;
+    color: white;
+    border-radius: 5px;
+}
+/* ---------- MINI CALENDAR ---------- */
+
+.mini-calendar {
+    border: 1px solid #e3e3e3;
+    margin: 0px;
+    position: relative;
+    top: 52px;
+    height: 237px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.mini-calendar header {
+    margin: 0px 10px 10px 10px;
+    position: relative;
+    top: 7px;
+}
+
+.mini-calendar h2 {
+    /*text-transform: uppercase;*/
+    font-size: 1.2em;
+    line-height: 1.25em;
+    margin: .25em 0;
+}
+.mini-calendar h3 {
+    font-size: 1.5em;
+    line-height: 1em;
+    margin: .33em 0;
+}
+.mini-calendar table {
+    margin: 10px;
+    position: relative;
+    top: 10px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+.mini-calendar thead {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.mini-calendar tbody {
+    color: #7c8a95;
+}
+
+.mini-calendar tbody td:hover {
+    border: 1px solid #cbd1d2;
+}
+
+.mini-calendar td {
+    padding-top: 2px;
+    font-size: 0.95em;
+    border: 1px solid transparent;
+    display: inline-block;
+    height: 26px;
+    line-height: 1em;
+    text-align: center;
+    width: 26px;
+}
+
+.mini-calendar .mini-other-month {
+    opacity: .3;
+}
+
+.mini-calendar td.mini-today {
+    border: 1px solid #c6c6c6;
+    background-color: #fcf8e3;
+    /*color: #f9f9f9;*/
+}
+.mini-calendar td.mini-selected {
+    opacity: 1;
+    border: 1px solid #c6c6c6;
+    background-color: rgba(58, 135, 173, 0.35);
+}
+.mini-event {
+    cursor: pointer;
+    position: relative;
+}
+
+.mini-event:after {
+    background: #2cba22;
+    border-radius: 50%;
+    bottom: .3em;
+    display: block;
+    content: '';
+    height: .3em;
+    left: 50%;
+    margin: -.2em 0 0 -.2em;
+    position: absolute;
+    width: .3em;
+}
+
+.mini-prev-button,
+.mini-next-button {
+    text-align: center;
+    /*border: 2px solid #cbd1d2;*/
+    border-radius: 50%;
+    /*color: #000;*/
+    height: 1.5em;
+    font-size: 1em;
+    font-weight: 800;
+    line-height: 2em;
+    margin: -1em;
+    position: absolute;
+    top: 50%;
+    width: 1.5em;
+}
+
+.mini-prev-button {
+    left: 1em;
+}
+
+.mini-next-button {
+    right: 1em;
+}
