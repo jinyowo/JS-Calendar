@@ -128,6 +128,7 @@ var Selector = {
     Mtitle : "mini-title",
     Mcells : "mini-cells",
     Mselected : "mini-selected",
+    Mevent : "mini-event",
     MotherMonth : "mini-other-month",
     MprevButton : "mini-prev-button",
     MnextButton : "mini-next-button",

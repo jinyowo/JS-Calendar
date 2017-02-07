@@ -48,8 +48,7 @@ MiniCalendar.prototype = {
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
-        // var events = this.callbackList["GET_EVENT"](this.myDate);
-        // var vaildEvents = this.getEvent(events);
+        var events = this.callbackList["GET_EVENT"];
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;
@@ -71,21 +70,55 @@ MiniCalendar.prototype = {
             if (this.cells[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cells[i]);
             else if (this.cells[i].className.includes(Selector.Mtoday)) this.removeToday(this.cells[i]);
         }
+        this.setEventOnCalendar(events);
     },
     getEvent: function(events) {
         var result = [];
+        var startDate = this.callbackList["GET_NUMS"](this.myDate)[1];
         for(var i=0; i<events.length; i++) {
-            if(events[i].repeat === "none") {   // 반복일정이 아니면 일정의 시작과 끝을 모두 검사
-
-            }
-            else {  // 반복일정은 일정의 시작만 검사
-
+            var eventArray = JSON.parse(events[i]);
+            for(var j = 0; j < eventArray.length; j++) {
+                event = eventArray[j];
+                if(event.repeat === "none"
+                || event.start > startDate) {   // 반복일정이 아니면 해당 달에 존재하므로 추가
+                    result.push(event);
+                }
             }
         }
         return result;
     },
+    setEventOnCalendar: function(events) {
+        var validEvents = this.getEvent(events);
+        var startDate = this.callbackList["GET_NUMS"](this.myDate)[1];
+        var endDate = this.callbackList["GET_NUMS"](this.myDate)[2];
+
+        for (var i = 0; i < validEvents.length; i++) {
+            var event = validEvents[i];
+            var start = event.start.slice(0, 10);
+            var end = event.end.slice(0, 10);
+
+            if (start < startDate) {
+                start = startDate;
+            }
+            if (end > endDate) {
+                end = endDate;
+            }
+
+            var curr = 0;
+            while (this.cells[curr].getAttribute(CustomData.date) !== start) {
+                curr++;
+            }
+            while (this.cells[curr].getAttribute(CustomData.date) <= end) {
+                if (!this.cells[curr].classList.contains(Selector.Mevent)) {
+                    Utility.addClass(this.cells[curr], Selector.Mevent);
+                }
+                curr++;
+            }
+        }
+    },
     /** Button method */
     arrowClickEvent: function(evt) {
+        this.resetEvent();
         this.resetSelected();
         this.moveCalendar(evt.target);
         this.drawCalendar(this.myDate);
@@ -114,4 +147,11 @@ MiniCalendar.prototype = {
             }
         }
     },
+    resetEvent: function() {
+        for(var i=0; i<this.cells.length; i++) {
+            if(this.cells[i].classList.contains(Selector.Mevent)) {
+                Utility.removeClass(this.cells[i], Selector.Mevent);
+            }
+        }
+    }
 };
