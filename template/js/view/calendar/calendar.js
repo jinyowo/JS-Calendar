@@ -38,7 +38,7 @@ Calendar.prototype = {
             this.typeButtons[i].init(this, this.typeButtonClickEvent.bind(this), {});
         }
         this.todayButton.init(this, this.todayButtonClickEvent.bind(this), {});
-        this.setCalendar();
+        this.setCalendar(this.myDate);
     },
     setType: function(type) {
         this.type = type;
@@ -60,9 +60,10 @@ Calendar.prototype = {
         Utility.removeClass(ele, Style.todayEffect);
     },
     /** set Calendar */
-    setCalendar: function() {
-        this.drawCalendar();
+    setCalendar: function(date) {
+        this.drawCalendar(date);
         // 해당 달력에 포함되어 있는 일정 띄우기
+        this.resetEvent();
         this.schedules.init(this, 0, "month");
         this.schedules.setEvents();
 
@@ -70,13 +71,13 @@ Calendar.prototype = {
         this.setTypeButton(this.type, this.typeButtons); // type에 따라 우상단의 type button 활성화
         this.isToday(); // 달력에 따라 today button 활성화/비활성화
     },
-    drawCalendar: function() {
-        this.setMonthTitle();
-        this.setMonthCalendarBody(this.myDate);
+    drawCalendar: function(date) {
+        this.setMonthTitle(date);
+        this.setMonthCalendarBody(date);
     },
-    setMonthTitle: function() {
-        var thisMonthFullname = Utility.months[this.myDate.month];
-        this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + this.myDate.year + "</h2>";
+    setMonthTitle: function(date) {
+        var thisMonthFullname = Utility.months[date.month];
+        this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + date.year + "</h2>";
     },
     setMonthCalendarBody: function(date) {
         var result = this.calculateCalendar(date);
@@ -158,13 +159,14 @@ Calendar.prototype = {
     /** Button method */
     arrowButtonClickEvent: function(evt) {
         this.moveCalendar(evt.target);
+        this.callbackList["SET_MINI"](this.myDate);
         this.resetEvent();
-        this.setCalendar(this);
+        this.setCalendar(this.myDate);
     },
     typeButtonClickEvent: function(evt) {
         this.type = evt.target.innerText;
         this.resetEvent();
-        this.setCalendar(this);
+        this.setCalendar(this.myDate);
     },
     todayButtonClickEvent: function() {
         if (this.isToday(this)) return false;
@@ -172,7 +174,7 @@ Calendar.prototype = {
         this.setMyDate(Utility.Today);
         this.callbackList["SET_MINI"](this.myDate);
         this.resetEvent();
-        this.setCalendar(this);
+        this.setCalendar(this.myDate);
     },
     moveCalendar: function(target) {
         var prevArrowClass = Selector.prevButton;
@@ -189,7 +191,6 @@ Calendar.prototype = {
             this.myDate.month = 0;
             this.myDate.year++;
         }
-        this.callbackList["SET_MINI"](this.myDate);
     },
     setTypeButton: function(type, typeButtons) {
         this.inactiveButtonSet(typeButtons, Style.activeEffect);

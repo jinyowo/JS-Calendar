@@ -5,7 +5,8 @@ function MiniCalendar() {
         date: -1
     };
     this.monthTitle = _$("." + Selector.Mtitle);
-    this.cells = document.querySelectorAll("." + Selector.Mcells + " td");
+    this.body = document.querySelector("." + Selector.Mcells);
+    this.cells = this.body.querySelectorAll("td");
     this.prevButton = document.querySelector("." + Selector.MprevButton);
     this.nextButton = document.querySelector("." + Selector.MnextButton);
 };
@@ -14,6 +15,7 @@ MiniCalendar.prototype = {
         this.callbackList = option;
         Utility.on(this.prevButton, "click", this.arrowClickEvent.bind(this));
         Utility.on(this.nextButton, "click", this.arrowClickEvent.bind(this));
+        Utility.on(this.body, "click", this.moveToDate.bind(this));
         this.drawCalendar(base);
     },
     setMyDate: function(base) {
@@ -27,6 +29,18 @@ MiniCalendar.prototype = {
     removeToday: function(ele) {
         Utility.removeClass(ele, Selector.Mtoday);
     },
+    moveToDate: function() {
+        var dateStr = event.target.getAttribute("data-date");
+        var year = dateStr.slice(0, 4) * 1,
+            month = dateStr.slice(5, 7) * 1 -1,
+            date = dateStr.slice(8) * 1;
+        this.callbackList["SET_NUMS"]({year, month, date});
+        this.resetSelected();
+        for(var i in this.cells) {
+            if(this.cells[i] !== event.target) continue;
+            Utility.addClass(this.cells[i], Selector.Mselected);
+        }
+    },
     drawCalendar: function(base) {
         this.setMyDate(base);
 
@@ -34,8 +48,8 @@ MiniCalendar.prototype = {
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
-        var events = this.callbackList["GET_EVENT"](this.myDate);
-        var vaildEvents = this.getEvent(events);
+        // var events = this.callbackList["GET_EVENT"](this.myDate);
+        // var vaildEvents = this.getEvent(events);
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;
@@ -72,8 +86,8 @@ MiniCalendar.prototype = {
     },
     /** Button method */
     arrowClickEvent: function(evt) {
+        this.resetSelected();
         this.moveCalendar(evt.target);
-        // this.resetEvent();
         this.drawCalendar(this.myDate);
     },
     moveCalendar: function(target) {
@@ -92,20 +106,12 @@ MiniCalendar.prototype = {
         }
     },
     /** schedule clear */
-    resetEvent: function() {
-        var body = document.querySelector("." + Selector.Mcells);
-        var template = "";
-        for (var i = 0; i < 6; i++) {   // 달력 한달을 6주로 표시함
-            template += "<tr>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n<td></td>" +
-                "\n</tr>";
+    resetSelected: function() {
+        for(var i=0; i<this.cells.length; i++) {
+            if(this.cells[i].classList.contains(Selector.Mselected)) {
+                Utility.removeClass(this.cells[i], Selector.Mselected);
+                break;
+            }
         }
-        body.innerHTML = template;
     },
 };
