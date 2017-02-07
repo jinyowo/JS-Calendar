@@ -6,10 +6,14 @@ function MiniCalendar() {
     };
     this.monthTitle = _$("." + Selector.Mtitle);
     this.cells = document.querySelectorAll("." + Selector.Mcells + " td");
+    this.prevButton = document.querySelector("." + Selector.MprevButton);
+    this.nextButton = document.querySelector("." + Selector.MnextButton);
 };
 MiniCalendar.prototype = {
     init: function(base, option) {
         this.callbackList = option;
+        Utility.on(this.prevButton, "click", this.arrowClickEvent.bind(this));
+        Utility.on(this.nextButton, "click", this.arrowClickEvent.bind(this));
         this.drawCalendar(base);
     },
     setMyDate: function(base) {
@@ -29,7 +33,7 @@ MiniCalendar.prototype = {
         var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
-        var numArr = this.callbackList["GET_NUMS"]();
+        var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;
@@ -53,18 +57,17 @@ MiniCalendar.prototype = {
         }
     },
     /** Button method */
-    arrowButtonClickEvent: function(evt) {
+    arrowClickEvent: function(evt) {
         this.moveCalendar(evt.target);
-        this.resetEvent();
-        this.setCalendar(this);
+        // this.resetEvent();
+        this.drawCalendar(this.myDate);
     },
     moveCalendar: function(target) {
-        var prevArrowClass = Selector.prevButton;
-        var nextArrowClass = Selector.nextButton;
-        var button = target.closest("button");
+        var prevArrowClass = Selector.MprevButton;
+        var nextArrowClass = Selector.MnextButton;
 
-        if (button.classList.contains(prevArrowClass)) this.myDate.month--;
-        else if (button.classList.contains(nextArrowClass)) this.myDate.month++;
+        if (target.classList.contains(prevArrowClass)) this.myDate.month--;
+        else if (target.classList.contains(nextArrowClass)) this.myDate.month++;
 
         if (this.myDate.month < 0) {
             this.myDate.month = 11;

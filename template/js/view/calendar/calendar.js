@@ -72,71 +72,65 @@ Calendar.prototype = {
         this.isToday(); // 달력에 따라 today button 활성화/비활성화
     },
     drawCalendar: function() {
-        switch (this.type) {
-            case "month":
-                this.setMonthTitle();
-                this.setMonthCalendarBody();
-                break;
-            default:
-                break;
-        }
+        this.setMonthTitle();
+        this.setMonthCalendarBody(this.myDate);
     },
     setMonthTitle: function() {
         var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + this.myDate.year + "</h2>";
     },
-    setMonthCalendarBody: function() {
-        var numArr = [];
-        var currentDate = 0;
-        currentDate = this.prevMonth(numArr, currentDate); // 지난달 날짜계산
-        currentDate = this.thisMonth(numArr, currentDate); // 이번달 날짜계산
-        currentDate = this.nextMonth(numArr, currentDate); // 다음달 날짜계산
+    setMonthCalendarBody: function(date) {
+        var result = this.calculateCalendar(date);
+        var notThisMonth = true;
         // 날짜출력, today 셋팅
         for (var i = 0; i < this.cells.length; i++) {
+            if(result[0][i] === 1) notThisMonth = !notThisMonth;
+            if(notThisMonth) Utility.addClass(this.cells[i], Selector.otherMonth);
+            else Utility.removeClass(this.cells[i], Selector.otherMonth);
+
             if (this.cellsBg[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBg[i]);
             else if (this.cellsBg[i].className.includes(Selector.today)) this.removeToday(this.cellsBg[i]);
 
-            this.nums[i].innerText = numArr[i];
+            this.nums[i].innerText = result[0][i];
         }
         this.firstDay = this.cells[0].getAttribute(CustomData.date);
-        this.lastDay = this.cells[currentDate - 1].getAttribute(CustomData.date);
-        return numArr;
+        this.lastDay = this.cells[result[1] - 1].getAttribute(CustomData.date);
     },
-    prevMonth: function(numArr, currentDate) {
-        var firstDate = new Date(this.myDate.year, this.myDate.month, 1);
+    calculateCalendar: function(date) {
+        var numArr = [];
+        var currentDate = 0;
+        currentDate = this.prevMonth(numArr, currentDate, date); // 지난달 날짜계산
+        currentDate = this.thisMonth(numArr, currentDate, date); // 이번달 날짜계산
+        currentDate = this.nextMonth(numArr, currentDate, date); // 다음달 날짜계산
+
+        return [numArr, currentDate];
+    },
+    prevMonth: function(numArr, currentDate, base) {
+        var firstDate = new Date(base.year,  base.month, 1);
         var firstWeekday = firstDate.getDay();
-        var prevYear = this.myDate.year;
-        if (this.myDate.month === 0) {
+        var prevYear =  base.year;
+        if ( base.month === 0) {
             prevYear--;
         }
-        var prevMonthLastDate = this.getLastDate(this.myDate.month - 1);
+        var prevMonthLastDate = this.getLastDate( base.month - 1);
         var prevMonthfirstDate = prevMonthLastDate - firstWeekday + 1;
 
         for (var i = prevMonthfirstDate; i <= prevMonthLastDate; i++) {
-            if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
-                Utility.addClass(this.cells[currentDate], Selector.otherMonth);
-            }
-            this.setCells(prevYear, this.myDate.month, i, currentDate++, numArr);
+            this.setCells(prevYear,  base.month, i, currentDate++, numArr);
         }
         return currentDate;
     },
-    thisMonth: function(numArr, currentDate) {
-        var lastDate = this.getLastDate(this.myDate.month);
+    thisMonth: function(numArr, currentDate, base) {
+        var lastDate = this.getLastDate( base.month);
         for (var i = 1; i <= lastDate; i++) {
-            if (this.cells[currentDate].className.includes(Selector.otherMonth)) {
-                Utility.removeClass(this.cells[currentDate], Selector.otherMonth);
-            }
-            this.setCells(this.myDate.year, this.myDate.month + 1, i, currentDate++, numArr);
+            this.setCells( base.year,  base.month + 1, i, currentDate++, numArr);
         }
         return currentDate;
     },
-    nextMonth: function(numArr, currentDate) {
+    nextMonth: function(numArr, currentDate, base) {
         var nextMonthDate = 1;
         for (var i = currentDate; i < this.cells.length; i++) {
-            if (!this.cells[currentDate].className.includes(Selector.otherMonth)) {
-                Utility.addClass(this.cells[currentDate], Selector.otherMonth);
-            }
-            this.setCells(this.myDate.year, this.myDate.month + 2, nextMonthDate++, currentDate++, numArr);
+            this.setCells( base.year,  base.month + 2, nextMonthDate++, currentDate++, numArr);
         }
         return currentDate;
     },
