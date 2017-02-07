@@ -35,7 +35,6 @@ MiniCalendar.prototype = {
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
         var events = this.callbackList["GET_EVENT"];
-        var vaildEvents = this.getEvent(events);
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;
@@ -57,25 +56,57 @@ MiniCalendar.prototype = {
             if (this.cells[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cells[i]);
             else if (this.cells[i].className.includes(Selector.Mtoday)) this.removeToday(this.cells[i]);
         }
+        this.setEventOnCalendar(events);
     },
     getEvent: function(events) {
         var result = [];
+        var startDate = this.callbackList["GET_NUMS"](this.myDate)[1];
         for(var i=0; i<events.length; i++) {
             var eventArray = JSON.parse(events[i]);
             for(var j = 0; j < eventArray.length; j++) {
                 event = eventArray[j];
                 if(event.repeat === "none"
-                || event.start > this.callbackList["GET_NUMS"](this.myDate)[1]) {   // 반복일정이 아니면 해당 달에 존재하므로 추가
+                || event.start > startDate) {   // 반복일정이 아니면 해당 달에 존재하므로 추가
                     result.push(event);
                 }
             }
         }
         return result;
     },
+    setEventOnCalendar: function(events) {
+        var validEvents = this.getEvent(events);
+        var startDate = this.callbackList["GET_NUMS"](this.myDate)[1];
+        var endDate = this.callbackList["GET_NUMS"](this.myDate)[2];
+
+        for (var i = 0; i < validEvents.length; i++) {
+            var event = validEvents[i];
+            var start = event.start.slice(0, 10);
+            var end = event.end.slice(0, 10);
+
+            if (start < startDate) {
+                start = startDate;
+            }
+            if (end > endDate) {
+                end = endDate;
+            }
+
+            var curr = 0;
+            while (this.cells[curr].getAttribute(CustomData.date) !== start) {
+                curr++;
+            }
+            while (this.cells[curr].getAttribute(CustomData.date) <= end) {
+                if (!this.cells[curr].classList.contains("mini-event")) {
+                    Utility.addClass(this.cells[curr], "mini-event");
+                }
+                curr++;
+            }
+        }
+    },
     /** Button method */
     arrowClickEvent: function(evt) {
         this.moveCalendar(evt.target);
-        // this.resetEvent();
+        this.resetEvent();
+        this.cells = document.querySelectorAll("." + Selector.Mcells + " td");
         this.drawCalendar(this.myDate);
     },
     moveCalendar: function(target) {
