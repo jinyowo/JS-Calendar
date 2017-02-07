@@ -186,7 +186,7 @@ ScheduleDisplay.prototype = {
             var items = localStorage.getItem(key);
             var schedules = JSON.parse(items);
             var order = []; // 이번달에 표시할 이벤트
-            var isRepeat = this.isRepeatEvent(key, date);
+            var isRepeat = this.isRepeatEvent(key);
 
             if (isRepeat[0] || isRepeat[1].length > 0) order = isRepeat[1];
             if (order.length > 0) {
@@ -203,25 +203,27 @@ ScheduleDisplay.prototype = {
                 this.keys.push(key);
                 continue;
             }
-            if(this.checkThisMonth(key, date)) {
+            if(this.checkThisMonth(key)) {
                 this.scheduleArray.push(items);
                 this.keys.push(key);
             }
         }
+        console.log(this.scheduleArray);
         return this.scheduleArray;
     },
-    isRepeatEvent: function(key, date) {
+    isRepeatEvent: function(key) {
         var order = []; // 이번달에 표시할 이벤트
         var count = 0;
         var schedules = JSON.parse(localStorage.getItem(key));
 
         for (var i = 0; i < schedules.length; i++) {
             var schedule = schedules[i];
-            if (schedule.repeat !== "none") {
+            var scheduleStart = schedule.start.slice(0, 10);
+            if (schedule.repeat !== "none" && this.calendar.lastDay >= scheduleStart) {
                 order.push(i);
                 count++;
             } else {
-                if(this.checkThisMonth(key, date)) order.push(i);
+                if(this.checkThisMonth(key)) order.push(i);
             }
         }
         if (count === schedules.length) return [true, order];
