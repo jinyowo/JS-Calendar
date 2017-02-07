@@ -9,7 +9,7 @@
 .scheduleButton{
     text-align: center;
     padding-top: 2.5px;
-    background-color: #3a87ad;
+    background-color: #2cba22;
     color: white;
     border-radius: 5px;
 }
@@ -93,7 +93,7 @@
 }
 
 .mini-event:after {
-    background: #3a87ad;
+    background: #2cba22;
     border-radius: 50%;
     bottom: .3em;
     display: block;
