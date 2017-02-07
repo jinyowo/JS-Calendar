@@ -34,7 +34,7 @@ MiniCalendar.prototype = {
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
-        var events = this.callbackList["GET_EVENT"](this.myDate);
+        var events = this.callbackList["GET_EVENT"];
         var vaildEvents = this.getEvent(events);
         var year = this.myDate.year;
         var month = this.myDate.month;
@@ -61,11 +61,13 @@ MiniCalendar.prototype = {
     getEvent: function(events) {
         var result = [];
         for(var i=0; i<events.length; i++) {
-            if(events[i].repeat === "none") {   // 반복일정이 아니면 일정의 시작과 끝을 모두 검사
-
-            }
-            else {  // 반복일정은 일정의 시작만 검사
-
+            var eventArray = JSON.parse(events[i]);
+            for(var j = 0; j < eventArray.length; j++) {
+                event = eventArray[j];
+                if(event.repeat === "none"
+                || event.start > this.callbackList["GET_NUMS"](this.myDate)[1]) {   // 반복일정이 아니면 해당 달에 존재하므로 추가
+                    result.push(event);
+                }
             }
         }
         return result;
