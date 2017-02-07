@@ -8,7 +8,6 @@ ScheduleDisplay.prototype = {
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-        this.scheduleArray = [];
         this.keys = [];
         this.calendarType = type;
         this.calendar = calendar;
@@ -181,6 +180,7 @@ ScheduleDisplay.prototype = {
         }
     },
     getThisMonthEvent: function(date) {
+        this.scheduleArray = [];
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
             var items = localStorage.getItem(key);
