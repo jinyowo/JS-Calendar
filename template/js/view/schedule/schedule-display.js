@@ -8,7 +8,6 @@ ScheduleDisplay.prototype = {
     init: function(calendar, due, type) {
         //TODO:due와 type 이용해 일정 기간 스케쥴들 가져오는 함수 추가해야함
         // TODO: data.js에 저장해 둔 일정을 불러오는 형식으로 변경할 것.
-        this.scheduleArray = [];
         this.keys = [];
         this.calendarType = type;
         this.calendar = calendar;
@@ -181,12 +180,13 @@ ScheduleDisplay.prototype = {
         }
     },
     getThisMonthEvent: function(date) {
+        this.scheduleArray = [];
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
             var items = localStorage.getItem(key);
             var schedules = JSON.parse(items);
             var order = []; // 이번달에 표시할 이벤트
-            var isRepeat = this.isRepeatEvent(key, date);
+            var isRepeat = this.isRepeatEvent(key);
 
             if (isRepeat[0] || isRepeat[1].length > 0) order = isRepeat[1];
             if (order.length > 0) {
@@ -203,25 +203,26 @@ ScheduleDisplay.prototype = {
                 this.keys.push(key);
                 continue;
             }
-            if(this.checkThisMonth(key, date)) {
+            if(this.checkThisMonth(key)) {
                 this.scheduleArray.push(items);
                 this.keys.push(key);
             }
         }
         return this.scheduleArray;
     },
-    isRepeatEvent: function(key, date) {
+    isRepeatEvent: function(key) {
         var order = []; // 이번달에 표시할 이벤트
         var count = 0;
         var schedules = JSON.parse(localStorage.getItem(key));
 
         for (var i = 0; i < schedules.length; i++) {
             var schedule = schedules[i];
-            if (schedule.repeat !== "none") {
+            var scheduleStart = schedule.start.slice(0, 10);
+            if (schedule.repeat !== "none" && this.calendar.lastDay >= scheduleStart) {
                 order.push(i);
                 count++;
             } else {
-                if(this.checkThisMonth(key, date)) order.push(i);
+                if(this.checkThisMonth(key)) order.push(i);
             }
         }
         if (count === schedules.length) return [true, order];
@@ -232,7 +233,7 @@ ScheduleDisplay.prototype = {
         var due = key.split("S");
         var eStart = due[0];
         var eEnd = due[1].replace("E", "");
-      
+
         if ((eStart > this.calendar.lastDay && eEnd > this.calendar.lastDay)
         || eStart < this.calendar.firstDay && eEnd < this.calendar.firstDay) {
             result = false;

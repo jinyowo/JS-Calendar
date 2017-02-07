@@ -43,12 +43,13 @@ MiniCalendar.prototype = {
     },
     drawCalendar: function(base) {
         this.setMyDate(base);
-
+        this.resetSelected();
+        this.resetEvent();
         var thisMonthFullname = Utility.months[this.myDate.month];
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
-        var events = this.callbackList["GET_EVENT"];
+        var events = this.callbackList["GET_EVENT"](this.myDate);
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;

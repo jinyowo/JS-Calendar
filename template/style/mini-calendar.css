@@ -74,7 +74,7 @@
 }
 
 .mini-calendar .mini-other-month {
-    color: #cbd1d2;
+    opacity: .3;
 }
 
 .mini-calendar td.mini-today {
@@ -83,8 +83,9 @@
     /*color: #f9f9f9;*/
 }
 .mini-calendar td.mini-selected {
+    opacity: 1;
     border: 1px solid #c6c6c6;
-    background-color: #ff7b5e;
+    background-color: rgba(58, 135, 173, 0.35);
 }
 .mini-event {
     cursor: pointer;
