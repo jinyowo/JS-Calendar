@@ -48,7 +48,7 @@ MiniCalendar.prototype = {
         this.monthTitle.innerText = thisMonthFullname + " " + this.myDate.year;
 
         var numArr = this.callbackList["GET_NUMS"](this.myDate)[0];
-        var events = this.callbackList["GET_EVENT"];
+        var events = this.callbackList["GET_EVENT"](this.myDate);
         var year = this.myDate.year;
         var month = this.myDate.month;
         var notThisMonth = true;
