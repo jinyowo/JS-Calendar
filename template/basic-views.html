@@ -40,6 +40,12 @@
             width: auto;
             height: 723px;
         }
+		.fc-sun, .fc-sun a {
+			color: red;
+		}
+		.fc-sat, .fc-sat a {
+			color: blue;
+		}
 
 	</style>
 	<script id="popup-template" type="text/x-handlebars-template">
@@ -136,76 +142,76 @@
         <div class="mini-calendar">
             <header>
                 <h2 class="mini-title"></h2>
-                <a class="mini-prev-button" href="#"><</a>
-                <a class="mini-next-button" href="#">></a>
+                <a class="mini-prev-button"><</a>
+                <a class="mini-next-button">></a>
             </header>
             <table>
                 <thead>
                     <tr>
-                        <td>S</td>
+                        <td class="fc-sun">S</td>
                         <td>M</td>
                         <td>T</td>
                         <td>W</td>
                         <td>T</td>
                         <td>F</td>
-                        <td>S</td>
+                        <td class="fc-sat">S</td>
                     </tr>
                 </thead>
                 <tbody class="mini-cells">
                     <tr>
+                        <td class="fc-sun"></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="fc-sat"></td>
                     </tr>
                     <tr>
+                        <td class="fc-sun"></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="fc-sat"></td>
                     </tr>
                     <tr>
+                        <td class="fc-sun"></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="fc-sat"></td>
                     </tr>
                     <tr>
+                        <td class="fc-sun"></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="fc-sat"></td>
                     </tr>
 
                     <tr>
+                        <td class="fc-sun"></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="fc-sat"></td>
                     </tr>
                     <tr>
-						<td></td>
+						<td class="fc-sun"></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
+                        <td class="fc-sat"></td>
                     </tr>
                 </tbody>
             </table>

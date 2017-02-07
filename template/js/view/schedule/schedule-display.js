@@ -232,7 +232,7 @@ ScheduleDisplay.prototype = {
         var due = key.split("S");
         var eStart = due[0];
         var eEnd = due[1].replace("E", "");
-      
+
         if ((eStart > this.calendar.lastDay && eEnd > this.calendar.lastDay)
         || eStart < this.calendar.firstDay && eEnd < this.calendar.firstDay) {
             result = false;
