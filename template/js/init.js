@@ -8,8 +8,8 @@ function init() {
     });
     mini.init(Utility.Today, {
         GET_NUMS: calendar.calculateCalendar.bind(calendar),
-        SET_NUMS: calendar.setMonthCalendarBody.bind(calendar),
-        GET_EVENT: schedules.getThisMonthEvent.bind(schedules),
+        SET_NUMS: calendar.setCalendar.bind(calendar),
+        // GET_EVENT: schedules.getThisMonthEvent.bind(schedules),
     });
 
 }
