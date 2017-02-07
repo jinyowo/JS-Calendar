@@ -12,7 +12,7 @@ ScheduleDisplay.prototype = {
         this.keys = [];
         this.calendarType = type;
         this.calendar = calendar;
-        this.getThisMonthEvent();
+        this.getThisMonthEvent(this.calendar.myDate);
         this.status = {
             isStart: true,
             isEnd: true,
@@ -180,14 +180,13 @@ ScheduleDisplay.prototype = {
           tableBody.appendChild(newRow);
         }
     },
-
-    getThisMonthEvent: function() {
+    getThisMonthEvent: function(date) {
         for (var i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
             var items = localStorage.getItem(key);
             var schedules = JSON.parse(items);
             var order = []; // 이번달에 표시할 이벤트
-            var isRepeat = this.isRepeatEvent(key);
+            var isRepeat = this.isRepeatEvent(key, date);
 
             if (isRepeat[0] || isRepeat[1].length > 0) order = isRepeat[1];
             if (order.length > 0) {
@@ -204,13 +203,14 @@ ScheduleDisplay.prototype = {
                 this.keys.push(key);
                 continue;
             }
-            if(this.checkThisMonth(key)) {
+            if(this.checkThisMonth(key, date)) {
                 this.scheduleArray.push(items);
                 this.keys.push(key);
             }
         }
+        return this.scheduleArray;
     },
-    isRepeatEvent: function(key) {
+    isRepeatEvent: function(key, date) {
         var order = []; // 이번달에 표시할 이벤트
         var count = 0;
         var schedules = JSON.parse(localStorage.getItem(key));
@@ -221,7 +221,7 @@ ScheduleDisplay.prototype = {
                 order.push(i);
                 count++;
             } else {
-                if(this.checkThisMonth(key)) order.push(i);
+                if(this.checkThisMonth(key, date)) order.push(i);
             }
         }
         if (count === schedules.length) return [true, order];
@@ -232,7 +232,7 @@ ScheduleDisplay.prototype = {
         var due = key.split("S");
         var eStart = due[0];
         var eEnd = due[1].replace("E", "");
-
+      
         if ((eStart > this.calendar.lastDay && eEnd > this.calendar.lastDay)
         || eStart < this.calendar.firstDay && eEnd < this.calendar.firstDay) {
             result = false;

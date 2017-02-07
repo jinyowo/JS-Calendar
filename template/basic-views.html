@@ -7,6 +7,7 @@
 	<link href='./style/fullcalendar.print.min.css' rel='stylesheet' media='print' />
 	<link href='./style/popup.css' rel='stylesheet' />
 	<link href='./style/form-popup.css' rel='stylesheet' />
+	<link href='./style/mini-calendar.css' rel='stylesheet' />
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.2/handlebars.min.js"></script>
 	<script src='./js/lib/jquery.min.js'></script>
 	<!-- Latest compiled and minified CSS -->
@@ -22,20 +23,24 @@
 		}
 
 		#calendar {
+			position: absolute;
+			left: 250px;
 			max-width: 900px;
-			margin: 0 auto;
+			margin: 0 auto 0 14px;
 		}
 
 		button {
 			border: 0;
 			outline: 0;
 		}
+		#sidebar {
+            position: absolute;
+			border: 1px solid #e3e3e3;
+            /*background-color: #d7d7d7;*/
+            width: auto;
+            height: 723px;
+        }
 
-		.scheduleButton{
-			background-color: #3a87ad;
-			color: white;
-			border-radius: 5px;
-		}
 	</style>
 	<script id="popup-template" type="text/x-handlebars-template">
 		<strong id="popupTitle">{{ title }}</strong>
@@ -54,9 +59,6 @@
 </head>
 
 <body>
-	<div>
-		<button id="scheduleButton" class="scheduleButton" >일정만들기</button>
-	</div>
 	<!-- 팝업 div -->
 	<div class="popupBackground">
 		<div class="popupContent">
@@ -118,15 +120,99 @@
 					<label>설명:</label>
 					<textarea id="desc" class="form-control" rows="5" placeholder="일정에 필요한 설명을 남기세요"></textarea>
 				</div>
-				<div class="schedule" >
-					<button  id="submit" type="submit" class="btn btn-default">저장</button>
-					<button  id="modify" type="submit" class="btn btn-default">수정</button>
-					<button  class="btn btn-default">취소</button>
+				<div class="schedule">
+					<button id="submit" type="submit" class="btn btn-default">저장</button>
+					<button id="modify" type="submit" class="btn btn-default">수정</button>
+					<button class="btn btn-default">취소</button>
 				</div>
 			</form>
 		</div>
 	</div>
-	<!-- schedule form -->
+	<!-- sidebar -->
+	<div id="sidebar" class="container">
+		<div class="scheduleButton">
+			<button id="scheduleButton" class="scheduleButton" >일정만들기</button>
+		</div>
+        <div class="mini-calendar">
+            <header>
+                <h2 class="mini-title"></h2>
+                <a class="mini-prev-button" href="#"><</a>
+                <a class="mini-next-button" href="#">></a>
+            </header>
+            <table>
+                <thead>
+                    <tr>
+                        <td>S</td>
+                        <td>M</td>
+                        <td>T</td>
+                        <td>W</td>
+                        <td>T</td>
+                        <td>F</td>
+                        <td>S</td>
+                    </tr>
+                </thead>
+                <tbody class="mini-cells">
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+						<td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- end calendar -->
+    </div>
+	<!-- main calendar -->
 	<div id="calendar" class="fc fc-unthemed fc-ltr">
 		<div class="fc-toolbar fc-header-toolbar">
 			<div class="fc-left">
@@ -1175,6 +1261,7 @@
 	<script type="text/javascript" src="./js/view/schedule/schedule-display.js"></script>
 	<script type="text/javascript" src="./js/view/calendar/calendar.js"></script>
 	<script type="text/javascript" src="./js/view/calendar/button.js"></script>
+	<script type="text/javascript" src="./js/view/calendar/mini-calendar.js"></script>
 	<script type="text/javascript" src="./js/view/schedule/make-schedule.js"></script>
 	<script type="text/javascript" src="./js/view/detail/popup.js"></script>
 </body>
