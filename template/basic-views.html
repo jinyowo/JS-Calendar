@@ -60,7 +60,6 @@
 			text-decoration: none;
 		}
 		.fc-widget-content {
-			hover:context-menu;
 			cursor:context-menu;
 		}
 		.inputStyle{
@@ -107,7 +106,7 @@
 				</div>
 				<hr />
 				<div class="schedule">
-					<input id="title" type="text" rows="2" class="form-control" placeholder="제목없는 일정">
+					<input id="title" type="text" rows="2" class="form-control textInput" placeholder="제목없는 일정">
 				</div>
 				<hr />
 				<div class="schedule">
@@ -129,7 +128,7 @@
 				<div class="schedule">
 					<label>반복:</label>
 					<div class="inline schedule" id="repeat">
-						<label class="radio-inline"> <input type="radio" name="optradio" value="Y">매년</label>
+						<label class="radio-inline"><input type="radio" name="optradio" value="Y">매년</label>
 						<label class="radio-inline"><input type="radio" name="optradio" value="M">매월</label>
 						<label class="radio-inline"><input type="radio" name="optradio" value="W">매주</label>
 						<label class="radio-inline"><input type="radio" name="optradio" value="D">매일</label>
@@ -140,10 +139,10 @@
 				<div class="schedule">
 					<div class="schedule">
 						<label>장소:</label>
-						<input id="place" type="text" class="form-control" placeholder="위치입력">
+						<input id="place" type="text" class="form-control textInput" placeholder="위치입력">
 					</div>
 					<label>설명:</label>
-					<textarea id="desc" class="form-control" rows="5" placeholder="일정에 필요한 설명을 남기세요"></textarea>
+					<textarea id="desc" class="form-control textInput" rows="5" placeholder="일정에 필요한 설명을 남기세요"></textarea>
 				</div>
 				<div class="schedule">
 					<button id="submit" type="submit" class="btn btn-default">저장</button>
