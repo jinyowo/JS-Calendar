@@ -70,7 +70,7 @@ MiniCalendar.prototype = {
             } else {
                 $(this.cells[i]).attr(CustomData.date, Utility.formDate(this.myDate.year, month, numArr[i]));
             }
-            $(this.cells[i]).text = numArr[i];
+            $(this.cells[i]).text(numArr[i]);
 
             if ($(this.cells[i]).attr(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cells[i]);
             else if ($(this.cells[i]).hasClass(Selector.Mtoday)) this.removeToday(this.cells[i]);
