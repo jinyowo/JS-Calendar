@@ -289,6 +289,7 @@ ScheduleDisplay.prototype = {
     showMore: function(evt) {
         var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
+        var sidebar = document.querySelector("#sidebar");
         var mores = $(table).find("." + Selector.moreCell);
         var hidden = $(table).children();
 
@@ -296,6 +297,7 @@ ScheduleDisplay.prototype = {
         mores.hide();
         var cellHeight = ((table.children.length) * 20);
         table.closest(".fc-row").style.height = cellHeight + "px";
+        sidebar.style.height = (722 + cellHeight - 107) + "px";
         _$("." + Selector.dayGridContainer).style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
 
         hidden.removeClass(Selector.limitEvent);
@@ -308,9 +310,11 @@ ScheduleDisplay.prototype = {
 
         mores.show();
         limited.addClass(Selector.limitEvent);
+
         var totalHeight = parseInt(_$("." + Selector.dayGridContainer).style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
         table.closest(".fc-row").style.height = this.default.tableHeight + "px";
+        sidebar.style.height = "";
         _$("." + Selector.dayGridContainer).style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
     getEventRowCount: function(row, dateHead) {
