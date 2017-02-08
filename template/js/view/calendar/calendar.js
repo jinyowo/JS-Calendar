@@ -27,7 +27,6 @@ function Calendar() {
 Calendar.prototype = {
     init: function(type, base, schedules, option) {
         this.setType(type);
-        this.setMyDate(base);
         this.schedules = schedules;
         this.callbackList = option;
         // Button init
@@ -38,7 +37,7 @@ Calendar.prototype = {
             this.typeButtons[i].init(this, this.typeButtonClickEvent.bind(this), {});
         }
         this.todayButton.init(this, this.todayButtonClickEvent.bind(this), {});
-        this.setCalendar(this.myDate);
+        this.setCalendar(base);
     },
     setType: function(type) {
         this.type = type;
@@ -61,6 +60,7 @@ Calendar.prototype = {
     },
     /** set Calendar */
     setCalendar: function(date) {
+        this.setMyDate(date);
         this.drawCalendar(date);
         // 해당 달력에 포함되어 있는 일정 띄우기
         this.resetEvent();
