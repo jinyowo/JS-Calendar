@@ -8,7 +8,7 @@ function Calendar() {
     this.monthTitle = $('.' + Selector.title);
     this.cells = $('.' + Selector.cellTop);
     this.cellsBg = $('.' + Selector.cellBg);
-    this.nums = $('.' + Selector.cellTop + ' a');
+    this.nums = $('.' + Selector.cellTop).find('a');
     this.firstDay = '';
     this.lastDay = '';
     /** Button set */
