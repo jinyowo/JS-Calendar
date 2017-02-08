@@ -48,16 +48,16 @@ ScheduleDisplay.prototype = {
         var endDate = Utility.formDate(end.getFullYear(), end.getMonth() + 1, end.getDate());
 
         this.initStatus(this.status);
-        var weeks = document.querySelectorAll(".fc-month-view .fc-day-grid .fc-row.fc-week");
+        var weeks = $(".fc-month-view .fc-day-grid .fc-row.fc-week");
         var dateHead = null;
         for (var i = 0; i < weeks.length; i++) {
             if (this.status.isStart) {
-                dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
+                dateHead = $(weeks[i]).find("." + Selector.scheduleSkeleton + " [data-date=\"" + startDate + "\"]");
             } else {
-                dateHead = weeks[i]._$("." + Selector.scheduleSkeleton + " thead tr").firstElementChild;
+                dateHead = $(weeks[i]).find("." + Selector.scheduleSkeleton + " thead tr").children(0);
             }
-            if(dateHead !== null) {
-              this.setWeekRowEvent(dateHead, weeks[i])
+            if(dateHead.length !== 0) {
+              this.setWeekRowEvent(dateHead[0], weeks[i])
             }
             if (this.status.isEnd) {
                 break;
@@ -70,17 +70,12 @@ ScheduleDisplay.prototype = {
       this.status.row = this.getEventRowCount(weekRow, dateHead);
       if (!this.status.isEnd) {
           for (var j = 0; j < this.status.row; j++) {
+              if (rowBody.children.length <= this.status.row) {
               this.addRow(rowBody);
+              }
           }
       }
       var dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
-
-      if (this.status.row === this.moreRow) {
-        this.setMoreCell(dateBody);
-        this.status.row++;
-        this.addRow(rowBody);
-        dateBody = Utility.getTbodyFromThead(dateHead, this.status.row);
-      }
 
       if (this.status.row > this.moreRow) {
           this.setLimitedEvent(dateBody, event.title);
@@ -120,7 +115,7 @@ ScheduleDisplay.prototype = {
         }
     },
     setEventBar: function(ele, title) {
-        Utility.addClass(ele, Selector.schedule);
+        $(ele).addClass(Selector.schedule);
         ele.innerHTML = "<a class = \"fc-day-grid-event fc-h-event fc-event fc-draggable fc-resizable\">" +
             "<div class = \"fc-content\">" +
             "</div></a>";
@@ -138,27 +133,27 @@ ScheduleDisplay.prototype = {
             eventLink._$("div").innerHTML = html;
         }
         if (this.status.isStart) {
-            Utility.addClass(eventLink, "fc-start");
+            $(eventLink).addClass("fc-start");
         } else {
-            Utility.addClass(eventLink, "fc-not-start");
+            $(eventLink).addClass("fc-not-start");
         }
         this.setBarStatus(this.status);
         if (this.status.isEnd) {
-            Utility.addClass(eventLink, "fc-end");
+            $(eventLink).addClass("fc-end");
         } else {
-            Utility.addClass(eventLink, "fc-not-end");
+            $(eventLink).addClass("fc-not-end");;
         }
     },
 
     setLimitedEvent: function(ele, title) {
-        Utility.addClass(ele.parentNode, Selector.limitEvent);
+        $(ele.parentNode).addClass(Selector.limitEvent);
     },
 
     setMoreCell: function(ele) {
-        Utility.addClass(ele, Selector.moreCell);
+        $(ele).addClass( Selector.moreCell);
         ele.innerHTML = "<div><a class=\"" + Selector.moreButton + "\">more...</a></div>";
 
-        Utility.on(ele._$("." + Selector.moreButton), 'click',this.showMore.bind(this));
+        $(ele._$("." + Selector.moreButton)).click(this.showMore.bind(this));
     },
 
     setHideCell: function(tableBody) {
@@ -167,7 +162,7 @@ ScheduleDisplay.prototype = {
         var newCells = newRow.querySelectorAll("." + Selector.hideButton);
 
         for (var i = 0; i < newCells.length; i++) {
-          Utility.on(newCells[i], 'click', this.hideMore.bind(this));
+          $(newCells[i]).click(this.hideMore.bind(this));
           newCells[i].innerText = "hide";
         }
 
@@ -284,73 +279,68 @@ ScheduleDisplay.prototype = {
         }
     },
     addRow: function(bodyEle) {
-        if (bodyEle.children.length <= this.status.row) {
-            var newRow = bodyEle.firstElementChild.cloneNode(true);
-            for (var i = 0; i < 7; i++) {
-                newRow.children[i].innerHTML = "";
-                newRow.children[i].className = "";
-            }
-            bodyEle.appendChild(newRow);
+        var newRow = bodyEle.firstElementChild.cloneNode(true);
+        for (var i = 0; i < 7; i++) {
+            newRow.children[i].innerHTML = "";
+            newRow.children[i].className = "";
         }
+        bodyEle.appendChild(newRow);
     },
     showMore: function(evt) {
         var moreButton = evt.target;
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
-        var mores = table.querySelectorAll("." + Selector.moreCell);
-        var hidden = table.children;
+        var mores = $(table).find("." + Selector.moreCell);
+        var hidden = $(table).children();
 
         this.setHideCell(table);
-        for (var i = 0; i < mores.length; i++) {
-          Utility.hideElement(mores[i]);
-        }
+        mores.hide();
         var cellHeight = ((table.children.length) * 20);
         table.closest(".fc-row").style.height = cellHeight + "px";
         _$("." + Selector.dayGridContainer).style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
 
-        for(i = 0; i < hidden.length; i++) {
-            Utility.removeClass(hidden[i], Selector.limitEvent);
-        }
+        hidden.removeClass(Selector.limitEvent);
     },
     hideMore: function(evt) {
         var hideButton = evt.target;
         var table = hideButton.parentNode.parentNode.parentNode.parentNode;
-        var limited = table.children;
-        var mores = table.querySelectorAll("." + Selector.moreCell);
-        for (var i = 0; i < mores.length; i++) {
-          Utility.showElement(mores[i]);
-        }
-        for (var i = this.moreRow + 1; i < limited.length; i++) {
-          Utility.addClass(limited[i], Selector.limitEvent);
-        }
+        var limited = $(table).children().slice(this.moreRow + 1);
+        var mores = $(table).find("." + Selector.moreCell);
+
+        mores.show();
+        limited.addClass(Selector.limitEvent);
         var totalHeight = parseInt(_$("." + Selector.dayGridContainer).style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
         table.closest(".fc-row").style.height = this.default.tableHeight + "px";
         _$("." + Selector.dayGridContainer).style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
     getEventRowCount: function(row, dateHead) {
-      var remain = this.status.remain;
-      var count = 0;
-      var result = 0;
-      var trs = row.querySelectorAll("." + Selector.scheduleSkeleton + " tbody tr");
+        var remain = this.status.remain;
+        var count = 0;
+        var result = 0;
+        var trs = row.querySelectorAll("." + Selector.scheduleSkeleton + " tbody tr");
 
-      if (remain > 7) {
-        remain = 7;
-      }
-
-      for (var i = 0; i <= remain && dateHead !== null; i++) {
-        for (var j = 0; j < trs.length; j++) {
-          var toCheck = Utility.getTbodyFromThead(dateHead, count).classList;
-          if(toCheck.contains(Selector.schedule) || count === this.moreRow) {
-            count++;
-          }
+        if (remain > 7) {
+            remain = 7;
         }
 
-        if (count > result) {
-          result = count;
+        for (var i = 0; i <= remain && dateHead !== null; i++) {
+            for (var j = 0; j < trs.length; j++) {
+                var toCheck = Utility.getTbodyFromThead(dateHead, count).classList;
+                if(toCheck.contains(Selector.schedule)) {
+                    count++;
+                } if(count === this.moreRow) {
+                    this.addRow(trs[0].parentNode)
+                    this.setMoreCell(Utility.getTbodyFromThead(dateHead, count));
+                    count++;
+                }
+            }
+
+            if (count > result) {
+                result = count;
+            }
+            dateHead = dateHead.nextElementSibling;
+            count = 0;
         }
-        dateHead = dateHead.nextElementSibling;
-        count = 0;
-      }
-      return result;
+        return result;
     }
 }
