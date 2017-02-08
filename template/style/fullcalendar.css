@@ -211,7 +211,8 @@ NOTE: use percentage font sizes or else old IE chokes
   borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
 */
 
-.fc-state-default {
+.fc-state-default,
+.fc-state-disabled {
 	background-color: white;
 	background-repeat: repeat-x;
 	border-color: #e6e6e6 #e6e6e6 #bfbfbf;
@@ -223,13 +224,12 @@ NOTE: use percentage font sizes or else old IE chokes
 .fc-state-active {
 	background-color: #2caa22;
 	color:white;
+	background-image: none;
 }
 
-.fc-state-down,
-.fc-state-active {
-	background-color: #2caa22;
-	color:white;
-	background-image: none;
+.fc-state-hover {
+	background-color: rgba(44, 186, 34, 0.2);
+	color:#2caa22;
 }
 
 .fc-state-disabled {
