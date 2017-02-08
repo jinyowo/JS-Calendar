@@ -244,7 +244,7 @@ ScheduleDisplay.prototype = {
 
         var last = Utility.setTimeByGMT(new Date(this.calendar.lastDay));
         Utility.setTimeDefault(last, 9);
-        while (last >= nextEnd) {
+        while (last >= Utility.setTimeByGMT(nextEnd)) {
             this.showRepeatEvent(event, nextStart, nextEnd);
             this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
         }
