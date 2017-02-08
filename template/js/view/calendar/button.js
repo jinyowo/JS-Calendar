@@ -17,6 +17,7 @@ Button.prototype = {
         $(this.ele).click(this.onClickEvent.bind(this));
     },
     onMouseOver: function() {
+        if($(this.ele).hasClass(Style.disabledEffect)) return 0;
         $(this.ele).addClass(Style.hoverEffect);
     },
     onMouseOut: function() {

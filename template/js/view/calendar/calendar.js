@@ -209,6 +209,7 @@ Calendar.prototype = {
             this.todayButton.active();
             return false;
         } else {
+            $(this.todayButton.ele).removeClass(Style.hoverEffect);
             this.todayButton.inactive();
             return true;
         }
