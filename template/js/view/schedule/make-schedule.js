@@ -71,7 +71,7 @@ FormView.prototype = {
     hideInputForm: function(event) {
         if (this.isTarget(event.target)) {
             this.container.slideUp("slow");
-            this.submitInfo.clearInput();
+            this.submitInfo.clearInput.call(this.submitInfo);
         }
     },
     isTarget: function(target) {
@@ -185,11 +185,14 @@ Submission.prototype = {
     },
     getScheduleInfo: function() {
         var scheduleInfo = {};
-
-
         for (var i = 0; i < this.inputIdList1.length; i++) {
             var inputValue = _$("#" + this.inputIdList1[i]).value;
+
             scheduleInfo[this.inputIdList1[i]] = inputValue;
+        }
+        if(scheduleInfo["title"].length === 0 )
+        {
+          scheduleInfo["title"]= "제목없는 일정";
         }
         var timeArray = this.getTime();
         scheduleInfo["start"] = timeArray[0];
@@ -248,7 +251,6 @@ Submission.prototype = {
     },
     clearInput: function() {
         this.textInput.val("");
-
         // for (var i = 0; i < this.inputIdList1.length; i++) {
         //     _$("#" + this.inputIdList1[i]).value = "";
         // }
