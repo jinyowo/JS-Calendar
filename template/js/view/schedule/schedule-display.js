@@ -298,6 +298,7 @@ ScheduleDisplay.prototype = {
         var table = moreButton.parentNode.parentNode.parentNode.parentNode;
         var mores = table.querySelectorAll("." + Selector.moreCell);
         var hidden = table.children;
+        var sidebar = document.querySelector("#sidebar");
 
         this.setHideCell(table);
         for (var i = 0; i < mores.length; i++) {
@@ -305,6 +306,7 @@ ScheduleDisplay.prototype = {
         }
         var cellHeight = ((table.children.length) * 20);
         table.closest(".fc-row").style.height = cellHeight + "px";
+        sidebar.style.height = (722 + cellHeight - 107) + "px";
         _$("." + Selector.dayGridContainer).style.height = this.default.monthHeight + (cellHeight - this.default.tableHeight) + "px";
 
         for(i = 0; i < hidden.length; i++) {
@@ -316,6 +318,7 @@ ScheduleDisplay.prototype = {
         var table = hideButton.parentNode.parentNode.parentNode.parentNode;
         var limited = table.children;
         var mores = table.querySelectorAll("." + Selector.moreCell);
+        var sidebar = document.querySelector("#sidebar");
         for (var i = 0; i < mores.length; i++) {
           Utility.showElement(mores[i]);
         }
@@ -325,6 +328,7 @@ ScheduleDisplay.prototype = {
         var totalHeight = parseInt(_$("." + Selector.dayGridContainer).style.height);
         var cellHeight = parseInt(table.closest(".fc-row").style.height);
         table.closest(".fc-row").style.height = this.default.tableHeight + "px";
+        sidebar.style.height = "";
         _$("." + Selector.dayGridContainer).style.height = totalHeight - (cellHeight - this.default.tableHeight) + "px";
     },
     getEventRowCount: function(row, dateHead) {
