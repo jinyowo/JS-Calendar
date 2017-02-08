@@ -5,10 +5,10 @@ function Calendar() {
         date: -1,
     };
     this.type = "";
-    this.monthTitle = _$("." + Selector.title);
-    this.cells = document.querySelectorAll("." + Selector.cellTop);
-    this.cellsBg = document.querySelectorAll("." + Selector.cellBg);
-    this.nums = document.querySelectorAll("." + Selector.cellTop + " a");
+    this.monthTitle = $("." + Selector.title);
+    this.cells = $("." + Selector.cellTop);
+    this.cellsBg = $("." + Selector.cellBg);
+    this.nums = $("." + Selector.cellTop + " a");
     this.firstDay = "";
     this.lastDay = "";
     /** Button set */
@@ -52,12 +52,12 @@ Calendar.prototype = {
         this.numArr = numArr;
     },
     setToday: function(ele) {
-        Utility.addClass(ele, Selector.today);
-        Utility.addClass(ele, Style.todayEffect);
+        $(ele).addClass(Selector.today);
+        $(ele).addClass(Style.todayEffect);
     },
     removeToday: function(ele) {
-        Utility.removeClass(ele, Selector.today);
-        Utility.removeClass(ele, Style.todayEffect);
+        $(ele).removeClass(Selector.today);
+        $(ele).removeClass(Style.todayEffect);
     },
     /** set Calendar */
     setCalendar: function(date) {
@@ -77,7 +77,7 @@ Calendar.prototype = {
     },
     setMonthTitle: function(date) {
         var thisMonthFullname = Utility.months[date.month];
-        this.monthTitle.innerHTML = "<h2>" + thisMonthFullname + " " + date.year + "</h2>";
+        this.monthTitle.html("<h2>" + thisMonthFullname + " " + date.year + "</h2>");
     },
     setMonthCalendarBody: function(date) {
         var result = this.calculateCalendar(date);
@@ -85,13 +85,13 @@ Calendar.prototype = {
         // 날짜출력, today 셋팅
         for (var i = 0; i < this.cells.length; i++) {
             if(result[0][i] === 1) notThisMonth = !notThisMonth;
-            if(notThisMonth) Utility.addClass(this.cells[i], Selector.otherMonth);
-            else Utility.removeClass(this.cells[i], Selector.otherMonth);
+            if(notThisMonth) $(this.cells[i]).addClass(Selector.otherMonth);
+            else $(this.cells[i]).removeClass(Selector.otherMonth);
 
             if (this.cellsBg[i].getAttribute(CustomData.date) === Utility.formDate(Utility.Today.year, Utility.Today.month + 1, Utility.Today.date)) this.setToday(this.cellsBg[i]);
-            else if (this.cellsBg[i].className.includes(Selector.today)) this.removeToday(this.cellsBg[i]);
+            else if ($(this.cellsBg[i]).hasClass(Selector.today)) this.removeToday(this.cellsBg[i]);
 
-            this.nums[i].innerText = result[0][i];
+            $(this.nums[i]).text(result[0][i]);
         }
     },
     calculateCalendar: function(date) {
