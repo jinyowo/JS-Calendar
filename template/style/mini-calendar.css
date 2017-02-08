@@ -9,7 +9,7 @@
 .scheduleButton{
     text-align: center;
     padding-top: 2.5px;
-    background-color: #2cba22;
+    background-color: inherit;
     color: white;
     border-radius: 5px;
 }

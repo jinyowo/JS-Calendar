@@ -15,10 +15,12 @@
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 	<style>
+		@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
 		body {
 			margin: 40px 10px;
 			padding: 0;
-			font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
+			font-family: "Nanum Gothic", "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
 			font-size: 14px;
 		}
 
@@ -40,7 +42,15 @@
             height: 722px;
         }
 		#scheduleButton {
+			background:#2caa22;
 			cursor: pointer;
+		}
+		#scheduleButton:hover {
+			background: rgba(44, 186, 34, 0.2);
+		}
+		#scheduleButton:hover .scheduleButton {
+			background: none;
+			color:#2caa22;
 		}
 		.fc-day-number {
 			color: #7c8a95;
