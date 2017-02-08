@@ -8,24 +8,24 @@ function DetailView() {
     };
     this.popupBackground = $('.popupBackground');
     this.popupContent = _$('.popupContent');
-    this.span = _$('.popupClose');
+    this.span = $('.popupClose');
     this.parsedContent = _$('.parsedContent');
-    this.monthView = _$('.fc-month-view');
-    this.deleteButton = _$('.delete');
-    this.modifyConfirmButton = _$('.modify');
-    this.modifyButton = _$('#modify');
+    this.monthView = $('.fc-month-view');
+    this.deleteButton = $('.delete');
+    this.modifyConfirmButton = $('.modify');
+    this.modifyButton = $('#modify');
     this.startDayInput = _$("#startDay");
     this.endDayInput = _$("#endDay");
 }
 DetailView.prototype = {
     init: function(option) {
         this.callbacklist = option;
-        Utility.on(this.span, "click", this.closePopup.bind(this));
+        this.span.on("click", this.closePopup.bind(this));
         this.popupBackground.on("click", this.closePopup.bind(this));
-        Utility.on(this.monthView, "click", this.executeEvent.bind(this));
-        Utility.on(this.deleteButton, "click", this.showConfirm.bind(this));
-        Utility.on(this.modifyConfirmButton, "click", this.changeForm.bind(this));
-        Utility.on(this.modifyButton, "click", this.getModifiedInfo.bind(this));
+        this.monthView.on("click", this.executeEvent.bind(this));
+        this.deleteButton.on("click", this.showConfirm.bind(this));
+        this.modifyConfirmButton.on("click", this.changeForm.bind(this));
+        this.modifyButton.on("click", this.getModifiedInfo.bind(this));
     },
     changeForm: function() {
         $(".scheduleBackground").slideDown("slow");
@@ -124,8 +124,18 @@ DetailView.prototype = {
         return false;
     },
     getCoordinate: function(event) {
-        var centerPointX = (window.innerWidth) / 2;
-        var centerPointY = (window.innerHeight) / 2;
+
+        var calendar = document.querySelector(".fc-body");
+
+        var rect = calendar.getBoundingClientRect();
+        var Top = rect.top;
+        var Left = rect.left;
+
+        var offsetWidth = calendar.offsetWidth;
+        var offsetHeight = calendar.offsetHeight;
+
+        var centerPointX = Left + (offsetWidth / 2);
+        var centerPointY = Top + (offsetHeight / 2);
         var x = event.clientX;
         var y = event.clientY;
         var pcStyle = this.popupContent.style;
@@ -172,8 +182,8 @@ var showDetail = new DetailView();
 var modifyInfo = new Submission();
 showForm.init();
 modifyInfo.init({
-  CHECK_COLOR: "LightGray",
-  NON_CHECK_COLOR: "White"
+    CHECK_COLOR: "LightGray",
+    NON_CHECK_COLOR: "White"
 });
 showDetail.init({
     GET_INFO: modifyInfo.getScheduleInfo,
