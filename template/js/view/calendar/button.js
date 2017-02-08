@@ -1,6 +1,5 @@
 function Button(selector, type) {
-    this.toolbar = _$("."+Selector.topDiv);
-    this.ele = this.toolbar._$(selector);
+    this.ele = $('.'+Selector.topDiv).find(selector);
     this.type = type;
 };
 Button.prototype = {
