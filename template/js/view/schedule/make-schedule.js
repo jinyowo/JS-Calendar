@@ -107,13 +107,17 @@ Submission.prototype = {
         Utility.on(this.submitButton, "click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
         Utility.on(document, "click", this.clickCalendarCell.bind(this));
-        $("#title").on('input', this.inputLimit );
+        $("#title").on('keyup', this.inputLimit );
 
     },
     inputLimit: function() {
-        if ($(this).val().length >= 11) {
-            alert('제목은 11글자까지 입력가능합니다');
-        }
+      if($(this).val().length > 11) {
+          alert("제목은 11자까지 입력 가능합니다.");
+          $(this).val($(this).val().substring(0, 11));
+      }
+
+
+
     },
     clickCalendarCell: function(event) {
         if (event.target.tagName === "TD" && event.target.className === "") {
