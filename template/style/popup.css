@@ -33,7 +33,7 @@
 
 /* 닫기 버튼*/
 
-.popupClose {
+.popupClose:not(.popupBackground) {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
