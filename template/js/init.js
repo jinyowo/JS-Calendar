@@ -1,8 +1,8 @@
-document.addEventListener("DOMContentLoaded", init);
-function init() {
+$(function init() {
     var calendar = new Calendar();
     var mini = new MiniCalendar();
     var schedules = new ScheduleDisplay();
+
     calendar.init("month", Utility.Today, schedules, {
         SET_MINI: mini.drawCalendar.bind(mini),
     });
@@ -12,4 +12,4 @@ function init() {
         GET_EVENT: schedules.getThisMonthEvent.bind(schedules),
     });
 
-}
+});

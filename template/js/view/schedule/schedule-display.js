@@ -83,7 +83,7 @@ ScheduleDisplay.prototype = {
       }
 
       if (this.status.row > this.moreRow) {
-          this.setLimitedEvent(dateBody, event.title);
+          this.setLimitedEvent(dateBody, this.schedule.title);
       }
 
       for (var day = 0; day < 7 && dateBody !== null && !this.status.isEnd; day++) {
