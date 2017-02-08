@@ -96,18 +96,6 @@ var Utility = {
         }
         return year + '-' + this.padZero(month, 2) + '-' + this.padZero(date, 2);
     },
-    addClass: function(ele, name) {
-        ele.classList.add(name);
-    },
-    removeClass: function(ele, name) {
-        ele.classList.remove(name);
-    },
-    showElement: function(ele) {
-        ele.style.display = 'block';
-    },
-    hideElement: function(ele) {
-        ele.style.display = 'none';
-    },
     getTbodyFromThead: function(headTd, row) {
         var headEle = headTd.parentNode.parentNode;
         var tds = headEle.querySelectorAll('td');
@@ -141,8 +129,5 @@ var Utility = {
           date.setMinutes(59);
           date.setSeconds(59);
       }
-  },
-  on: function(target, evt, func ){ //evt는 문자열로 전달!!
-      return target.addEventListener(evt, func);
   }
 };
