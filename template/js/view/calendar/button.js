@@ -11,28 +11,28 @@ Button.prototype = {
         this.registEvent();
     },
     registEvent: function() {
-        Utility.on(this.ele, "mouseover", this.onMouseOver.bind(this));
-        Utility.on(this.ele, "mouseout", this.onMouseOut.bind(this));
-        Utility.on(this.ele, "mousedown", this.onMouseDown.bind(this));
-        Utility.on(this.ele, "mouseup", this.onMouseUp.bind(this));
-        Utility.on(this.ele, "click", this.onClickEvent.bind(this));
+        $(this.ele).mouseover(this.onMouseOver.bind(this));
+        $(this.ele).mouseout(this.onMouseOut.bind(this));
+        $(this.ele).mousedown(this.onMouseDown.bind(this));
+        $(this.ele).mouseup(this.onMouseUp.bind(this));
+        $(this.ele).click(this.onClickEvent.bind(this));
     },
     onMouseOver: function() {
-        Utility.addClass(this.ele, Style.hoverEffect);
+        $(this.ele).addClass(Style.hoverEffect);
     },
     onMouseOut: function() {
-        Utility.removeClass(this.ele, Style.hoverEffect);
+        $(this.ele).removeClass(Style.hoverEffect);
     },
     onMouseDown: function() {
-        Utility.addClass(this.ele, Style.clickEffect);
+        $(this.ele).addClass(Style.clickEffect);
     },
     onMouseUp: function() {
-        Utility.removeClass(this.ele, Style.clickEffect);
+        $(this.ele).removeClass(Style.clickEffect);
     },
     active: function() {
-        Utility.removeClass(this.ele, Style.disabledEffect);
+        $(this.ele).removeClass(Style.disabledEffect);
     },
     inactive: function() {
-        Utility.addClass(this.ele, Style.disabledEffect);
+        $(this.ele).addClass(Style.disabledEffect);
     }
 };
