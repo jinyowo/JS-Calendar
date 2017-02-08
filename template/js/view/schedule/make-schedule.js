@@ -2,7 +2,6 @@ function FormView() {
     this.calendarCell = $('.fc-widget-content');
     this.container = $('.scheduleBackground');
     this.submitInfo = new Submission();
-
     this.scheduleButton = $("#scheduleButton");
 }
 FormView.prototype = {
@@ -71,7 +70,7 @@ FormView.prototype = {
     hideInputForm: function(event) {
         if (this.isTarget(event.target)) {
             this.container.slideUp("slow");
-            this.submitInfo.clearInput.call(this.submitInfo);
+            this.submitInfo.clearInput();
         }
     },
     isTarget: function(target) {
@@ -82,7 +81,6 @@ FormView.prototype = {
         } else return false;
     }
 };
-
 function Submission() {
     this.textInput = $(".textInput");
     this.timeInput = $(".time");
@@ -107,13 +105,13 @@ Submission.prototype = {
         Utility.on(this.submitButton, "click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
         Utility.on(document, "click", this.clickCalendarCell.bind(this));
-        $("#title").on('input', this.inputLimit );
-
+        $("#title").on('keyup', this.inputLimit );
     },
     inputLimit: function() {
-        if ($(this).val().length >= 11) {
-            alert('제목은 11글자까지 입력가능합니다');
-        }
+      if($(this).val().length > 11) {
+          alert("제목은 11자까지 입력 가능합니다.");
+          $(this).val($(this).val().substring(0, 11));
+      }
     },
     clickCalendarCell: function(event) {
         if (event.target.tagName === "TD" && event.target.className === "") {
@@ -187,7 +185,6 @@ Submission.prototype = {
         var scheduleInfo = {};
         for (var i = 0; i < this.inputIdList1.length; i++) {
             var inputValue = _$("#" + this.inputIdList1[i]).value;
-
             scheduleInfo[this.inputIdList1[i]] = inputValue;
         }
         if(scheduleInfo["title"].length === 0 )
@@ -231,34 +228,23 @@ Submission.prototype = {
         var startTimeInput = this.startTimeInput;
         var endTimeInput = this.endTimeInput;
         this.timeInput.toggleClass("inputStyle");
-
         if (this.allDayButton.prop("checked")) {
             this.defaultStart = startTimeInput.value;
             this.defaultEnd = endTimeInput.value;
             startTimeInput.value = "00:00";
             endTimeInput.value = "23:59";
             this.timeInput.attr("readonly", true);
-            // startTimeInput.style.backgroundColor = "LightGray";
-            // endTimeInput.style.backgroundColor = "LightGray";
         } else if (!this.allDayButton.prop("checked")) {
-            // startTimeInput.style.backgroundColor = "White";
-            // endTimeInput.style.backgroundColor = "White";
             this.timeInput.attr("readonly", false);
-
             startTimeInput.value = this.defaultStart;
             endTimeInput.value = this.defaultEnd;
         }
     },
     clearInput: function() {
         this.textInput.val("");
-        // for (var i = 0; i < this.inputIdList1.length; i++) {
-        //     _$("#" + this.inputIdList1[i]).value = "";
-        // }
-        _$(".basicValue").checkeds = true;
-        this.allDayButton.checked = false;
+        _$(".basicValue").checked = true;
+        this.allDayButton.prop("checked", false);
         this.timeInput.removeClass("inputStyle");
-        // this.startTimeInput.style.backgroundColor = "White";
-        // this.endTimeInput.style.backgroundColor = "White";
         this.defaultStart = "";
         this.defalutEnd = "";
     },

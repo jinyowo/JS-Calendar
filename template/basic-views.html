@@ -36,9 +36,8 @@
 		#sidebar {
             position: absolute;
 			border: 1px solid #e3e3e3;
-            /*background-color: #d7d7d7;*/
             width: auto;
-            height: 723px;
+            height: 722px;
         }
 		#scheduleButton {
 			cursor: pointer;
@@ -107,7 +106,7 @@
 				</div>
 				<hr />
 				<div class="schedule">
-					<input id="title" maxlength="11" type="text" rows="2" class="form-control textInput" placeholder="제목없는 일정">
+					<input id="title" type="text" rows="2" class="form-control textInput" placeholder="제목없는 일정">
 				</div>
 				<hr />
 				<div class="schedule">
@@ -115,12 +114,12 @@
 						<label>시작</label>
 						<!-- submit button 클릭후 전단되는 value 형식 YYYY-MM-DDTHH:MM -->
 						<input class="timeInput" id="startDay" type="date" />
-						<input class="timeInput" id="startTime" type="time" />
+						<input class="timeInput time" id="startTime" type="time" />
 					</div>
 					<div class="inline schedule">
 						<label>끝</label>
 						<input class="timeInput" id="endDay" type="date" />
-						<input class="timeInput" id="endTime" type="time" />
+						<input class="timeInput time" id="endTime" type="time" />
 					</div>
 					<div class="inline schedule">
 						<label class="checkbox-inline"><input id="allDay" type="checkbox" value="">종일</label>
