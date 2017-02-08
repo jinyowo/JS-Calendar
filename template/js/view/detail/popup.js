@@ -6,7 +6,7 @@ function DetailView() {
         D: "매일",
         none: "반복안함"
     };
-    this.popupBackground = _$('.popupBackground');
+    this.popupBackground = $('.popupBackground');
     this.popupContent = _$('.popupContent');
     this.span = _$('.popupClose');
     this.parsedContent = _$('.parsedContent');
@@ -21,15 +21,15 @@ DetailView.prototype = {
     init: function(option) {
         this.callbacklist = option;
         Utility.on(this.span, "click", this.closePopup.bind(this));
-        Utility.on(this.popupBackground, "click", this.closePopup.bind(this));
+        this.popupBackground.on("click", this.closePopup.bind(this));
         Utility.on(this.monthView, "click", this.executeEvent.bind(this));
         Utility.on(this.deleteButton, "click", this.showConfirm.bind(this));
         Utility.on(this.modifyConfirmButton, "click", this.changeForm.bind(this));
         Utility.on(this.modifyButton, "click", this.getModifiedInfo.bind(this));
     },
     changeForm: function() {
-        _$(".scheduleBackground").style.display = "block";
-        this.popupBackground.style.display = "none";
+        $(".scheduleBackground").slideDown("slow");
+        this.popupBackground.fadeOut("fast");
         _$("#submit").style.display = "none";
         this.modifyButton.style.display = "inline-block";
         this.insertForm();
@@ -98,7 +98,7 @@ DetailView.prototype = {
     },
     executeEvent: function(event) {
         if (this.confirmTarget(event.target)) {
-            Utility.showElement(this.popupBackground);
+            this.popupBackground.fadeIn("fast");
             this.getCoordinate(event);
             this.getSchedule(event.target);
             this.insertPopupContent();
@@ -113,7 +113,7 @@ DetailView.prototype = {
         this.keyset = [key, pos];
     },
     closePopup: function() {
-        Utility.hideElement(this.popupBackground);
+        this.popupBackground.fadeOut("fast");
     },
     confirmTarget: function(target) {
         if (target.closest("a")) {

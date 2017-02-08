@@ -7,9 +7,9 @@ function FormView() {
 }
 FormView.prototype = {
     init: function() {
-        this.calendarCell.on( "click", this.getDateInfo.bind(this));
-        $(document).on( "click", this.hideInputForm.bind(this));
-        this.scheduleButton.on( "click", this.makeSchduleByButton.bind(this));
+        this.calendarCell.on("click", this.getDateInfo.bind(this));
+        $(document).on("click", this.hideInputForm.bind(this));
+        this.scheduleButton.on("click", this.makeSchduleByButton.bind(this));
     },
     getDateInfo: function() {
         this.dateData = event.target.getAttribute("data-date");
@@ -30,7 +30,7 @@ FormView.prototype = {
     },
     dayInput: function() {
         var date = new Date();
-        var ISODate = date.toISOString().split("T",1);
+        var ISODate = date.toISOString().split("T", 1);
         this.submitInfo.startDayInput.value = ISODate;
         this.submitInfo.endDayInput.value = ISODate;
     },
@@ -66,12 +66,12 @@ FormView.prototype = {
     showInputForm: function() {
         this.submitInfo.submitButton.style.display = "inline-block";
         _$("#modify").style.display = "none";
-        this.container.show("slow");
+        this.container.slideDown("slow");
     },
     hideInputForm: function(event) {
         if (this.isTarget(event.target)) {
-            this.container.hide("slow");
-            this.submitInfo.clearInput();
+            this.container.slideUp("slow");
+            this.submitInfo.clearInput.call(this.submitInfo);
         }
     },
     isTarget: function(target) {
@@ -84,7 +84,7 @@ FormView.prototype = {
 };
 
 function Submission() {
-    this.textInput =$(".textInput");
+    this.textInput = $(".textInput");
     this.timeInput = $(".time");
     this.titleInput = _$("#title");
     this.allDayButton = $('#allDay');
@@ -107,6 +107,17 @@ Submission.prototype = {
         Utility.on(this.submitButton, "click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
         Utility.on(document, "click", this.clickCalendarCell.bind(this));
+        $("#title").on('keyup', this.inputLimit );
+
+    },
+    inputLimit: function() {
+      if($(this).val().length > 11) {
+          alert("제목은 11자까지 입력 가능합니다.");
+          $(this).val($(this).val().substring(0, 11));
+      }
+
+
+
     },
     clickCalendarCell: function(event) {
         if (event.target.tagName === "TD" && event.target.className === "") {
@@ -138,6 +149,7 @@ Submission.prototype = {
         var timeStart = this.dateFromISO(timeArray[0]);
         var timeEnd = this.dateFromISO(timeArray[1]);
         if ((timeStart - timeEnd) >= 0) {
+            alert('잘못된 기간이 입력되어 자동수정됩니다.')
             this.fixTime(event.target.id);
         }
     },
@@ -163,7 +175,7 @@ Submission.prototype = {
     saveScheduleInfo: function(x) {
         var keyValue = this.setDayKey();
         var scheduleInfo = this.getScheduleInfo.bind(this)();
-        if(scheduleInfo === undefined) return 0;    // 반복일정 기간이 잘못된 경우
+        if (scheduleInfo === undefined) return 0; // 반복일정 기간이 잘못된 경우
         var alreadyHas = localStorage.getItem(keyValue);
         var scheduleArray = [];
         if (!!alreadyHas) {
@@ -177,11 +189,14 @@ Submission.prototype = {
     },
     getScheduleInfo: function() {
         var scheduleInfo = {};
-
-
         for (var i = 0; i < this.inputIdList1.length; i++) {
             var inputValue = _$("#" + this.inputIdList1[i]).value;
+
             scheduleInfo[this.inputIdList1[i]] = inputValue;
+        }
+        if(scheduleInfo["title"].length === 0 )
+        {
+          scheduleInfo["title"]= "제목없는 일정";
         }
         var timeArray = this.getTime();
         scheduleInfo["start"] = timeArray[0];
@@ -193,7 +208,7 @@ Submission.prototype = {
 
         // check repeatEvent date
         var correntEvent = this.checkRepeatEvent(repeatValue, this.dateFromISO(scheduleInfo["start"]), this.dateFromISO(scheduleInfo["end"]));
-        if(!correntEvent) scheduleInfo = undefined;
+        if (!correntEvent) scheduleInfo = undefined;
 
         return scheduleInfo;
     },
@@ -240,7 +255,6 @@ Submission.prototype = {
     },
     clearInput: function() {
         this.textInput.val("");
-
         // for (var i = 0; i < this.inputIdList1.length; i++) {
         //     _$("#" + this.inputIdList1[i]).value = "";
         // }
@@ -261,16 +275,16 @@ Submission.prototype = {
         var result = true;
         var diff = end - start;
 
-        if(repeat === "D") {
+        if (repeat === "D") {
             result = diff > currDay ? false : true;
-        } else if(repeat === "W") {
+        } else if (repeat === "W") {
             result = diff > currWeek ? false : true;
-        } else if(repeat === "M") {
+        } else if (repeat === "M") {
             result = diff > currMonth ? false : true;
         } else {
             result = diff > currYear ? false : true;
         }
-        if(!result) alert("날짜 값이 잘못되었습니다.");
+        if (!result) alert("날짜 값이 잘못되었습니다.");
         return result;
     }
 };
