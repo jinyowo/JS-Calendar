@@ -1,14 +1,15 @@
 function FormView() {
-    this.calendarCell = _$('.fc-widget-content');
-    this.container = _$('.scheduleBackground');
+    this.calendarCell = $('.fc-widget-content');
+    this.container = $('.scheduleBackground');
     this.submitInfo = new Submission();
-    this.scheduleButton = _$("#scheduleButton");
+
+    this.scheduleButton = $("#scheduleButton");
 }
 FormView.prototype = {
     init: function() {
-        Utility.on(this.calendarCell, "click", this.getDateInfo.bind(this));
-        Utility.on(document, "click", this.hideInputForm.bind(this));
-        Utility.on(this.scheduleButton, "click", this.makeSchduleByButton.bind(this));
+        this.calendarCell.on( "click", this.getDateInfo.bind(this));
+        $(document).on( "click", this.hideInputForm.bind(this));
+        this.scheduleButton.on( "click", this.makeSchduleByButton.bind(this));
     },
     getDateInfo: function() {
         this.dateData = event.target.getAttribute("data-date");
@@ -65,11 +66,11 @@ FormView.prototype = {
     showInputForm: function() {
         this.submitInfo.submitButton.style.display = "inline-block";
         _$("#modify").style.display = "none";
-        Utility.showElement(this.container);
+        this.container.show("slow");
     },
     hideInputForm: function(event) {
         if (this.isTarget(event.target)) {
-            Utility.hideElement(this.container);
+            this.container.hide("slow");
             this.submitInfo.clearInput();
         }
     },
@@ -83,8 +84,10 @@ FormView.prototype = {
 };
 
 function Submission() {
+    this.textInput =$(".textInput");
+    this.timeInput = $(".time");
     this.titleInput = _$("#title");
-    this.allDayButton = _$('#allDay');
+    this.allDayButton = $('#allDay');
     this.submitButton = _$('#submit');
     this.inputIdList1 = ["title", "place", "desc"];
     this.inputIdList2 = [
@@ -100,7 +103,7 @@ function Submission() {
 Submission.prototype = {
     init: function(option) {
         this.callbacklist = option;
-        Utility.on(this.allDayButton, "click", this.setAllDay.bind(this));
+        this.allDayButton.on("click", this.setAllDay.bind(this));
         Utility.on(this.submitButton, "click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
         Utility.on(document, "click", this.clickCalendarCell.bind(this));
@@ -174,6 +177,8 @@ Submission.prototype = {
     },
     getScheduleInfo: function() {
         var scheduleInfo = {};
+
+
         for (var i = 0; i < this.inputIdList1.length; i++) {
             var inputValue = _$("#" + this.inputIdList1[i]).value;
             scheduleInfo[this.inputIdList1[i]] = inputValue;
@@ -214,32 +219,36 @@ Submission.prototype = {
     setAllDay: function() {
         var startTimeInput = this.startTimeInput;
         var endTimeInput = this.endTimeInput;
-        if (this.allDayButton.checked) {
+        this.timeInput.toggleClass("inputStyle");
+
+        if (this.allDayButton.prop("checked")) {
             this.defaultStart = startTimeInput.value;
             this.defaultEnd = endTimeInput.value;
             startTimeInput.value = "00:00";
             endTimeInput.value = "23:59";
-            startTimeInput.readOnly = true;
-            endTimeInput.readOnly = true;
-            startTimeInput.style.backgroundColor = "LightGray";
-            endTimeInput.style.backgroundColor = "LightGray";
-        } else if (!this.allDayButton.checked) {
-            startTimeInput.style.backgroundColor = "White";
-            endTimeInput.style.backgroundColor = "White";
-            startTimeInput.readOnly = false;
-            endTimeInput.readOnly = false;
+            this.timeInput.attr("readonly", true);
+            // startTimeInput.style.backgroundColor = "LightGray";
+            // endTimeInput.style.backgroundColor = "LightGray";
+        } else if (!this.allDayButton.prop("checked")) {
+            // startTimeInput.style.backgroundColor = "White";
+            // endTimeInput.style.backgroundColor = "White";
+            this.timeInput.attr("readonly", false);
+
             startTimeInput.value = this.defaultStart;
             endTimeInput.value = this.defaultEnd;
         }
     },
     clearInput: function() {
-        for (var i = 0; i < this.inputIdList1.length; i++) {
-            _$("#" + this.inputIdList1[i]).value = "";
-        }
-        _$(".basicValue").checked = true;
+        this.textInput.val("");
+
+        // for (var i = 0; i < this.inputIdList1.length; i++) {
+        //     _$("#" + this.inputIdList1[i]).value = "";
+        // }
+        _$(".basicValue").checkeds = true;
         this.allDayButton.checked = false;
-        this.startTimeInput.style.backgroundColor = "White";
-        this.endTimeInput.style.backgroundColor = "White";
+        this.timeInput.removeClass("inputStyle");
+        // this.startTimeInput.style.backgroundColor = "White";
+        // this.endTimeInput.style.backgroundColor = "White";
         this.defaultStart = "";
         this.defalutEnd = "";
     },
