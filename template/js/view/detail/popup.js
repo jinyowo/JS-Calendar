@@ -31,7 +31,7 @@ DetailView.prototype = {
         $(".scheduleBackground").slideDown("slow");
         this.popupBackground.fadeOut("fast");
         _$("#submit").style.display = "none";
-        this.modifyButton.style.display = "inline-block";
+        this.modifyButton.css("display", "inline-block");
         this.insertForm();
     },
     insertForm: function() {

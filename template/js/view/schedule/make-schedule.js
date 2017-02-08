@@ -63,7 +63,8 @@ FormView.prototype = {
         this.Date2 = timedate2.split(':', 2);
     },
     showInputForm: function() {
-        this.submitInfo.submitButton.style.display = "inline-block";
+
+        this.submitInfo.submitButton.css("display", "inline-block");
         _$("#modify").style.display = "none";
         this.container.slideDown("slow");
     },
@@ -81,12 +82,13 @@ FormView.prototype = {
         } else return false;
     }
 };
+
 function Submission() {
     this.textInput = $(".textInput");
     this.timeInput = $(".time");
     this.titleInput = _$("#title");
     this.allDayButton = $('#allDay');
-    this.submitButton = _$('#submit');
+    this.submitButton = $('#submit');
     this.inputIdList1 = ["title", "place", "desc"];
     this.inputIdList2 = [
         ["startDay", "startTime"],
@@ -102,19 +104,19 @@ Submission.prototype = {
     init: function(option) {
         this.callbacklist = option;
         this.allDayButton.on("click", this.setAllDay.bind(this));
-        Utility.on(this.submitButton, "click", this.saveScheduleInfo.bind(this));
+        this.submitButton.on("click", this.saveScheduleInfo.bind(this));
         this.timeAlert.bind(this)();
-        Utility.on(document, "click", this.clickCalendarCell.bind(this));
-        $("#title").on('keyup', this.inputLimit );
+        $(document).on("click", this.clickCalendarCell.bind(this));
+        $("#title").on('keyup', this.inputLimit);
     },
     inputLimit: function() {
-      if($(this).val().length > 11) {
-          alert("제목은 11자까지 입력 가능합니다.");
-          $(this).val($(this).val().substring(0, 11));
-      }
+        if ($(this).val().length > 11) {
+            alert("제목은 11자까지 입력 가능합니다.");
+            $(this).val($(this).val().substring(0, 11));
+        }
     },
     clickCalendarCell: function(event) {
-        if (event.target.tagName === "TD" && event.target.className === "") {
+        if (this.isTarget()) {
             for (var i = 0; i < this.cell.length; i++) {
                 var mouseX = event.clientX;
                 var mouseY = event.clientY;
@@ -132,11 +134,14 @@ Submission.prototype = {
             }
         }
     },
+    isTarget: function() {
+        if ((event.target.tagName === "TD" && event.target.className === "") || (event.target.parentNode.className === "fc-more-cell") || (event.target.parentNode.className === "fc-hide-cell")) {
+            return true;
+        } else return false;
+    },
     timeAlert: function() {
-        var elements = document.querySelectorAll(".timeInput");
-        for (var i = 0; i < elements.length; i++) {
-            Utility.on(elements[i], "focusout", this.compareDate.bind(this));
-        }
+        var elements = $(".timeInput");
+        elements.on("focusout", this.compareDate.bind(this));
     },
     compareDate: function() {
         var timeArray = this.getTime();
@@ -187,9 +192,8 @@ Submission.prototype = {
             var inputValue = _$("#" + this.inputIdList1[i]).value;
             scheduleInfo[this.inputIdList1[i]] = inputValue;
         }
-        if(scheduleInfo["title"].length === 0 )
-        {
-          scheduleInfo["title"]= "제목없는 일정";
+        if (scheduleInfo["title"].length === 0) {
+            scheduleInfo["title"] = "제목없는 일정";
         }
         var timeArray = this.getTime();
         scheduleInfo["start"] = timeArray[0];
