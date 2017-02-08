@@ -37,13 +37,14 @@ DetailView.prototype = {
     insertForm: function() {
         var savedArray = JSON.parse(localStorage.getItem(this.keyset[0]));
         var position = this.keyset[1];
-        var startData = savedArray[position]['start'].replace(':00Z', "").split('T', 2);
-        var endData = savedArray[position]["end"].replace(':00Z', "").split('T', 2);
-        _$("#title").value = savedArray[position]["title"];
-        _$("#place").value = savedArray[position]["place"];
-        _$("#desc").value = savedArray[position]["desc"];
-        if (savedArray[position]["allDay"]) _$('#allDay').checked = true;
-        _$('input[value=' + savedArray[position]["repeat"] + ']').checked = true;
+        var dataObject = savedArray[position];
+        var startData = dataObject['start'].replace(':00Z', "").split('T', 2);
+        var endData = dataObject["end"].replace(':00Z', "").split('T', 2);
+        _$("#title").value = dataObject["title"];
+        _$("#place").value = dataObject["place"];
+        _$("#desc").value = dataObject["desc"];
+        if (dataObject["allDay"]) _$('#allDay').checked = true;
+        _$('input[value=' + dataObject["repeat"] + ']').checked = true;
         this.startDayInput.value = startData[0];
         this.endDayInput.value = endData[0];
         _$("#startTime").value = startData[1];
@@ -170,7 +171,10 @@ var showForm = new FormView();
 var showDetail = new DetailView();
 var modifyInfo = new Submission();
 showForm.init();
-modifyInfo.init();
+modifyInfo.init({
+  CHECK_COLOR: "LightGray",
+  NON_CHECK_COLOR: "White"
+});
 showDetail.init({
     GET_INFO: modifyInfo.getScheduleInfo,
     DAYKEY: modifyInfo.setDayKey.bind(modifyInfo),
