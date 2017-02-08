@@ -107,6 +107,7 @@
 
 .mini-prev-button,
 .mini-next-button {
+    cursor: pointer;
     text-align: center;
     /*border: 2px solid #cbd1d2;*/
     border-radius: 50%;
