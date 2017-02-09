@@ -63,16 +63,22 @@ br {
     line-height: 150%;
 }
 
-
-/*delete 버튼*/
-
-.delete {
-    margin: 3px;
+.modify,.delete{
+  margin: 2px;
+  padding: 3px 6px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  border-radius: 4px;
+  border-color: #2caa22;
+  color: #2caa22;
 }
 
-
-/*modify 버튼*/
-
-.modify {
-    margin: 3px;
+.modify:hover,.delete:hover{
+  background-color: rgba(44, 186, 34, 0.2);
+  color:#2caa22;
 }
