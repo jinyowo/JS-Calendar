@@ -111,7 +111,7 @@ var Utility = {
         }
     },
     setTimeByGMT: function(date) {
-      var converted = date;
+      var converted = new Date(date);
       var offset = date.getTimezoneOffset()/60;
       var hours = date.getHours();
 

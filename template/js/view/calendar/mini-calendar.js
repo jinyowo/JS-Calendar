@@ -80,12 +80,15 @@ MiniCalendar.prototype = {
     getEvent: function(events) {
         var result = [];
         var startDate = this.callbackList['GET_NUMS'](this.myDate)[1];
+        var endDate = this.callbackList['GET_NUMS'](this.myDate)[2];
         for (var i = 0; i < events.length; i++) {
             var eventArray = JSON.parse(events[i]);
             for (var j = 0; j < eventArray.length; j++) {
                 event = eventArray[j];
                 if (event.repeat === 'none' ||
                     event.start > startDate) { // 반복일정이 아니면 해당 달에 존재하므로 추가
+                    result.push(event);
+                } else if (event.end > startDate){
                     result.push(event);
                 }
             }
