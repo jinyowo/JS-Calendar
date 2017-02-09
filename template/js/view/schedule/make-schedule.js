@@ -98,6 +98,7 @@ function Submission() {
     this.startTimeInput = _$("#startTime");
     this.endDayInput = _$("#endDay");
     this.endTimeInput = _$("#endTime");
+
     this.cell = document.querySelectorAll("td.fc-day.fc-widget-content:not(.fc-past)");
 }
 Submission.prototype = {
