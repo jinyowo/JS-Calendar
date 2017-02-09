@@ -11,7 +11,7 @@
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.2/handlebars.min.js"></script>
 	<script src='./js/lib/jquery.min.js'></script>
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href='./style/bootstrap.min.css' rel='stylesheet'>
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 	<style>
@@ -100,8 +100,8 @@
 			<div class="parsedContent">
 			</div>
 			<div>
-				<button type="button" class="delete btn btn-default btn-xs">삭제</button>
-				<button type="button" class="modify btn btn-default btn-xs">수정</button>
+				<button type="button" class="delete fc-button fc-state-default">삭제</button>
+				<button type="button" class="modify fc-button fc-state-default">수정</button>
 			</div>
 		</div>
 	</div>
@@ -114,11 +114,11 @@
 					<h1 style="display:inline">일정만들기</h1>
 					<span class="closeButton">&times;</span>
 				</div>
-				<hr />
+				<hr class="scheduleLine"/>
 				<div class="schedule">
 					<input id="title" type="text" rows="2" class="form-control textInput" placeholder="제목없는 일정">
 				</div>
-				<hr />
+				<hr class="scheduleLine"/>
 				<div class="schedule">
 					<div class="inline schedule">
 						<label>시작</label>
@@ -145,7 +145,7 @@
 						<label class="radio-inline"><input type="radio" class="basicValue" name="optradio" value="none" checked>none</label>
 					</div>
 				</div>
-				<hr />
+				<hr class="scheduleLine"/>
 				<div class="schedule">
 					<div class="schedule">
 						<label>장소:</label>
@@ -155,9 +155,9 @@
 					<textarea id="desc" class="form-control textInput" rows="5" placeholder="일정에 필요한 설명을 남기세요"></textarea>
 				</div>
 				<div class="schedule">
-					<button id="submit" type="submit" class="btn btn-default">저장</button>
-					<button id="modify" type="submit" class="btn btn-default">수정</button>
-					<button id="cancel" type="button" class="btn btn-default">취소</button>
+					<button id="submit" type="submit" class="fc-button fc-state-default">저장</button>
+					<button id="modify" type="submit" class="fc-button fc-state-default">수정</button>
+					<button id="cancel" type="button" class="fc-button fc-state-default">취소</button>
 				</div>
 			</form>
 		</div>
