@@ -253,7 +253,7 @@ ScheduleDisplay.prototype = {
         var first = Utility.setTimeByGMT(new Date(this.calendar.firstDay));
         Utility.setTimeDefault(first, 0);
 
-        while (first >= nextStart) {
+        while (first > nextEnd) {
             this.moveNextRepeatEvent(nextStart, nextEnd, repeatType);
         }
     },
